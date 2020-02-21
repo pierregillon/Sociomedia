@@ -27,7 +27,7 @@ namespace NewsAggregator.Tests
         [Fact]
         public void Keywords_are_words_with_the_most_occurence()
         {
-            var words = new[] { "test", "winter", "john", "mountains", "test", "summer", "test", "winter" };
+            var words = new[] { "test", "winter", "john", "mountains", "test", "summer", "winter", "test" };
 
             var keywords = _keywordsCalculator.Calculate(words, 10);
 
@@ -44,15 +44,19 @@ namespace NewsAggregator.Tests
         }
 
         [Fact]
-        public void Keywords_are_words_combination()
+        public void Keywords_can_be_a_combination_of_two_words()
         {
-            var words = new[] { "a", "b", "a", "b" };
+            var words = new[] { "john", "wick", "winter", "john", "wick", "summer" };
 
             var keywords = _keywordsCalculator.Calculate(words, 10);
 
             keywords
                 .Should()
-                .BeEquivalentTo(new Keyword("a b", 2));
+                .BeEquivalentTo(new [] {
+                    new Keyword("john wick", 2),
+                    new Keyword("winter", 1),
+                    new Keyword("summer", 1)
+                });
         }
     }
 }
