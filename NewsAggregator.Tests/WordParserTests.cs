@@ -42,6 +42,33 @@ namespace NewsAggregator.Tests
             words.Should().BeEquivalentTo("découvert");
         }
 
+        [Theory]
+        [InlineData("\"hello world\"")]
+        [InlineData("«hello world»")]
+        public void Clear_quotes(string text)
+        {
+            var simpleHtml = $"<html>{text}</html>";
+
+            var words = _wordParser.ParseHtml(simpleHtml);
+
+            words.Should().BeEquivalentTo("hello", "world");
+        }
+
+        [Theory]
+        [InlineData("hello, world")]
+        [InlineData("hello world.")]
+        [InlineData("hello;world;")]
+        [InlineData("hello world!")]
+        [InlineData("hello world?")]
+        public void Clear_punctuations(string text)
+        {
+            var simpleHtml = $"<html>{text}</html>";
+
+            var words = _wordParser.ParseHtml(simpleHtml);
+
+            words.Should().BeEquivalentTo("hello", "world");
+        }
+
         [Fact]
         public void Do_not_parse_alt_attribute()
         {

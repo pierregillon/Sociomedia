@@ -2,19 +2,24 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 
 namespace NewsAggregator
 {
     public class WordParser
     {
-        private static readonly Regex RemoveHtmlTagsRegex = new Regex(@"<[^>]*>", RegexOptions.Compiled | RegexOptions.Singleline);
-        private static readonly Regex RemoveExtractSpacesRegex = new Regex(@"\s+", RegexOptions.Compiled);
+        private static readonly string[] Separators = { " ", "\"", "'", "«", "»", "?", "!", ";", ",", "." };
+
+        private static readonly Regex RemoveDuplicatedSpacesRegex = new Regex(@"\s+", RegexOptions.Compiled);
 
         public IReadOnlyCollection<string> ParseHtml(string html)
         {
-            var text = RemoveHtmlTagsRegex.Replace(html, string.Empty);
-            text = WebUtility.HtmlDecode(text);
-            return RemoveExtractSpacesRegex.Replace(text, " ").Split(" ", StringSplitOptions.RemoveEmptyEntries);
+            var doc = new HtmlDocument();
+            doc.LoadHtml(WebUtility.HtmlDecode(html));
+            var text = doc.DocumentNode.InnerText;
+            return RemoveDuplicatedSpacesRegex
+                .Replace(text, " ")
+                .Split(Separators, StringSplitOptions.RemoveEmptyEntries);
         }
     }
 }

@@ -4,7 +4,9 @@
     {
         public Article Build(string html)
         {
-            var plainText = new WordParser().ParseHtml(html);
+            var articleContent = new HtmlParser().FindArticle(html);
+
+            var plainText = new WordParser().ParseHtml(articleContent);
 
             return null;
         }
