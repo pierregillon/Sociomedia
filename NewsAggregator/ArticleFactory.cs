@@ -1,4 +1,6 @@
-﻿namespace NewsAggregator
+﻿using System.Diagnostics.Tracing;
+
+namespace NewsAggregator
 {
     public class ArticleFactory
     {
@@ -6,7 +8,9 @@
         {
             var articleContent = new HtmlParser().FindArticle(html);
 
-            var plainText = new WordParser().ParseHtml(articleContent);
+            var words = new WordParser().ParseHtml(articleContent);
+
+            var keywords = new KeywordsCalculator().Calculate(words, 30);
 
             return null;
         }
