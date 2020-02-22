@@ -7,11 +7,16 @@ namespace NewsAggregator
     {
         public IReadOnlyCollection<Keyword> Calculate(IReadOnlyCollection<string> words, int count)
         {
-            words = words.Where(x => x.Length > 3).ToArray();
-            var twoWordsKeywords = GetKeywordsComposed(words, 2);
-            var oneWord = GetKeywordsComposed(words, 1).Where(x=>twoWordsKeywords.All(y => !y.Contains(x))).ToArray();
+            var results = new List<Keyword>();
+            for (var i = 4; i >= 1; i--) {
+                var keywords = GetKeywordsComposed(words, i);
+                results.AddRange(keywords.Where(x=> !results.Any(y => y.Contains(x))));
+            }
 
-            return twoWordsKeywords.Union(oneWord).ToArray();
+            return results
+                .Where(x => x.Value.Length > 3)
+                .Take(count)
+                .ToArray();
         }
 
         public IReadOnlyCollection<Keyword> GetKeywordsComposed(IReadOnlyCollection<string> words, int count)
