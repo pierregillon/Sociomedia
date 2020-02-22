@@ -62,7 +62,7 @@ namespace NewsAggregator.Tests
         [Fact]
         public void Keywords_can_be_a_combination_of_three_words()
         {
-            var words = new[] { "john", "wick", "rocks", "winter", "john", "wick", "rocks", "summer" };
+            var words = new[] { "john", "wick", "rocks", "winter", "john", "wick", "rocks" };
 
             var keywords = _keywordsCalculator.Calculate(words, 10);
 
@@ -70,15 +70,14 @@ namespace NewsAggregator.Tests
                 .Should()
                 .BeEquivalentTo(new[] {
                     new Keyword("john wick rocks", 2),
-                    new Keyword("winter", 1),
-                    new Keyword("summer", 1)
+                    new Keyword("winter", 1)
                 });
         }
 
         [Fact]
         public void Keywords_can_be_a_combination_four_words()
         {
-            var words = new[] { "john", "wick", "rocks", "now", "winter", "john", "wick", "rocks", "now", "summer" };
+            var words = new[] { "john", "wick", "rocks", "now", "winter", "time", "john", "wick", "rocks", "now", "summer", "winter", "time" };
 
             var keywords = _keywordsCalculator.Calculate(words, 10);
 
@@ -86,7 +85,23 @@ namespace NewsAggregator.Tests
                 .Should()
                 .BeEquivalentTo(new[] {
                     new Keyword("john wick rocks now", 2),
-                    new Keyword("winter", 1),
+                    new Keyword("winter time", 2),
+                    new Keyword("summer", 1)
+                });
+        }
+
+        [Fact]
+        public void Keywords_can_be_a_combination_four_words_test()
+        {
+            var words = new[] { "john", "wick", "rocks", "now", "winter", "time", "john", "wick", "rocks", "now", "summer", "winter", "time" };
+
+            var keywords = _keywordsCalculator.Calculate(words, 10);
+
+            keywords
+                .Should()
+                .BeEquivalentTo(new[] {
+                    new Keyword("john wick rocks now", 2),
+                    new Keyword("winter time", 2),
                     new Keyword("summer", 1)
                 });
         }

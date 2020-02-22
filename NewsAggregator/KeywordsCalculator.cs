@@ -5,32 +5,50 @@ namespace NewsAggregator
 {
     public class KeywordsCalculator
     {
+        private const int MaxCombinationWordSize = 4;
+
         public IReadOnlyCollection<Keyword> Calculate(IReadOnlyCollection<string> words, int count)
         {
-            var results = new List<Keyword>();
-            for (var i = 4; i >= 1; i--) {
-                var keywords = GetKeywordsComposed(words, i);
-                results.AddRange(keywords.Where(x=> !results.Any(y => y.Contains(x))));
-            }
-
-            return results
+            return GetKeywords(words)
                 .Where(x => x.Value.Length > 3)
                 .Take(count)
                 .ToArray();
         }
 
-        public IReadOnlyCollection<Keyword> GetKeywordsComposed(IReadOnlyCollection<string> words, int count)
+        private IEnumerable<Keyword> GetKeywords(IEnumerable<string> words)
         {
-            var test = new List<IEnumerable<string>>();
+            var wordProcessing = words.ToList();
 
-            for (int i = 0; i < count/2 + 1; i++) {
-                test.AddRange(words.Skip(i).Chunk(count).ToArray());
+            for (var combinationSize = MaxCombinationWordSize; combinationSize >= 1; combinationSize--) {
+                if (wordProcessing.Count <= combinationSize) {
+                    continue;
+                }
+
+                var keywords = GetKeywordsComposed(wordProcessing, combinationSize);
+                foreach (var keyword in keywords) {
+                    yield return keyword;
+                }
+
+                wordProcessing.RemoveAll(x => keywords.Any(keyword => keyword.Contains(x)));
+
+                if (wordProcessing.Count == 0) {
+                    break;
+                }
+            }
+        }
+
+        public IReadOnlyCollection<Keyword> GetKeywordsComposed(IReadOnlyCollection<string> words, int combinationSize)
+        {
+            var keywordsGroups = new List<IEnumerable<string>>();
+
+            for (var i = 0; i < combinationSize / 2 + 1; i++) {
+                keywordsGroups.AddRange(words.Skip(i).Chunk(combinationSize).ToArray());
             }
 
-            return test
+            return keywordsGroups
                 .Select(x => string.Join(' ', x))
                 .GroupBy(x => x)
-                .Where(x => count == 1 || x.Count() >= 2)
+                .Where(x => combinationSize == 1 || x.Count() >= 2)
                 .OrderByDescending(x => x.Count())
                 .Select(x => new Keyword(x.Key, x.Count()))
                 .ToArray();
@@ -63,6 +81,11 @@ namespace NewsAggregator
         {
             var words = Value.Split(' ');
             return words.Except(keyword.Value.Split(' ')).Count() != words.Length;
+        }
+
+        public bool Contains(string word)
+        {
+            return Value.Contains(word);
         }
     }
 }
