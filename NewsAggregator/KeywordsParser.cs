@@ -1,17 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 
 namespace NewsAggregator
 {
-    public class KeywordsCalculator
+    public class KeywordsParser
     {
         private const int MaxCombinationWordSize = 4;
+        private static readonly string[] Separators = { " ", "\"", "'", "«", "»", "?", "!", ";", ",", "." };
+        private string[] invalidWords = new[] { "mais", "ou", "et", "donc", "or", "ni", "car", "de", "dans", "du", "ma", "me", "mes", "mon", };
 
-        public IReadOnlyCollection<Keyword> Calculate(IReadOnlyCollection<string> words, int count)
+        public IReadOnlyCollection<Keyword> Parse(string text, int count)
         {
+            var words = text
+                .Split(Separators, StringSplitOptions.RemoveEmptyEntries);
+
             return GetKeywords(words)
+                .OrderByDescending(x => x.Occurence)
                 .Take(count)
                 .ToArray();
         }
@@ -27,7 +34,7 @@ namespace NewsAggregator
 
                 var keywords = GetKeywordsComposed(wordProcessing, combinationSize);
                 foreach (var keyword in keywords) {
-                    wordProcessing.RemoveAll(x => keyword.Contains(x));
+                    //wordProcessing.RemoveAll(x => keyword.Contains(x));
                     yield return keyword;
                 }
 
@@ -39,10 +46,12 @@ namespace NewsAggregator
 
         public IEnumerable<Keyword> GetKeywordsComposed(IReadOnlyCollection<string> words, int combinationSize)
         {
-            return Enumerable.Range(0, combinationSize / 2 + 1)
+            var matrix = Enumerable.Range(0, combinationSize)
                 .SelectMany(x => words.Skip(x).Chunk(combinationSize))
-                .Where(x => x.All(s => s.Length > 2))
-                .Select(x => string.Join(' ', x))
+                .Where(x => x.All(s => s.Length > 3))
+                .Select(x => string.Join(' ', x));
+
+            return matrix
                 .GroupBy(x => x.RemoveDiacritics().ToLower())
                 .Where(x => x.Count() >= 2)
                 .OrderByDescending(x => x.Count())

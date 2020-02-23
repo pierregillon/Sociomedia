@@ -1,15 +1,27 @@
-﻿using HtmlAgilityPack;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 
 namespace NewsAggregator
 {
     public class HtmlParser
     {
-        public string FindArticle(string html)
+        private static readonly Regex RemoveDuplicatedSpacesRegex = new Regex(@"\s+", RegexOptions.Compiled);
+
+        public string ExtractPlainTextArticleContent(string html)
         {
-            var doc = new HtmlDocument();
-            doc.LoadHtml(html);
-            var articleNode = FindNode(doc.DocumentNode, "article");
-            return articleNode != null ? articleNode.OuterHtml : html;
+            var text = FindPlainText(WebUtility.HtmlDecode(html));
+            return RemoveDuplicatedSpacesRegex.Replace(text, " ").Trim();
+        }
+
+        private static string FindPlainText(string html)
+        {
+            var htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(html);
+            return FindNode(htmlDocument.DocumentNode, "article")?.InnerText
+                   ?? htmlDocument.DocumentNode.InnerText;
         }
 
         private static HtmlNode FindNode(HtmlNode node, string name)

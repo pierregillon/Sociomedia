@@ -8,7 +8,7 @@ namespace NewsAggregator
     {
         static async Task Main(string[] args)
         {
-            var url = "https://www.lefigaro.fr/sciences/2020/02/21/01008-20200221LIVWWW00001-en-direct-coronavirus-epidemie-chine-Wuhan-Branville-covid-19-rapatries.php";
+            var url = "https://www.lemonde.fr/international/article/2020/02/22/coronavirus-le-point-sur-l-epidemie_6030475_3210.html";
 
             var html = await Download(url);
 
