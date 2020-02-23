@@ -6,7 +6,7 @@
         {
             var articleContent = new HtmlParser().ExtractPlainTextArticleContent(html);
 
-            var keywords = new KeywordsParser().Parse(articleContent, 30);
+            var keywords = new KeywordsParser().Parse(articleContent);
 
             return null;
         }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace NewsAggregator
 {
@@ -12,7 +10,7 @@ namespace NewsAggregator
         private static readonly string[] Separators = { " ", "\"", "'", "«", "»", "?", "!", ";", ",", "." };
         private static readonly string[] InvalidWords = { "mais", "donc", "dans", "aussi", "alors", "ensuite", "pour" };
 
-        public IReadOnlyCollection<Keyword> Parse(string text, int count)
+        public IEnumerable<Keyword> Parse(string text)
         {
             var words = text
                 .Split(Separators, StringSplitOptions.RemoveEmptyEntries)
@@ -21,8 +19,7 @@ namespace NewsAggregator
 
             return FilterOnlyNewKeywords(GetKeywords(words))
                 .OrderByDescending(x => x.Occurence)
-                .Take(count)
-                .ToArray();
+                .ThenBy(x => x.WordCount);
         }
 
         private static IEnumerable<Keyword> FilterOnlyNewKeywords(IEnumerable<Keyword> keywords)
@@ -60,69 +57,12 @@ namespace NewsAggregator
 
         public IEnumerable<Keyword> GetKeywordsComposed(IReadOnlyCollection<string> words, int combinationSize)
         {
-            var matrix = Enumerable.Range(0, combinationSize)
+            return Enumerable.Range(0, combinationSize)
                 .SelectMany(x => words.Skip(x).Chunk(combinationSize))
                 .Where(x => x.All(w => w != null))
-                .Select(x => string.Join(' ', x));
-
-            return matrix
-                .GroupBy(x => x.RemoveDiacritics().ToLower())
+                .GroupBy(x => string.Join(' ', x).RemoveDiacritics().ToLower())
                 .Where(x => x.Count() >= 2)
-                .OrderByDescending(x => x.Count())
                 .Select(x => new Keyword(x.Key, x.Count()));
-        }
-    }
-
-    public static class EnumerableExtensions
-    {
-        public static IEnumerable<IEnumerable<T>> Chunk<T>(this IEnumerable<T> source, int chunkSize)
-        {
-            while (source.Any()) {
-                yield return source.Take(chunkSize);
-                source = source.Skip(chunkSize);
-            }
-        }
-    }
-
-    public static class StringExtensions
-    {
-        public static string RemoveDiacritics(this string text)
-        {
-            var normalizedString = text.Normalize(NormalizationForm.FormD);
-            var stringBuilder = new StringBuilder();
-
-            foreach (var c in normalizedString) {
-                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
-                if (unicodeCategory != UnicodeCategory.NonSpacingMark) {
-                    stringBuilder.Append(c);
-                }
-            }
-
-            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
-        }
-    }
-
-    public class Keyword
-    {
-        public string Value { get; }
-        public int Occurence { get; }
-        public int WordCount => Value.Split(' ').Length;
-
-        public Keyword(string value, int occurence)
-        {
-            Value = value;
-            Occurence = occurence;
-        }
-
-        public bool Contains(Keyword keyword)
-        {
-            var words = Value.Split(' ');
-            return words.Except(keyword.Value.Split(' ')).Count() != words.Length;
-        }
-
-        public bool Contains(string word)
-        {
-            return Value.Contains(word);
         }
     }
 }

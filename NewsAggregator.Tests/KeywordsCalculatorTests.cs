@@ -19,7 +19,7 @@ namespace NewsAggregator.Tests
         [InlineData("a bc c test a test")]
         public void Keywords_are_words_with_more_than_2_letters(string text)
         {
-            _keywordsParser.Parse(text, 10)
+            _keywordsParser.Parse(text)
                 .Should()
                 .BeEquivalentTo(new Keyword("test", 2));
         }
@@ -29,7 +29,7 @@ namespace NewsAggregator.Tests
         {
             const string text = "c winter d test test winter john a winter test john b test";
 
-            var keywords = _keywordsParser.Parse(text, 10);
+            var keywords = _keywordsParser.Parse(text);
 
             keywords
                 .Should()
@@ -46,9 +46,9 @@ namespace NewsAggregator.Tests
         [InlineData("john wick is a real john wick")]
         public void Keywords_can_be_a_combination_of_two_words(string text)
         {
-            _keywordsParser.Parse(text, 10)
+            _keywordsParser.Parse(text)
                 .Should()
-                .ContainEquivalentOf(new Keyword("john wick", 2));
+                .Contain(new Keyword("john wick", 2));
         }
 
         [Theory]
@@ -56,25 +56,25 @@ namespace NewsAggregator.Tests
         [InlineData("john wick rocks winter john wick rocks")]
         public void Keywords_can_be_a_combination_of_three_words(string text)
         {
-            _keywordsParser.Parse(text, 10)
+            _keywordsParser.Parse(text)
                 .Should()
-                .ContainEquivalentOf(new Keyword("john wick rocks", 2));
+                .Contain(new Keyword("john wick rocks", 2));
         }
 
         [Theory]
         [InlineData("John wick enjoys killing during winter time. Of course, john wick enjoys killing in summer time too.")]
         public void Keywords_can_be_a_combination_four_words(string text)
         {
-            _keywordsParser.Parse(text, 10)
+            _keywordsParser.Parse(text)
                 .Should()
-                .ContainEquivalentOf(new Keyword("john wick enjoys killing", 2));
+                .Contain(new Keyword("john wick enjoys killing", 2));
         }
 
         [Theory]
         [InlineData("TEST a Test b test c tést")]
         public void Keyword_is_a_group_of_words_ignoring_case_or_diacritics(string text)
         {
-            _keywordsParser.Parse(text, 1)
+            _keywordsParser.Parse(text)
                 .Should()
                 .BeEquivalentTo(new Keyword("test", 4));
         }
@@ -83,15 +83,11 @@ namespace NewsAggregator.Tests
         [InlineData("John wick enjoys killing during winter time, and John wick is great.")]
         public void A_keyword_with_multiple_words_overrides_other_keyword(string text)
         {
-            var result = _keywordsParser.Parse(text, 10);
-
-            result
+            _keywordsParser.Parse(text)
                 .Should()
-                .ContainEquivalentOf(new Keyword("john wick", 2));
-
-            result
-                .Should()
-                .NotContain(x => x.WordCount == 1 && (x.Contains("john") || x.Contains("wick")));
+                .Contain(new Keyword("john wick", 2))
+                .And.NotContain(new Keyword("john", 1))
+                .And.NotContain(new Keyword("wick", 1));
         }
 
         [Theory]
@@ -102,7 +98,7 @@ namespace NewsAggregator.Tests
         [InlineData("aussi aussi")]
         public void A_keyword_is_not_french_specific_words(string text)
         {
-            _keywordsParser.Parse(text, 10)
+            _keywordsParser.Parse(text)
                 .Should()
                 .BeEmpty();
         }
