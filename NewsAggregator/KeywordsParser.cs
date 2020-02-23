@@ -7,7 +7,7 @@ namespace NewsAggregator
     public class KeywordsParser
     {
         private const int MaxCombinationWordSize = 4;
-        private static readonly string[] Separators = { " ", "\"", "'", "«", "»", "?", "!", ";", ",", "." };
+        private static readonly string[] Separators = { " ", "\"", "'", "’", "«", "»", "?", "!", ";", ",", "." };
         private static readonly string[] InvalidWords = { "mais", "donc", "dans", "aussi", "alors", "ensuite", "pour" };
 
         public IEnumerable<Keyword> Parse(string text)

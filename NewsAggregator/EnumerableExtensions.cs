@@ -19,5 +19,15 @@ namespace NewsAggregator
                 yield return enumerator.Current;
             } while (--chunkSize > 0 && enumerator.MoveNext());
         }
+
+        public static IEnumerable<T> IntersectAll<T>(this IEnumerable<IEnumerable<T>> values)
+        {
+            IEnumerable<T> result = null;
+            using var enumerator = values.GetEnumerator();
+            while (enumerator.MoveNext()) {
+                result = result == null ? enumerator.Current : result.Intersect(enumerator.Current);
+            }
+            return result;
+        }
     }
 }

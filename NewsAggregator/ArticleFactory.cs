@@ -8,7 +8,7 @@ namespace NewsAggregator
         {
             var articleContent = new HtmlParser().ExtractPlainTextArticleContent(html);
 
-            var keywords = new KeywordsParser().Parse(articleContent).Take(20).ToArray();
+            var keywords = new KeywordsParser().Parse(articleContent).Take(50).ToArray();
 
             return new Article(keywords);
         }
