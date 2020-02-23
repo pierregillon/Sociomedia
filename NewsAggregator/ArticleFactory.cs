@@ -10,7 +10,7 @@ namespace NewsAggregator
 
             var keywords = new KeywordsParser().Parse(articleContent).Take(20).ToArray();
 
-            return null;
+            return new Article(keywords);
         }
     }
 }

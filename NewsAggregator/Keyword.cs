@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace NewsAggregator
 {
-    public class Keyword
+    public class Keyword : IEquatable<Keyword>
     {
         private readonly string _value;
         private readonly IReadOnlyCollection<string> _words;
@@ -29,9 +29,11 @@ namespace NewsAggregator
             return _value;
         }
 
-        protected bool Equals(Keyword other)
+        public bool Equals(Keyword other)
         {
+            if (other == null) throw new ArgumentNullException(nameof(other));
             return _words.SequenceEqual(other._words);
+            //return string.Compare(_value, other._value, CultureInfo.CurrentCulture, CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace) == 0;
         }
 
         public override bool Equals(object obj)
@@ -44,7 +46,7 @@ namespace NewsAggregator
 
         public override int GetHashCode()
         {
-            return (_words != null ? _words.GetHashCode() : 0);
+            return _value.GetHashCode();
         }
     }
 }

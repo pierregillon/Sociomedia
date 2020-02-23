@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
 using Xunit;
 
 namespace NewsAggregator.Tests
@@ -30,6 +32,15 @@ namespace NewsAggregator.Tests
                 .Contains(new Keyword("wick john", 2))
                 .Should()
                 .BeFalse();
+        }
+
+        [Fact]
+        public void Intersection_of_keywords()
+        {
+            new[] { new Keyword("john wick", 1) }
+                .Intersect(new[] { new Keyword("john wick", 1) })
+                .Should()
+                .BeEquivalentTo(new Keyword("john wick", 1));
         }
     }
 }
