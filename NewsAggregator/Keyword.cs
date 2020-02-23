@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace NewsAggregator
@@ -20,7 +21,7 @@ namespace NewsAggregator
 
         public bool Contains(Keyword keyword)
         {
-            return _words.Except(keyword._words).Count() != _words.Count;
+            return _value.Contains(keyword._value);
         }
 
         public override string ToString()
