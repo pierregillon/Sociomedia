@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 
 namespace NewsAggregator
 {
@@ -10,7 +12,6 @@ namespace NewsAggregator
         public IReadOnlyCollection<Keyword> Calculate(IReadOnlyCollection<string> words, int count)
         {
             return GetKeywords(words)
-                .Where(x => x.Value.Length > 3)
                 .Take(count)
                 .ToArray();
         }
@@ -20,16 +21,15 @@ namespace NewsAggregator
             var wordProcessing = words.ToList();
 
             for (var combinationSize = MaxCombinationWordSize; combinationSize >= 1; combinationSize--) {
-                if (wordProcessing.Count <= combinationSize) {
+                if (wordProcessing.Count < combinationSize) {
                     continue;
                 }
 
                 var keywords = GetKeywordsComposed(wordProcessing, combinationSize);
                 foreach (var keyword in keywords) {
+                    wordProcessing.RemoveAll(x => keyword.Contains(x));
                     yield return keyword;
                 }
-
-                wordProcessing.RemoveAll(x => keywords.Any(keyword => keyword.Contains(x)));
 
                 if (wordProcessing.Count == 0) {
                     break;
@@ -37,21 +37,16 @@ namespace NewsAggregator
             }
         }
 
-        public IReadOnlyCollection<Keyword> GetKeywordsComposed(IReadOnlyCollection<string> words, int combinationSize)
+        public IEnumerable<Keyword> GetKeywordsComposed(IReadOnlyCollection<string> words, int combinationSize)
         {
-            var keywordsGroups = new List<IEnumerable<string>>();
-
-            for (var i = 0; i < combinationSize / 2 + 1; i++) {
-                keywordsGroups.AddRange(words.Skip(i).Chunk(combinationSize).ToArray());
-            }
-
-            return keywordsGroups
+            return Enumerable.Range(0, combinationSize / 2 + 1)
+                .SelectMany(x => words.Skip(x).Chunk(combinationSize))
+                .Where(x => x.All(s => s.Length > 2))
                 .Select(x => string.Join(' ', x))
-                .GroupBy(x => x)
-                .Where(x => combinationSize == 1 || x.Count() >= 2)
+                .GroupBy(x => x.RemoveDiacritics().ToLower())
+                .Where(x => x.Count() >= 2)
                 .OrderByDescending(x => x.Count())
-                .Select(x => new Keyword(x.Key, x.Count()))
-                .ToArray();
+                .Select(x => new Keyword(x.Key, x.Count()));
         }
     }
 
@@ -63,6 +58,24 @@ namespace NewsAggregator
                 yield return source.Take(chunkSize);
                 source = source.Skip(chunkSize);
             }
+        }
+    }
+
+    public static class StringExtensions
+    {
+        public static string RemoveDiacritics(this string text)
+        {
+            var normalizedString = text.Normalize(NormalizationForm.FormD);
+            var stringBuilder = new StringBuilder();
+
+            foreach (var c in normalizedString) {
+                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark) {
+                    stringBuilder.Append(c);
+                }
+            }
+
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
     }
 

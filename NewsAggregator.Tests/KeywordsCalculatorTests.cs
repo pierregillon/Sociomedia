@@ -13,32 +13,30 @@ namespace NewsAggregator.Tests
         }
 
         [Fact]
-        public void Keywords_are_words_with_more_than_3_letters()
+        public void Keywords_are_words_with_more_than_2_letters()
         {
-            var words = new[] { "test", "a", "b", "c", "de", "abc" };
+            var words = new[] { "test", "a", "a", "a", "test" };
 
             var keywords = _keywordsCalculator.Calculate(words, 10);
 
             keywords
                 .Should()
-                .BeEquivalentTo(new Keyword("test", 1));
+                .BeEquivalentTo(new Keyword("test", 2));
         }
 
         [Fact]
-        public void Keywords_are_words_with_the_most_occurence()
+        public void Keywords_are_ordered_by_occurrence()
         {
-            var words = new[] { "test", "winter", "john", "mountains", "test", "summer", "winter", "test" };
+            var words = new[] { "test", "winter", "john", "a", "winter", "test", "john", "b", "test","c", "winter", "d", "test" };
 
             var keywords = _keywordsCalculator.Calculate(words, 10);
 
             keywords
                 .Should()
                 .BeEquivalentTo(new[] {
-                        new Keyword("test", 3),
-                        new Keyword("winter", 2),
-                        new Keyword("john", 1),
-                        new Keyword("mountains", 1),
-                        new Keyword("summer", 1)
+                        new Keyword("test", 4),
+                        new Keyword("winter", 3),
+                        new Keyword("john", 2),
                     }
                 );
         }
@@ -52,11 +50,7 @@ namespace NewsAggregator.Tests
 
             keywords
                 .Should()
-                .BeEquivalentTo(new [] {
-                    new Keyword("john wick", 2),
-                    new Keyword("winter", 1),
-                    new Keyword("summer", 1)
-                });
+                .BeEquivalentTo(new Keyword("john wick", 2));
         }
 
         [Fact]
@@ -68,10 +62,7 @@ namespace NewsAggregator.Tests
 
             keywords
                 .Should()
-                .BeEquivalentTo(new[] {
-                    new Keyword("john wick rocks", 2),
-                    new Keyword("winter", 1)
-                });
+                .BeEquivalentTo(new Keyword("john wick rocks", 2));
         }
 
         [Fact]
@@ -83,15 +74,11 @@ namespace NewsAggregator.Tests
 
             keywords
                 .Should()
-                .BeEquivalentTo(new[] {
-                    new Keyword("john wick rocks now", 2),
-                    new Keyword("winter time", 2),
-                    new Keyword("summer", 1)
-                });
+                .BeEquivalentTo(new Keyword("john wick rocks now", 2), new Keyword("winter time", 2));
         }
 
         [Fact]
-        public void Keywords_can_be_a_combination_four_words_test()
+        public void Keywords_combinations_have_always_unique_words()
         {
             var words = new[] { "john", "wick", "rocks", "now", "winter", "time", "john", "wick", "rocks", "now", "summer", "winter", "time" };
 
@@ -101,9 +88,20 @@ namespace NewsAggregator.Tests
                 .Should()
                 .BeEquivalentTo(new[] {
                     new Keyword("john wick rocks now", 2),
-                    new Keyword("winter time", 2),
-                    new Keyword("summer", 1)
+                    new Keyword("winter time", 2)
                 });
+        }
+
+        [Fact]
+        public void Keywords_group_words_ignoring_case_or_diacritics()
+        {
+            var words = new[] { "TEST", "a", "Test", "b", "test", "c", "tést" };
+
+            var keywords = _keywordsCalculator.Calculate(words, 1);
+
+            keywords
+                .Should()
+                .BeEquivalentTo(new Keyword("test", 4));
         }
     }
 }
