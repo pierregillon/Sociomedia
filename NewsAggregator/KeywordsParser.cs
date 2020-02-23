@@ -10,17 +10,32 @@ namespace NewsAggregator
     {
         private const int MaxCombinationWordSize = 4;
         private static readonly string[] Separators = { " ", "\"", "'", "«", "»", "?", "!", ";", ",", "." };
-        private string[] invalidWords = new[] { "mais", "ou", "et", "donc", "or", "ni", "car", "de", "dans", "du", "ma", "me", "mes", "mon", };
+        private static readonly string[] InvalidWords = { "mais", "donc", "dans", "aussi", "alors", "ensuite", "pour" };
 
         public IReadOnlyCollection<Keyword> Parse(string text, int count)
         {
             var words = text
-                .Split(Separators, StringSplitOptions.RemoveEmptyEntries);
+                .Split(Separators, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Length <= 3 || InvalidWords.Contains(x) ? null : x)
+                .ToArray();
 
-            return GetKeywords(words)
+            return FilterOnlyNewKeywords(GetKeywords(words))
                 .OrderByDescending(x => x.Occurence)
                 .Take(count)
                 .ToArray();
+        }
+
+        private static IEnumerable<Keyword> FilterOnlyNewKeywords(IEnumerable<Keyword> keywords)
+        {
+            var allKeywords = new List<Keyword>();
+            foreach (var keyword in keywords) {
+                var existing = allKeywords.FirstOrDefault(x => x.Contains(keyword));
+                if (existing != null && existing.Occurence == keyword.Occurence) {
+                    continue;
+                }
+                allKeywords.Add(keyword);
+                yield return keyword;
+            }
         }
 
         private IEnumerable<Keyword> GetKeywords(IEnumerable<string> words)
@@ -34,7 +49,6 @@ namespace NewsAggregator
 
                 var keywords = GetKeywordsComposed(wordProcessing, combinationSize);
                 foreach (var keyword in keywords) {
-                    //wordProcessing.RemoveAll(x => keyword.Contains(x));
                     yield return keyword;
                 }
 
@@ -48,7 +62,7 @@ namespace NewsAggregator
         {
             var matrix = Enumerable.Range(0, combinationSize)
                 .SelectMany(x => words.Skip(x).Chunk(combinationSize))
-                .Where(x => x.All(s => s.Length > 3))
+                .Where(x => x.All(w => w != null))
                 .Select(x => string.Join(' ', x));
 
             return matrix
@@ -92,6 +106,7 @@ namespace NewsAggregator
     {
         public string Value { get; }
         public int Occurence { get; }
+        public int WordCount => Value.Split(' ').Length;
 
         public Keyword(string value, int occurence)
         {

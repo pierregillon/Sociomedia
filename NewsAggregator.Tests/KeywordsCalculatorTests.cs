@@ -1,4 +1,6 @@
+using System.Linq;
 using FluentAssertions;
+using FluentAssertions.Collections;
 using Xunit;
 
 namespace NewsAggregator.Tests
@@ -75,6 +77,34 @@ namespace NewsAggregator.Tests
             _keywordsParser.Parse(text, 1)
                 .Should()
                 .BeEquivalentTo(new Keyword("test", 4));
+        }
+
+        [Theory]
+        [InlineData("John wick enjoys killing during winter time, and John wick is great.")]
+        public void A_keyword_with_multiple_words_overrides_other_keyword(string text)
+        {
+            var result = _keywordsParser.Parse(text, 10);
+
+            result
+                .Should()
+                .ContainEquivalentOf(new Keyword("john wick", 2));
+
+            result
+                .Should()
+                .NotContain(x => x.WordCount == 1 && (x.Contains("john") || x.Contains("wick")));
+        }
+
+        [Theory]
+        [InlineData("dans dans dans")]
+        [InlineData("pour pour")]
+        [InlineData("alors alors")]
+        [InlineData("ensuite ensuite")]
+        [InlineData("aussi aussi")]
+        public void A_keyword_is_not_french_specific_words(string text)
+        {
+            _keywordsParser.Parse(text, 10)
+                .Should()
+                .BeEmpty();
         }
     }
 }
