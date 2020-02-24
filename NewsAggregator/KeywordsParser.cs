@@ -15,7 +15,8 @@ namespace NewsAggregator
             return text
                 .Split(Separators, StringSplitOptions.RemoveEmptyEntries)
                 .Select(ReplaceWordIfInvalid)
-                .Pipe(TransformToKeywords)
+                .ToArray()
+                .Pipe(this.TransformToKeywords)
                 .Pipe(FilterOnlyNewKeywords)
                 .OrderByDescending(x => x.Occurence)
                 .ThenBy(x => x.WordCount);
@@ -26,31 +27,25 @@ namespace NewsAggregator
             return x.Length <= 3 || InvalidWords.Contains(x) ? null : x;
         }
 
-        private IEnumerable<Keyword> TransformToKeywords(IEnumerable<string> words)
+        private IEnumerable<Keyword> TransformToKeywords(IReadOnlyCollection<string> words)
         {
-            var wordProcessing = words.ToList();
+            if (words.Count == 0) {
+                yield break;
+            }
 
-            for (var combinationSize = MaxCombinationWordSize; combinationSize >= 1; combinationSize--) {
-                if (wordProcessing.Count < combinationSize) {
-                    continue;
-                }
-
-                var keywords = GetKeywordsComposed(wordProcessing, combinationSize);
-                foreach (var keyword in keywords) {
+            for (int combinationSize = MaxCombinationWordSize; combinationSize >= 1; combinationSize--) {
+                IEnumerable<Keyword> keywords = this.GetKeywordsComposed(words, combinationSize);
+                foreach (Keyword keyword in keywords) {
                     yield return keyword;
-                }
-
-                if (wordProcessing.Count == 0) {
-                    break;
                 }
             }
         }
 
         private static IEnumerable<Keyword> FilterOnlyNewKeywords(IEnumerable<Keyword> keywords)
         {
-            var allKeywords = new List<Keyword>();
-            foreach (var keyword in keywords) {
-                var existing = allKeywords.FirstOrDefault(x => x.Contains(keyword));
+            List<Keyword> allKeywords = new List<Keyword>();
+            foreach (Keyword keyword in keywords) {
+                Keyword existing = allKeywords.FirstOrDefault(x => x.Contains(keyword));
                 if (existing != null && existing.Occurence == keyword.Occurence) {
                     continue;
                 }
