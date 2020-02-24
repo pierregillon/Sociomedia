@@ -12,30 +12,21 @@ namespace NewsAggregator
 
         public IEnumerable<Keyword> Parse(string text)
         {
-            var words = text
+            return text
                 .Split(Separators, StringSplitOptions.RemoveEmptyEntries)
-                .Select(x => x.Length <= 3 || InvalidWords.Contains(x) ? null : x)
-                .ToArray();
-
-            return FilterOnlyNewKeywords(GetKeywords(words))
+                .Select(ReplaceWordIfInvalid)
+                .Pipe(TransformToKeywords)
+                .Pipe(FilterOnlyNewKeywords)
                 .OrderByDescending(x => x.Occurence)
                 .ThenBy(x => x.WordCount);
         }
 
-        private static IEnumerable<Keyword> FilterOnlyNewKeywords(IEnumerable<Keyword> keywords)
+        private static string ReplaceWordIfInvalid(string x)
         {
-            var allKeywords = new List<Keyword>();
-            foreach (var keyword in keywords) {
-                var existing = allKeywords.FirstOrDefault(x => x.Contains(keyword));
-                if (existing != null && existing.Occurence == keyword.Occurence) {
-                    continue;
-                }
-                allKeywords.Add(keyword);
-                yield return keyword;
-            }
+            return x.Length <= 3 || InvalidWords.Contains(x) ? null : x;
         }
 
-        private IEnumerable<Keyword> GetKeywords(IEnumerable<string> words)
+        private IEnumerable<Keyword> TransformToKeywords(IEnumerable<string> words)
         {
             var wordProcessing = words.ToList();
 
@@ -52,6 +43,19 @@ namespace NewsAggregator
                 if (wordProcessing.Count == 0) {
                     break;
                 }
+            }
+        }
+
+        private static IEnumerable<Keyword> FilterOnlyNewKeywords(IEnumerable<Keyword> keywords)
+        {
+            var allKeywords = new List<Keyword>();
+            foreach (var keyword in keywords) {
+                var existing = allKeywords.FirstOrDefault(x => x.Contains(keyword));
+                if (existing != null && existing.Occurence == keyword.Occurence) {
+                    continue;
+                }
+                allKeywords.Add(keyword);
+                yield return keyword;
             }
         }
 
