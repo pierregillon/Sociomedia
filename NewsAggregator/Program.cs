@@ -22,11 +22,18 @@ namespace NewsAggregator
             var articles = new List<Article>();
             foreach (var url in urls) {
                 var html = await Download(url);
-                articles.Add(factory.Build(html));
+                articles.Add(factory.Build(url, html));
             }
 
-            foreach (var keyword in articles.Select(x => x.Keywords).IntersectAll()) {
-                Console.WriteLine(keyword);
+            var themes = new ThemeBuilder().Build(articles);
+
+            foreach (var theme in themes) {
+                Console.WriteLine("Theme : " + string.Concat(", ", theme.Keywords));
+                Console.WriteLine(" - Articles :");
+                foreach (var article in theme.Articles) {
+                    Console.WriteLine("  - " + article.Name);
+                }
+                Console.WriteLine("----------");
             }
             Console.WriteLine("-> ended.");
             Console.ReadKey();

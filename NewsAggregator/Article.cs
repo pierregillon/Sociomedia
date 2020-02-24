@@ -2,11 +2,14 @@
 
 namespace NewsAggregator
 {
-    public class Article {
+    public class Article
+    {
         public IReadOnlyCollection<Keyword> Keywords { get; }
+        public string Name { get; }
 
-        public Article(IReadOnlyCollection<Keyword> keywords)
+        public Article(string name, IReadOnlyCollection<Keyword> keywords)
         {
+            Name = name;
             Keywords = keywords;
         }
     }

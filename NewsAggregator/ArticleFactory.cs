@@ -4,13 +4,13 @@ namespace NewsAggregator
 {
     public class ArticleFactory
     {
-        public Article Build(string html)
+        public Article Build(string url, string html)
         {
             var articleContent = new HtmlParser().ExtractPlainTextArticleContent(html);
 
             var keywords = new KeywordsParser().Parse(articleContent).Take(50).ToArray();
 
-            return new Article(keywords);
+            return new Article(url, keywords);
         }
     }
 }
