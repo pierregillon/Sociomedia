@@ -11,6 +11,7 @@ namespace NewsAggregator
 
         public int Occurence { get; }
         public int WordCount => _words.Count;
+        public IEnumerable<string> Words => _words;
 
         public Keyword(string value, int occurence)
         {

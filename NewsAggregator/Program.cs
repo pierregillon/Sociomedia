@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using NewsAggregator.Themes;
 
 namespace NewsAggregator
 {
@@ -25,16 +27,19 @@ namespace NewsAggregator
                 articles.Add(factory.Build(url, html));
             }
 
-            var themes = new ThemeBuilder().Build(articles);
-
-            foreach (var theme in themes) {
-                Console.WriteLine("Theme : " + string.Concat(", ", theme.Keywords));
-                Console.WriteLine(" - Articles :");
-                foreach (var article in theme.Articles) {
-                    Console.WriteLine("  - " + article.Name);
-                }
-                Console.WriteLine("----------");
+            var themeManager = new ThemeManager();
+            foreach (var article in articles.Select(x => new ThemeArticle(x.Keywords.SelectMany(x => x.Words).ToArray()))) {
+                themeManager.Add(article);
             }
+
+            //foreach (var theme in themes) {
+            //    Console.WriteLine("Theme : " + string.Concat(", ", theme.Keywords));
+            //    Console.WriteLine(" - Articles :");
+            //    foreach (var article in theme.Articles) {
+            //        Console.WriteLine("  - " + article.Name);
+            //    }
+            //    Console.WriteLine("----------");
+            //}
             Console.WriteLine("-> ended.");
             Console.ReadKey();
         }
