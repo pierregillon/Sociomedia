@@ -30,5 +30,10 @@ namespace NewsAggregator.Themes
         {
             return _articles.Contains(article);
         }
+
+        public IReadOnlyCollection<string> ContainsKeywords(ThemeArticle article)
+        {
+            return Keywords.Intersect(article.Keywords).ToArray();
+        }
     }
 }

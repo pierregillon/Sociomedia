@@ -128,5 +128,37 @@ namespace NewsAggregator.Tests
                 .Should()
                 .BeEquivalentTo(new { Article = article3 });
         }
+
+        [Fact]
+        public void Three_articles_with_a_single_keyword_in_common()
+        {
+            var article1 = new ThemeArticle(new[] { "coronavirus", "italie" });
+            var article2 = new ThemeArticle(new[] { "coronavirus", "italie", "chine" });
+            var article3 = new ThemeArticle(new[] { "coronavirus", "chine" });
+
+            _themeManager.Add(article1);
+            _themeManager.Add(article2);
+            _themeManager.Add(article3);
+
+            var events = _themeManager.UncommittedEvents;
+
+            events
+                .OfType<NewThemeCreated>()
+                .Should()
+                .BeEquivalentTo(new[] {
+                    new {
+                        Keywords = new[] { "coronavirus", "italie" },
+                        Articles = new[] { article1, article2 }
+                    },
+                    new {
+                        Keywords = new[] { "coronavirus" },
+                        Articles = new[] { article1, article2, article3 }
+                    },
+                    new {
+                        Keywords = new[] { "coronavirus", "chine" },
+                        Articles = new[] { article2, article3 }
+                    },
+                });
+        }
     }
 }

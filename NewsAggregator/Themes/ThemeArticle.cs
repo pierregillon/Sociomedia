@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace NewsAggregator.Themes
 {
@@ -11,6 +10,16 @@ namespace NewsAggregator.Themes
         public ThemeArticle(IReadOnlyCollection<string> keywords)
         {
             Keywords = keywords;
+        }
+
+        public IReadOnlyCollection<string> ContainsKeywords(ThemeArticle article)
+        {
+            return Keywords.Intersect(article.Keywords).ToArray();
+        }
+
+        public bool ContainsKeywords(IReadOnlyCollection<string> keywords)
+        {
+            return keywords.All(Keywords.Contains);
         }
     }
 }

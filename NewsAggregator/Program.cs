@@ -28,7 +28,7 @@ namespace NewsAggregator
             }
 
             var themeManager = new ThemeManager();
-            foreach (var article in articles.Select(x => new ThemeArticle(x.Keywords.SelectMany(x => x.Words).ToArray()))) {
+            foreach (var article in articles.Select(x => new ThemeArticle(x.Keywords.SelectMany(keyword => keyword.Words).ToArray()))) {
                 themeManager.Add(article);
             }
 
