@@ -1,31 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.Cryptography.X509Certificates;
-using System.ServiceModel.Syndication;
 using System.Threading.Tasks;
-using System.Xml;
-using NewsAggregator.Application;
 using NewsAggregator.Application.SynchronizeRssFeed;
-using NewsAggregator.Domain;
-using NewsAggregator.Domain.Themes;
-using NewsAggregator.Infrastructure;
 using NewsAggregator.Infrastructure.CQRS;
-using StructureMap;
 
 namespace NewsAggregator
 {
-    class Program
+    internal class Program
     {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
-            var container = new Container(x => {
-                x.For<IHtmlParser>().Use<HtmlParser>();
-                x.For<ICommandDispatcher>().Use<StructureMapCommandDispatcher>();
-                x.For<ICommandHandler<SynchronizeRssFeedCommand>>().Use<SynchronizeRssFeedCommandHandler>();
-            });
+            var container = ContainerBuilder.Build();
 
             var commandDispatcher = container.GetInstance<ICommandDispatcher>();
 
@@ -74,6 +59,7 @@ namespace NewsAggregator
             Console.WriteLine("-> ended.");
             Console.ReadKey();
         }
+
 
         private static async Task<string> Download(string url)
         {

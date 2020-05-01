@@ -14,7 +14,7 @@ namespace NewsAggregator.Domain.Rss
             _feeds = feeds.ToList();
         }
 
-        public DateTime? LastUpdateDate => _feeds.Any() ? _feeds.Max(x => x.LastUpdateDate) : (DateTime?) null;
+        public DateTime? LastUpdateDate => _feeds.Any() ? _feeds.Max(x => x.PublishDate) : (DateTime?) null;
 
         public IEnumerator<RssFeed> GetEnumerator()
         {

@@ -28,7 +28,7 @@ namespace NewsAggregator.Application.SynchronizeRssFeed
                 var feeds = await _rssFeedReader.Read(rssSource);
                 if (feeds.LastUpdateDate > rssSource.LastSynchronizationDate) {
                     await CreateNewArticles(rssSource.Id, feeds);
-                    rssSource.Synchronized();
+                    //rssSource.Synchronized();
                     await _rssSourceRepository.Save(rssSource);
                 }
             }
