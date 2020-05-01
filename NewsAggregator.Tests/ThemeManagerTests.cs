@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
-using NewsAggregator.Themes;
+using NewsAggregator.Domain.Themes;
 using Xunit;
 
 namespace NewsAggregator.Tests

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
+using NewsAggregator.Domain;
 
-namespace NewsAggregator
+namespace NewsAggregator.Infrastructure
 {
-    public class HtmlParser
+    public class HtmlParser : IHtmlParser
     {
         private static readonly Regex RemoveDuplicatedSpacesRegex = new Regex(@"\s+", RegexOptions.Compiled);
 
@@ -26,15 +25,11 @@ namespace NewsAggregator
 
         private static HtmlNode FindNode(HtmlNode node, string name)
         {
-            if (node.Name == name) {
-                return node;
-            }
+            if (node.Name == name) return node;
 
             foreach (var childNode in node.ChildNodes) {
                 var result = FindNode(childNode, name);
-                if (result != null) {
-                    return result;
-                }
+                if (result != null) return result;
             }
 
             return null;

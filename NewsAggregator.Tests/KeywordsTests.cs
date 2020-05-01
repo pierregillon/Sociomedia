@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using NewsAggregator.Domain;
 using Xunit;
 
 namespace NewsAggregator.Tests

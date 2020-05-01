@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NewsAggregator.Themes
+namespace NewsAggregator.Domain.Themes
 {
     public class NewThemeCreated : IDomainEvent
     {

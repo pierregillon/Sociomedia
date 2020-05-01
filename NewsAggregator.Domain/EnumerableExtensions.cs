@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace NewsAggregator
+namespace NewsAggregator.Domain
 {
     public static class EnumerableExtensions
     {

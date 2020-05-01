@@ -4,7 +4,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using NewsAggregator.Themes;
+using NewsAggregator.Domain;
+using NewsAggregator.Domain.Themes;
+using NewsAggregator.Infrastructure;
 
 namespace NewsAggregator
 {
@@ -20,7 +22,7 @@ namespace NewsAggregator
                 "https://www.rtl.fr/actu/politique/coronavirus-oiivier-veran-annonce-que-70-hopitaux-supplementaires-vont-etre-actives-7800148130"
             };
 
-            var factory = new ArticleFactory();
+            var factory = new ArticleFactory(new HtmlParser());
             var articles = new List<Article>();
             foreach (var url in urls) {
                 var html = await Download(url);

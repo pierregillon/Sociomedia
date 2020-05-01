@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NewsAggregator.Themes {
+namespace NewsAggregator.Domain.Themes {
     public class ArticleAddedToTheme : IDomainEvent
     {
         public Guid ThemeId { get; }

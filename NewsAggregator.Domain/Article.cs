@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NewsAggregator
+namespace NewsAggregator.Domain
 {
     public class Article
     {

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using FluentAssertions;
+using NewsAggregator.Infrastructure;
 using Xunit;
 
 namespace NewsAggregator.Tests

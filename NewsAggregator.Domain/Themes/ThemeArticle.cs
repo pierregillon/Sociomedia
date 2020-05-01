@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace NewsAggregator.Themes
+namespace NewsAggregator.Domain.Themes
 {
     public class ThemeArticle
     {

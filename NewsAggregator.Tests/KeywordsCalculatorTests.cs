@@ -1,6 +1,5 @@
-using System.Linq;
 using FluentAssertions;
-using FluentAssertions.Collections;
+using NewsAggregator.Domain;
 using Xunit;
 
 namespace NewsAggregator.Tests

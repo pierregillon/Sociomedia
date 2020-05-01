@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NewsAggregator
+namespace NewsAggregator.Domain
 {
     public static class ObjectExtensions
     {
