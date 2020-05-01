@@ -4,7 +4,7 @@ using NewsAggregator.Domain;
 
 namespace NewsAggregator.Infrastructure.CQRS
 {
-    public interface IEventPublisher
+    public interface IEventPublisher2
     {
         Task Publish(IReadOnlyCollection<IDomainEvent> events);
     }

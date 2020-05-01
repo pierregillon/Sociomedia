@@ -3,6 +3,6 @@
 namespace NewsAggregator.Domain.Rss {
     public interface IRssFeedReader
     {
-        Task<RssFeeds> Read(RssSource source);
+        Task<RssFeeds> Read(string url);
     }
 }

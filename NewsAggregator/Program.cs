@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using NewsAggregator.Application.SynchronizeRssFeed;
+using NewsAggregator.Application.Commands.SynchronizeRssFeed;
 using NewsAggregator.Infrastructure.CQRS;
 
 namespace NewsAggregator

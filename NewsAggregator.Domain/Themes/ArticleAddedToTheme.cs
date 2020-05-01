@@ -1,15 +1,15 @@
 ﻿using System;
 
-namespace NewsAggregator.Domain.Themes {
-    public class ArticleAddedToTheme : IDomainEvent
+namespace NewsAggregator.Domain.Themes
+{
+    public class ArticleAddedToTheme : DomainEvent
     {
-        public Guid ThemeId { get; }
-        public ThemeArticle Article { get; }
-
         public ArticleAddedToTheme(Guid themeId, ThemeArticle article)
         {
-            ThemeId = themeId;
+            Id = themeId;
             Article = article;
         }
+
+        public ThemeArticle Article { get; }
     }
 }

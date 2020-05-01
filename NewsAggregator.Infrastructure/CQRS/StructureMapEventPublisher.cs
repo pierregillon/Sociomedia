@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using CQRSlite.Events;
 using NewsAggregator.Application;
-using NewsAggregator.Domain;
 using StructureMap;
 
 namespace NewsAggregator.Infrastructure.CQRS
@@ -15,21 +16,20 @@ namespace NewsAggregator.Infrastructure.CQRS
             _container = container;
         }
 
-        public async Task Publish(IReadOnlyCollection<IDomainEvent> events)
+        public async Task Publish<T>(T @event, CancellationToken cancellationToken = new CancellationToken()) where T : class, IEvent
         {
-            foreach (var @event in events) {
-                foreach (var listener in _container.GetAllInstances(typeof(IEventListener<>).MakeGenericType(@event.GetType()))) {
-                    await On(listener, @event);
-                }
+            foreach (var listener in _container.GetAllInstances(typeof(IEventListener<>).MakeGenericType(@event.GetType()))) {
+                await On(listener, @event);
             }
         }
 
-        private static async Task On(object listener, IDomainEvent @event)
+        private static async Task On(object listener, IEvent @event)
         {
             await (Task) listener
                 .GetType()
-                .GetMethod("On")
-                .MakeGenericMethod(@event.GetType())
+                .GetMethods()
+                .Where(x => x.Name == "On")
+                .Single(x => x.GetParameters()[0].ParameterType == @event.GetType())
                 .Invoke(listener, new[] { @event });
         }
     }

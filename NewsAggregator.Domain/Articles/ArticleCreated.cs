@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using NewsAggregator.Domain.Themes;
 
-namespace NewsAggregator.Domain.Articles {
-    public class ArticleCreated : IDomainEvent
+namespace NewsAggregator.Domain.Articles
+{
+    public class ArticleCreated : DomainEvent
     {
-        public Guid Id { get; }
-        public string Name { get; }
-        public IReadOnlyCollection<Keyword> Keywords { get; }
-
-        public ArticleCreated(Guid id, string name, IReadOnlyCollection<Keyword> keywords)
+        public ArticleCreated(Guid id, string name, string url, IReadOnlyCollection<Keyword> keywords, Guid rssSourceId)
         {
             Id = id;
             Name = name;
+            Url = url;
             Keywords = keywords;
+            RssSourceId = rssSourceId;
         }
+
+        public string Name { get; }
+        public IReadOnlyCollection<Keyword> Keywords { get; }
+        public string Url { get; }
+        public Guid RssSourceId { get; }
     }
 }

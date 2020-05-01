@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using NewsAggregator.Domain.Themes;
+using CQRSlite.Domain;
 
 namespace NewsAggregator.Domain.Articles
 {
-    public class Article
+    public class Article : AggregateRoot
     {
         public IReadOnlyCollection<Keyword> Keywords { get; }
         public string Name { get; }
         public string RssFeedId { get; set; }
-        public List<IDomainEvent> UncommitedEvents { get; } = new List<IDomainEvent>();
 
-        public Article(string name, IReadOnlyCollection<Keyword> keywords)
+        public Article(string name, string url, Guid rssSourceId, IReadOnlyCollection<Keyword> keywords)
         {
+            Id = Guid.NewGuid();
             Name = name;
             Keywords = keywords;
 
-            UncommitedEvents.Add(new ArticleCreated(Guid.NewGuid(), name, keywords));
+            ApplyChange(new ArticleCreated(Id, name, url, keywords, rssSourceId));
         }
     }
 }

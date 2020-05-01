@@ -70,7 +70,7 @@ namespace NewsAggregator.Domain.Themes
 
         private void On(ArticleAddedToTheme @event)
         {
-            var theme = _themes.Single(x => x.Id == @event.ThemeId);
+            var theme = _themes.Single(x => x.Id == @event.Id);
             theme.AddArticle(@event.Article);
         }
     }

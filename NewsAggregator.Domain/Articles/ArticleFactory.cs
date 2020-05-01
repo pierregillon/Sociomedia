@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace NewsAggregator.Domain.Articles
 {
@@ -11,13 +12,13 @@ namespace NewsAggregator.Domain.Articles
             _htmlParser = htmlParser;
         }
 
-        public Article Build(string url, string html)
+        public Article Build(string url, string html, Guid rssSourceId)
         {
             var articleContent = _htmlParser.ExtractPlainTextArticleContent(html);
 
             var keywords = new KeywordsParser().Parse(articleContent).Take(50).ToArray();
 
-            return new Article(url, keywords);
+            return new Article("test", url, rssSourceId, keywords);
         }
     }
 }
