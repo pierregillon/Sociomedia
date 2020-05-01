@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace NewsAggregator.Domain
+namespace NewsAggregator.Domain.Articles
 {
     public class ArticleFactory
     {
