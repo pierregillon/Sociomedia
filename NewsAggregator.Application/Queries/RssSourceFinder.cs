@@ -1,19 +1,21 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
-namespace NewsAggregator.Application.Queries {
+namespace NewsAggregator.Application.Queries
+{
     public class RssSourceFinder : IRssSourceFinder
     {
-        private readonly ReadModelDatabase _database;
+        private readonly InMemoryDatabase _database;
 
-        public RssSourceFinder(ReadModelDatabase database)
+        public RssSourceFinder(InMemoryDatabase database)
         {
             _database = database;
         }
 
         public Task<IReadOnlyCollection<RssSourceReadModel>> GetAll()
         {
-            return Task.FromResult((IReadOnlyCollection<RssSourceReadModel>) _database.Sources.ToArray());
+            return Task.FromResult((IReadOnlyCollection<RssSourceReadModel>) _database.List<RssSourceReadModel>().ToArray());
         }
     }
 }

@@ -1,17 +1,21 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using NewsAggregator.Domain.Rss;
 
 namespace NewsAggregator.Application.Queries
 {
-    public class ReadModelDatabase : IEventListener<RssSourceAdded>, IEventListener<RssSourceSynchronized>
+    public class ReadModelDatabaseFeeder : IEventListener<RssSourceAdded>, IEventListener<RssSourceSynchronized>
     {
-        public readonly List<RssSourceReadModel> Sources = new List<RssSourceReadModel>();
+        private readonly InMemoryDatabase _database;
+
+        public ReadModelDatabaseFeeder(InMemoryDatabase database)
+        {
+            _database = database;
+        }
 
         public Task On(RssSourceAdded @event)
         {
-            Sources.Add(new RssSourceReadModel {
+            _database.Add(new RssSourceReadModel {
                 Id = @event.Id,
                 Url = @event.Url,
                 LastSynchronizationDate = null
@@ -22,7 +26,7 @@ namespace NewsAggregator.Application.Queries
 
         public Task On(RssSourceSynchronized @event)
         {
-            var source = Sources.SingleOrDefault(x => x.Id == @event.Id);
+            var source = _database.List<RssSourceReadModel>().SingleOrDefault(x => x.Id == @event.Id);
             if (source != null) {
                 source.LastSynchronizationDate = @event.SynchronizedDate;
             }
