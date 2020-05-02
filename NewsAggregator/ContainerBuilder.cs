@@ -20,7 +20,7 @@ namespace NewsAggregator
             var container = new Container(x => {
                 x.For<IHtmlParser>().Use<HtmlParser>();
                 x.For<IHtmlPageDownloader>().Use<HtmlPageDownloader>();
-                x.For<IRssFeedReader>().Use<RssFeedReader>();
+                x.For<IRssSourceReader>().Use<RssSourceReader>();
 
                 x.For<ICommandDispatcher>().Use<StructureMapCommandDispatcher>();
                 x.For<IEventPublisher>().Use<StructureMapEventPublisher>();

@@ -2,7 +2,7 @@
 
 namespace NewsAggregator.Domain.Rss
 {
-    public class RssFeed
+    public class ExternalArticle
     {
         public Uri Url { get; set; }
         public string Title { get; set; }

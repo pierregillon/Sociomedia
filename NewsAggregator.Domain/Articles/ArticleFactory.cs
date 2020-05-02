@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
+using NewsAggregator.Domain.Rss;
 
 namespace NewsAggregator.Domain.Articles
 {
@@ -16,15 +16,15 @@ namespace NewsAggregator.Domain.Articles
             _htmlPageDownloader = htmlPageDownloader;
         }
 
-        public async Task<Article> Build(Uri url, Guid rssSourceId)
+        public async Task<Article> Build(Guid rssSourceId, ExternalArticle externalArticle)
         {
-            var html = await _htmlPageDownloader.Download(url);
+            var html = await _htmlPageDownloader.Download(externalArticle.Url);
 
             var articleContent = _htmlParser.ExtractPlainTextArticleContent(html);
 
             var keywords = new KeywordsParser().Parse(articleContent).Take(50).ToArray();
 
-            return new Article("test", url, rssSourceId, keywords);
+            return new Article(externalArticle.Title, externalArticle.Url, rssSourceId, keywords);
         }
     }
 }

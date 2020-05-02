@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using NewsAggregator.Application.Commands.AddRssSource;
-using NewsAggregator.Application.Commands.SynchronizeRssFeed;
+using NewsAggregator.Application.Commands.SynchronizeRssSources;
 using NewsAggregator.Infrastructure.CQRS;
 
 namespace NewsAggregator
@@ -15,8 +15,8 @@ namespace NewsAggregator
             var commandDispatcher = container.GetInstance<ICommandDispatcher>();
 
             await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.lemonde.fr/rss/une.xml")));
-            await commandDispatcher.Dispatch(new SynchronizeRssFeedCommand());
-            await commandDispatcher.Dispatch(new SynchronizeRssFeedCommand());
+            await commandDispatcher.Dispatch(new SynchronizeRssSourcesCommand());
+            await commandDispatcher.Dispatch(new SynchronizeRssSourcesCommand());
 
             Console.WriteLine("ended.");
             Console.ReadKey();

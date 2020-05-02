@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using NewsAggregator.Domain;
 
 namespace NewsAggregator.Infrastructure
 {
@@ -52,7 +51,7 @@ namespace NewsAggregator.Infrastructure
             if (_domainEventsPerGuid.TryGetValue(aggregateId, out var events)) {
                 return events.Where(x => x.Version > fromVersion).ToArray();
             }
-            return EventHistory.Empty();
+            return Array.Empty<IEvent>();
         }
     }
 }
