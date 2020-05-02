@@ -2,11 +2,11 @@
 using CQRSlite.Events;
 using NewsAggregator.Application;
 using NewsAggregator.Application.Queries;
-using NewsAggregator.Domain;
 using NewsAggregator.Domain.Articles;
 using NewsAggregator.Domain.Rss;
 using NewsAggregator.Infrastructure;
 using NewsAggregator.Infrastructure.CQRS;
+using NewsAggregator.Infrastructure.Logging;
 using StructureMap;
 using StructureMap.Graph;
 using StructureMap.Graph.Scanning;
@@ -31,6 +31,11 @@ namespace NewsAggregator
                     scanner.AddAllTypesOf(typeof(IEventListener<>));
                     scanner.AddAllTypesOf(typeof(ICommandHandler<>));
                 });
+
+                x.For<IEventPublisher>().DecorateAllWith<EventPublishedLogger>();
+                x.For<ICommandDispatcher>().DecorateAllWith<CommandDispatchedLogger>();
+
+                x.For<ILogger>().Use<ConsoleLogger>();
 
                 x.For<IRssSourceFinder>().Use<RssSourceFinder>();
                 x.For(typeof(IRepository)).Use(context => new Repository(context.GetInstance<IEventStore>()));

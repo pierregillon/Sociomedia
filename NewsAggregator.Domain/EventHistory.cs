@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using NewsAggregator.Domain;
 
-namespace NewsAggregator.Infrastructure {
+namespace NewsAggregator.Domain {
     public class EventHistory : IReadOnlyCollection<IDomainEvent>
     {
         private readonly IReadOnlyCollection<IDomainEvent> _events;

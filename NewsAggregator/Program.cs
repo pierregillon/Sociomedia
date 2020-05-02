@@ -16,8 +16,9 @@ namespace NewsAggregator
 
             await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.lemonde.fr/rss/une.xml")));
             await commandDispatcher.Dispatch(new SynchronizeRssFeedCommand());
+            await commandDispatcher.Dispatch(new SynchronizeRssFeedCommand());
 
-            Console.WriteLine("-> ended.");
+            Console.WriteLine("ended.");
             Console.ReadKey();
         }
     }

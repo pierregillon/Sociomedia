@@ -10,19 +10,23 @@ namespace NewsAggregator.Infrastructure
 {
     public class RssFeedReader : IRssFeedReader
     {
-        public async Task<RssFeeds> ReadNewFeeds(Uri url, DateTime? @from)
+        public async Task<RssFeeds> ReadNewFeeds(Uri url, DateTime? from)
         {
             await Task.Delay(0);
 
             var reader = XmlReader.Create(url.AbsoluteUri);
             var feed = SyndicationFeed.Load(reader);
             reader.Close();
-            return new RssFeeds(Parse(feed));
+            return new RssFeeds(Parse(feed, from));
         }
 
-        private static IEnumerable<RssFeed> Parse(SyndicationFeed feed)
+        private static IEnumerable<RssFeed> Parse(SyndicationFeed feed, DateTime? from)
         {
-            return feed.Items.Select(item => new RssFeed {
+            var feeds = feed.Items;
+            if (from.HasValue) {
+                feeds = feeds.Where(x => x.PublishDate > @from.Value);
+            }
+            return feeds.Select(item => new RssFeed {
                 Title = item.Title?.Text,
                 Summary = item.Summary?.Text,
                 PublishDate = item.PublishDate,
