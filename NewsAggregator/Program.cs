@@ -14,7 +14,11 @@ namespace NewsAggregator
 
             var commandDispatcher = container.GetInstance<ICommandDispatcher>();
 
-            await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.lemonde.fr/rss/une.xml")));
+            //await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.lemonde.fr/rss/une.xml")));
+            //await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.lemonde.fr/international/rss_full.xml")));
+            //await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.lemonde.fr/economie/rss_full.xml")));
+            await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.marianne.net/rss_marianne.xml")));
+
             await commandDispatcher.Dispatch(new SynchronizeRssSourcesCommand());
             await commandDispatcher.Dispatch(new SynchronizeRssSourcesCommand());
 

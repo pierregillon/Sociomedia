@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.ServiceModel.Syndication;
 using System.Threading.Tasks;
@@ -22,16 +23,47 @@ namespace NewsAggregator.Infrastructure
 
         private static IEnumerable<ExternalArticle> Parse(SyndicationFeed feed, DateTimeOffset? from)
         {
-            var articles = feed.Items;
+            var articles = ParseArticles(feed);
             if (from.HasValue) {
                 articles = articles.Where(x => x.PublishDate > @from.Value);
             }
-            return articles.Select(item => new ExternalArticle {
-                Title = item.Title?.Text,
-                Summary = item.Summary?.Text,
-                PublishDate = item.PublishDate,
-                Url = new Uri(item.Id)
-            });
+            return articles;
+        }
+
+        private static IEnumerable<ExternalArticle> ParseArticles(SyndicationFeed feed)
+        {
+            foreach (var externalArticle in feed.Items) {
+                var article = ParseArticle(externalArticle);
+                if (article != null) {
+                    yield return article;
+                }
+            }
+        }
+
+        private static ExternalArticle ParseArticle(SyndicationItem article)
+        {
+            try {
+                return new ExternalArticle {
+                    Title = WebUtility.HtmlDecode(article.Title?.Text),
+                    Summary = WebUtility.HtmlDecode(article.Summary?.Text),
+                    PublishDate = ExtractPublishDate(article),
+                    Url = new Uri(article.Id)
+                };
+            }
+            catch (Exception e) {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
+        private static DateTimeOffset ExtractPublishDate(SyndicationItem article)
+        {
+            try {
+                return article.PublishDate;
+            }
+            catch (Exception ex) {
+                return DateTimeOffset.Now;
+            }
         }
     }
 }
