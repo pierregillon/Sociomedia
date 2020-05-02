@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
-namespace NewsAggregator.Domain.Rss {
+namespace NewsAggregator.Domain.Rss
+{
     public interface IRssFeedReader
     {
-        Task<RssFeeds> Read(string url);
+        Task<RssFeeds> ReadNewFeeds(string url, DateTime? from);
     }
 }

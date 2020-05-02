@@ -23,11 +23,9 @@ namespace NewsAggregator
                 x.For<IEventPublisher>().Use<StructureMapEventPublisher>();
 
                 x.For<ICommandHandler<SynchronizeRssFeedCommand>>().Use<SynchronizeRssFeedCommandHandler>();
-                x.For<IEventListener<ArticleCreated>>().Use(x => x.GetInstance<ReadModelDatabase>());
-                x.For<IEventListener<RssSourceAdded>>().Use(x => x.GetInstance<ReadModelDatabase>());
-                x.For<IEventListener<RssSourceSynchronized>>().Use(x => x.GetInstance<ReadModelDatabase>());
+                x.For<IEventListener<RssSourceAdded>>().Use(context => context.GetInstance<ReadModelDatabase>());
+                x.For<IEventListener<RssSourceSynchronized>>().Use(context => context.GetInstance<ReadModelDatabase>());
 
-                x.For<IArticleFinder>().Use<ArticleFinder>();
                 x.For<IRssSourceFinder>().Use<RssSourceFinder>();
 
                 x.For(typeof(IRepository)).Use(typeof(Repository));

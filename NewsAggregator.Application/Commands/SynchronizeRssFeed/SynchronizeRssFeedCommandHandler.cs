@@ -13,20 +13,17 @@ namespace NewsAggregator.Application.Commands.SynchronizeRssFeed
         private readonly IRepository _repository;
         private readonly IRssFeedReader _rssFeedReader;
         private readonly ArticleFactory _articleFactory;
-        private readonly IArticleFinder _articleFinder;
         private readonly IRssSourceFinder _rssSourceFinder;
 
         public SynchronizeRssFeedCommandHandler(
             IRepository repository,
             IRssFeedReader rssFeedReader,
             ArticleFactory articleFactory,
-            IArticleFinder articleFinder,
             IRssSourceFinder rssSourceFinder)
         {
             _repository = repository;
             _rssFeedReader = rssFeedReader;
             _articleFactory = articleFactory;
-            _articleFinder = articleFinder;
             _rssSourceFinder = rssSourceFinder;
         }
 
@@ -34,26 +31,22 @@ namespace NewsAggregator.Application.Commands.SynchronizeRssFeed
         {
             var rssSources = await _rssSourceFinder.GetAll();
             foreach (var source in rssSources) {
-                var feeds = await _rssFeedReader.Read(source.Url);
-                if (feeds.LastPublishDate > source.LastSynchronizationDate) {
-                    var test = await _repository.Get<RssSource>(source.Id);
-                    await CreateNewArticles(source.Id, feeds);
-                    test.Synchronize();
-                    await _repository.Save(test);
+                var feeds = await _rssFeedReader.ReadNewFeeds(source.Url, source.LastSynchronizationDate);
+                if (feeds.Any()) {
+                    await SynchronizeArticles(source.Id, feeds);
                 }
             }
         }
 
-        private async Task CreateNewArticles(Guid rssSourceId, RssFeeds feeds)
+        private async Task SynchronizeArticles(Guid sourceId, RssFeeds feeds)
         {
-            var articles = await _articleFinder.GetArticles(rssSourceId);
             foreach (var rssFeed in feeds) {
-                if (articles.Any(x => x.Url == rssFeed.Id)) {
-                    continue;
-                }
-                var article = _articleFactory.Build(rssFeed.Url, rssFeed.Html, rssSourceId);
-                await _repository.Save(article);
+                await _repository.Save(_articleFactory.Build(rssFeed.Url, rssFeed.Html, sourceId));
             }
+
+            var source = await _repository.Get<RssSource>(sourceId);
+            source.Synchronize();
+            await _repository.Save(source);
         }
     }
 }

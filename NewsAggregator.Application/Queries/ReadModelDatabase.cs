@@ -1,25 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NewsAggregator.Domain.Articles;
 using NewsAggregator.Domain.Rss;
 
 namespace NewsAggregator.Application.Queries
 {
-    public class ReadModelDatabase : IEventListener<ArticleCreated>, IEventListener<RssSourceAdded>, IEventListener<RssSourceSynchronized>
+    public class ReadModelDatabase : IEventListener<RssSourceAdded>, IEventListener<RssSourceSynchronized>
     {
-        public readonly List<ArticleReadModel> Articles = new List<ArticleReadModel>();
         public readonly List<RssSourceReadModel> Sources = new List<RssSourceReadModel>();
-
-        public Task On(ArticleCreated @event)
-        {
-            Articles.Add(new ArticleReadModel {
-                Url = @event.Url,
-                RssSourceId = @event.RssSourceId
-            });
-
-            return Task.CompletedTask;
-        }
 
         public Task On(RssSourceAdded @event)
         {
