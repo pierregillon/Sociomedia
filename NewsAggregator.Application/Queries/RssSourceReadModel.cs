@@ -5,6 +5,6 @@ namespace NewsAggregator.Application.Queries {
     {
         public Guid Id { get; set; }
         public DateTime? LastSynchronizationDate { get; set; }
-        public string Url { get; set; }
+        public Uri Url { get; set; }
     }
 }

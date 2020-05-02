@@ -3,12 +3,12 @@
 namespace NewsAggregator.Domain.Rss {
     public class RssSourceAdded : DomainEvent
     {
-        public RssSourceAdded(Guid aggregateId, string url)
+        public RssSourceAdded(Guid aggregateId, Uri url)
         {
             Id = aggregateId;
             Url = url;
         }
 
-        public string Url { get; }
+        public Uri Url { get; }
     }
 }

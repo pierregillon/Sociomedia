@@ -41,7 +41,8 @@ namespace NewsAggregator.Application.Commands.SynchronizeRssFeed
         private async Task SynchronizeArticles(Guid sourceId, RssFeeds feeds)
         {
             foreach (var rssFeed in feeds) {
-                await _repository.Save(_articleFactory.Build(rssFeed.Url, rssFeed.Html, sourceId));
+                var article = await _articleFactory.Build(rssFeed.Url, sourceId);
+                await _repository.Save(article);
             }
 
             var source = await _repository.Get<RssSource>(sourceId);

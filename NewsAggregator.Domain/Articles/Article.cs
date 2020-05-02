@@ -6,17 +6,11 @@ namespace NewsAggregator.Domain.Articles
 {
     public class Article : AggregateRoot
     {
-        public IReadOnlyCollection<Keyword> Keywords { get; }
-        public string Name { get; }
-        public string RssFeedId { get; set; }
-
-        public Article(string name, string url, Guid rssSourceId, IReadOnlyCollection<Keyword> keywords)
+        public Article(string name, Uri url, Guid rssSourceId, IReadOnlyCollection<Keyword> keywords)
         {
-            Id = Guid.NewGuid();
-            Name = name;
-            Keywords = keywords;
+            this.Id = Guid.NewGuid();
 
-            ApplyChange(new ArticleCreated(Id, name, url, keywords, rssSourceId));
+            ApplyChange(new ArticleCreated(this.Id, name, url, keywords, rssSourceId));
         }
     }
 }

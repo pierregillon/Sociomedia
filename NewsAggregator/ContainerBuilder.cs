@@ -1,9 +1,10 @@
 ﻿using CQRSlite.Domain;
 using CQRSlite.Events;
 using NewsAggregator.Application;
-using NewsAggregator.Application.Commands.SynchronizeRssFeed;
 using NewsAggregator.Application.Queries;
 using NewsAggregator.Domain;
+using NewsAggregator.Domain.Articles;
+using NewsAggregator.Domain.Rss;
 using NewsAggregator.Infrastructure;
 using NewsAggregator.Infrastructure.CQRS;
 using StructureMap;
@@ -18,6 +19,8 @@ namespace NewsAggregator
         {
             var container = new Container(x => {
                 x.For<IHtmlParser>().Use<HtmlParser>();
+                x.For<IHtmlPageDownloader>().Use<HtmlPageDownloader>();
+                x.For<IRssFeedReader>().Use<RssFeedReader>();
 
                 x.For<ICommandDispatcher>().Use<StructureMapCommandDispatcher>();
                 x.For<IEventPublisher>().Use<StructureMapEventPublisher>();
@@ -30,11 +33,13 @@ namespace NewsAggregator
                 });
 
                 x.For<IRssSourceFinder>().Use<RssSourceFinder>();
-                x.For(typeof(IRepository)).Use(typeof(Repository));
+                x.For(typeof(IRepository)).Use(context => new Repository(context.GetInstance<IEventStore>()));
 
+                x.For<ReadModelDatabaseFeeder>().Singleton();
                 x.For<InMemoryDatabase>().Singleton();
                 x.For<IEventStore>().Use<InMemoryEventStore>().Singleton();
             });
+
             return container;
         }
     }

@@ -5,6 +5,14 @@ namespace NewsAggregator.Domain.Rss
 {
     public class RssSource : AggregateRoot
     {
+        private RssSource() { }
+
+        public RssSource(Uri url)
+        {
+            Id = Guid.NewGuid();
+            ApplyChange(new RssSourceAdded(Id, url));
+        }
+
         public DateTime LastSynchronizationDate { get; set; }
 
         public void Synchronize()

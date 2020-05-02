@@ -4,9 +4,9 @@ namespace NewsAggregator.Domain.Rss
 {
     public class RssFeed
     {
-        public DateTime PublishDate { get; set; }
-        public string Url { get; set; }
-        public string Html { get; set; }
-        public string Id { get; set; }
+        public Uri Url { get; set; }
+        public string Title { get; set; }
+        public DateTimeOffset PublishDate { get; set; }
+        public string Summary { get; set; }
     }
 }

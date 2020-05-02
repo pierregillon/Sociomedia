@@ -5,6 +5,6 @@ namespace NewsAggregator.Domain.Rss
 {
     public interface IRssFeedReader
     {
-        Task<RssFeeds> ReadNewFeeds(string url, DateTime? from);
+        Task<RssFeeds> ReadNewFeeds(Uri url, DateTime? from);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
-using NewsAggregator.Domain;
+using NewsAggregator.Domain.Articles;
 
 namespace NewsAggregator.Infrastructure
 {
