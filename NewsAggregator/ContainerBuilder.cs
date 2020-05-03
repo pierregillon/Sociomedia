@@ -7,6 +7,7 @@ using NewsAggregator.Domain.Rss;
 using NewsAggregator.Infrastructure;
 using NewsAggregator.Infrastructure.CQRS;
 using NewsAggregator.Infrastructure.Logging;
+using NewsAggregator.Infrastructure.RSS;
 using StructureMap;
 using StructureMap.Graph;
 using StructureMap.Graph.Scanning;
@@ -21,6 +22,7 @@ namespace NewsAggregator
                 x.For<IHtmlParser>().Use<HtmlParser>();
                 x.For<IHtmlPageDownloader>().Use<HtmlPageDownloader>();
                 x.For<IRssSourceReader>().Use<RssSourceReader>();
+                x.For<IRssParser>().Use<RssParser>();
 
                 x.For<ICommandDispatcher>().Use<StructureMapCommandDispatcher>();
                 x.For<IEventPublisher>().Use<StructureMapEventPublisher>();

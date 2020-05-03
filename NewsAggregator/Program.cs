@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
-using CQRSlite.Events;
 using NewsAggregator.Application.Commands.AddRssSource;
 using NewsAggregator.Application.Commands.SynchronizeRssSources;
-using NewsAggregator.Infrastructure;
 using NewsAggregator.Infrastructure.CQRS;
+
+#if RELEASE
+using CQRSlite.Events;
+using NewsAggregator.Infrastructure;
+#endif
 
 namespace NewsAggregator
 {
@@ -18,7 +21,6 @@ namespace NewsAggregator
             var eventStore = (EventStoreOrg) container.GetInstance<IEventStore>();
             await eventStore.Connect("localhost");
 #endif
-
 
             var commandDispatcher = container.GetInstance<ICommandDispatcher>();
 
