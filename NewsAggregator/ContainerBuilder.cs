@@ -36,13 +36,19 @@ namespace NewsAggregator
                 x.For<ICommandDispatcher>().DecorateAllWith<CommandDispatchedLogger>();
 
                 x.For<ILogger>().Use<ConsoleLogger>();
+                x.For<ITypeLocator>().Use<ReflectionTypeLocator>();
 
                 x.For<IRssSourceFinder>().Use<RssSourceFinder>();
                 x.For(typeof(IRepository)).Use(context => new Repository(context.GetInstance<IEventStore>()));
 
                 x.For<ReadModelDatabaseFeeder>().Singleton();
                 x.For<InMemoryDatabase>().Singleton();
+
+#if DEBUG
                 x.For<IEventStore>().Use<InMemoryEventStore>().Singleton();
+#else
+                x.For<IEventStore>().Use<EventStoreOrg>().Singleton();
+#endif
             });
 
             return container;

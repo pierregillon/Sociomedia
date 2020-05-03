@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using CQRSlite.Events;
 using NewsAggregator.Application.Commands.AddRssSource;
 using NewsAggregator.Application.Commands.SynchronizeRssSources;
+using NewsAggregator.Infrastructure;
 using NewsAggregator.Infrastructure.CQRS;
 
 namespace NewsAggregator
@@ -12,11 +14,17 @@ namespace NewsAggregator
         {
             var container = ContainerBuilder.Build();
 
+#if RELEASE
+            var eventStore = (EventStoreOrg) container.GetInstance<IEventStore>();
+            await eventStore.Connect("localhost");
+#endif
+
+
             var commandDispatcher = container.GetInstance<ICommandDispatcher>();
 
-            //await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.lemonde.fr/rss/une.xml")));
-            //await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.lemonde.fr/international/rss_full.xml")));
-            //await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.lemonde.fr/economie/rss_full.xml")));
+            await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.lemonde.fr/rss/une.xml")));
+            await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.lemonde.fr/international/rss_full.xml")));
+            await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.lemonde.fr/economie/rss_full.xml")));
             await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.marianne.net/rss_marianne.xml")));
 
             await commandDispatcher.Dispatch(new SynchronizeRssSourcesCommand());

@@ -51,7 +51,9 @@ namespace NewsAggregator.Application.Commands.SynchronizeRssSources
         private async Task UpdateLastSynchronizationDate(Guid sourceId)
         {
             var source = await _repository.Get<RssSource>(sourceId);
+            
             source.Synchronize();
+            
             await _repository.Save(source);
         }
     }

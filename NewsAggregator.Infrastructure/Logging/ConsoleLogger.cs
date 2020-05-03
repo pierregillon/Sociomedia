@@ -10,5 +10,11 @@ namespace NewsAggregator.Infrastructure.Logging
             Console.WriteLine($"[{DateTimeOffset.Now}] [{elapsedMilliseconds?.ToString() ?? "-"} MS]\t{message}");
             return Task.CompletedTask;
         }
+
+        public Task LogError(Exception ex)
+        {
+            Console.WriteLine($"[{DateTimeOffset.Now}] [ ERROR ]\t{ex}");
+            return Task.CompletedTask;
+        }
     }
 }

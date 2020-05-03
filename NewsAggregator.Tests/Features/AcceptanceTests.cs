@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CQRSlite.Events;
 using NewsAggregator.Application.Queries;
 using NewsAggregator.Domain.Articles;
@@ -23,6 +24,7 @@ namespace NewsAggregator.Tests.Features
 
             Container.Inject<ILogger>(new EmptyLogger());
             Container.Inject(Substitute.For<IHtmlPageDownloader>());
+            Container.Inject<IEventStore>(Container.GetInstance<InMemoryEventStore>());
 
             RssSourceFinder = Container.GetInstance<IRssSourceFinder>();
             CommandDispatcher = Container.GetInstance<ICommandDispatcher>();
@@ -32,6 +34,11 @@ namespace NewsAggregator.Tests.Features
         private class EmptyLogger : ILogger
         {
             public Task LogInformation(string message, long? elapsedMilliseconds = null)
+            {
+                return Task.CompletedTask;
+            }
+
+            public Task LogError(Exception ex)
             {
                 return Task.CompletedTask;
             }
