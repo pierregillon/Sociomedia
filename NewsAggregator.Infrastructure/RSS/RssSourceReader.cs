@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using NewsAggregator.Domain;
 using NewsAggregator.Domain.Rss;
 
 namespace NewsAggregator.Infrastructure.RSS
@@ -18,9 +19,11 @@ namespace NewsAggregator.Infrastructure.RSS
 
         public async Task<IReadOnlyCollection<ExternalArticle>> ReadNewArticles(Uri url, DateTimeOffset? from)
         {
-            var response = await Download(url);
-            var rssContent = _rssParser.Parse(await response.Content.ReadAsStreamAsync());
-            return rssContent.ToExternalArticles(from).ToArray();
+            return await url
+                .Pipe(Download)
+                .Pipe(async x => await x.Content.ReadAsStreamAsync())
+                .Pipe(x => _rssParser.Parse(x))
+                .Pipe(x => x.ToExternalArticles(from).ToArray());
         }
 
         private static async Task<HttpResponseMessage> Download(Uri url)

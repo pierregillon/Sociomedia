@@ -1,6 +1,8 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
+using NewsAggregator.Domain;
 using NewsAggregator.Domain.Articles;
 
 namespace NewsAggregator.Infrastructure
@@ -11,8 +13,16 @@ namespace NewsAggregator.Infrastructure
 
         public string ExtractPlainTextArticleContent(string html)
         {
-            var text = FindPlainText(WebUtility.HtmlDecode(html));
-            return RemoveDuplicatedSpacesRegex.Replace(text, " ").Trim();
+            return html
+                .Pipe(WebUtility.HtmlDecode)
+                .Pipe(FindPlainText)
+                .Pipe(ClearConsecutiveSpaces)
+                .Trim();
+        }
+
+        private static string ClearConsecutiveSpaces(string text)
+        {
+            return RemoveDuplicatedSpacesRegex.Replace(text, " ");
         }
 
         private static string FindPlainText(string html)
@@ -27,12 +37,9 @@ namespace NewsAggregator.Infrastructure
         {
             if (node.Name == name) return node;
 
-            foreach (var childNode in node.ChildNodes) {
-                var result = FindNode(childNode, name);
-                if (result != null) return result;
-            }
-
-            return null;
+            return node.ChildNodes
+                .Select(childNode => FindNode(childNode, name))
+                .FirstOrDefault(result => result != null);
         }
     }
 }
