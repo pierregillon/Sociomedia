@@ -192,6 +192,11 @@ app {
     display: block;
 }
 
+.article .date {
+    font-size: 12px;
+    margin-top: 10px;
+}
+
 .article .logo {
     height: 20px;
     display: block;
@@ -201,6 +206,8 @@ app {
 
 .article .image {
     width: 100%;
+    min-height: 135px;
+    background-color: lightblue;
 }
 
 .article .title {
@@ -210,5 +217,4 @@ app {
 
 .article .description {
     font-size: 14px;
-    padding-top: 15px;
 }

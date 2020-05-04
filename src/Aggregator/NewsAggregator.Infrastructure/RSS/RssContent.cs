@@ -24,7 +24,8 @@ namespace NewsAggregator.Infrastructure.RSS
                 Title = item.Title,
                 Summary = item.Summary,
                 PublishDate = item.PublishDate,
-                Url = new Uri(item.Link)
+                Url = new Uri(item.Link),
+                ImageUrl = string.IsNullOrEmpty(item.ImageUrl) ? null : new Uri(item.ImageUrl)
             });
         }
     }

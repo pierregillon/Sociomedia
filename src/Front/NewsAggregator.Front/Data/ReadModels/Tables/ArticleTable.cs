@@ -10,6 +10,12 @@ namespace NewsAggregator.Front.Data.ReadModels.Tables
 
         [Column] [NotNull] public string Title { get; set; }
 
+        [Column] public string Summary { get; set; }
+
         [Column] [NotNull] public string Url { get; set; }
+
+        [Column] [NotNull] public DateTimeOffset PublishDate { get; set; }
+
+        [Column] public Uri ImageUrl { get; set; }
     }
 }

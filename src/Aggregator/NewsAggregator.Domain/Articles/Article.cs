@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using CQRSlite.Domain;
+using NewsAggregator.Domain.Rss;
 
 namespace NewsAggregator.Domain.Articles
 {
@@ -8,9 +9,17 @@ namespace NewsAggregator.Domain.Articles
     {
         private Article() { }
 
-        public Article(string title, Uri url, Guid rssSourceId, IReadOnlyCollection<string> keywords) : this()
+        public Article(ExternalArticle externalArticle, Guid rssSourceId, IReadOnlyCollection<string> keywords) : this()
         {
-            ApplyChange(new ArticleSynchronized(Guid.NewGuid(), title, url, keywords, rssSourceId));
+            ApplyChange(new ArticleSynchronized(
+                Guid.NewGuid(), 
+                externalArticle.Title, 
+                externalArticle.Summary,
+                externalArticle.PublishDate,
+                externalArticle.Url,
+                externalArticle.ImageUrl,
+                keywords, 
+                rssSourceId));
         }
 
         private void Apply(ArticleSynchronized @event)

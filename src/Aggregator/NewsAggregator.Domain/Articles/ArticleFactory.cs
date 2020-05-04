@@ -24,7 +24,7 @@ namespace NewsAggregator.Domain.Articles
 
             var keywords = new KeywordsParser().Parse(articleContent).Take(50).ToArray();
 
-            return new Article(externalArticle.Title, externalArticle.Url, rssSourceId, keywords.Select(x => x.ToString()).ToArray());
+            return new Article(externalArticle, rssSourceId, keywords.Select(x => x.ToString()).ToArray());
         }
     }
 }

@@ -21,7 +21,10 @@ namespace NewsAggregator.ReadDatabaseSynchronizer.Application.EventListeners
             await _connection.Articles.InsertAsync(() => new ArticleTable {
                 Id = @event.Id,
                 Title = @event.Title,
-                Url = @event.Url.AbsoluteUri
+                Url = @event.Url,
+                Summary = @event.Summary,
+                ImageUrl = @event.ImageUrl,
+                PublishDate = @event.PublishDate
             });
 
             foreach (var keyword in @event.Keywords) {
