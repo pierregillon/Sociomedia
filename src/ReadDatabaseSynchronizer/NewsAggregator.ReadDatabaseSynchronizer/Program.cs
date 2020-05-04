@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using LinqToDB.Data;
+using NewsAggregator.ReadDatabaseSynchronizer.EventListeners;
+using NewsAggregator.ReadDatabaseSynchronizer.ReadModels;
 
 namespace NewsAggregator.ReadDatabaseSynchronizer
 {
@@ -7,6 +10,8 @@ namespace NewsAggregator.ReadDatabaseSynchronizer
     {
         private static async Task Main(string[] args)
         {
+            DataConnection.DefaultSettings = new MySettings();
+
             var container = ContainerBuilder.Build();
 
             var eventStore = container.GetInstance<EventStoreOrg>();

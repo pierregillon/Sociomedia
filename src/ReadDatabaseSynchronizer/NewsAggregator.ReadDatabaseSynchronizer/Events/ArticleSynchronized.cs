@@ -7,8 +7,7 @@ namespace NewsAggregator.ReadDatabaseSynchronizer.Events
     {
         public Guid Id { get; set; }
         public string Title { get; set; }
-        public IReadOnlyCollection<Keyword> Keywords { get; set; }
+        public IReadOnlyCollection<string> Keywords { get; set; }
         public Uri Url { get; set; }
-        public Guid RssSourceId { get; set; }
     }
 }

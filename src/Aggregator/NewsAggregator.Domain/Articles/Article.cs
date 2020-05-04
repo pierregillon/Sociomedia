@@ -8,7 +8,7 @@ namespace NewsAggregator.Domain.Articles
     {
         private Article() { }
 
-        public Article(string title, Uri url, Guid rssSourceId, IReadOnlyCollection<Keyword> keywords) : this()
+        public Article(string title, Uri url, Guid rssSourceId, IReadOnlyCollection<string> keywords) : this()
         {
             ApplyChange(new ArticleSynchronized(Guid.NewGuid(), title, url, keywords, rssSourceId));
         }

@@ -66,11 +66,17 @@ namespace NewsAggregator.ReadDatabaseSynchronizer
 
         private async Task EventAppeared(EventStoreCatchUpSubscription arg1, ResolvedEvent evt)
         {
-            if (!evt.OriginalStreamId.StartsWith("$")) {
-                _logger.Debug($"New event received : {evt.OriginalStreamId}");
-                if (TryConvertToDomainEvent(evt, out var @event)) {
-                    await _eventPublisher.Publish(@event);
+            try {
+                if (!evt.OriginalStreamId.StartsWith("$")) {
+                    _logger.Debug($"New event received : {evt.OriginalStreamId}");
+                    if (TryConvertToDomainEvent(evt, out var @event)) {
+                        await _eventPublisher.Publish(@event);
+                    }
                 }
+            }
+            catch (Exception ex) {
+                _logger.Error(ex.Message);
+                throw;
             }
         }
 
