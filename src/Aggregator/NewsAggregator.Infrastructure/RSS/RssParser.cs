@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using System.Xml;
-using System.Xml.Linq;
+using CodeHollow.FeedReader;
+using CodeHollow.FeedReader.Feeds;
 
 namespace NewsAggregator.Infrastructure.RSS
 {
@@ -13,25 +13,52 @@ namespace NewsAggregator.Infrastructure.RSS
     {
         public RssContent Parse(Stream rssStream)
         {
-            using var reader = XmlReader.Create(rssStream);
+            using var ms = new MemoryStream();
+            rssStream.CopyTo(ms);
+            var feed = FeedReader.ReadFromByteArray(ms.ToArray());
+            return new RssContent(feed.Items.Select(ConvertToRssItem).ToArray());
+        }
 
-            var rss = XElement.Load(reader);
+        private static RssItem ConvertToRssItem(FeedItem syndicationItem)
+        {
+            return new RssItem {
+                Id = syndicationItem.Id,
+                Title = WebUtility.HtmlDecode(syndicationItem.Title),
+                Link = syndicationItem.Link,
+                ImageUrl = GetImageUrl(syndicationItem),
+                Summary = WebUtility.HtmlDecode(GetSummary(syndicationItem)),
+                PublishDate = GetDate(syndicationItem)
+            };
+        }
 
-            var mediaAttribute = rss.Attribute(XNamespace.Xmlns + "media");
-            var media = mediaAttribute != null ? XNamespace.Get(mediaAttribute.Value) : null;
+        private static string GetSummary(FeedItem syndicationItem)
+        {
+            if (!string.IsNullOrEmpty(syndicationItem.Description)) {
+                return syndicationItem.Description;
+            }
+            return null;
+        }
 
-            return new RssContent(rss
-                .Descendants("item")
-                .Select(x => new RssItem {
-                    Id = (string) x.Element("guid"),
-                    Title = WebUtility.HtmlDecode((string) x.Element("title")),
-                    Summary = WebUtility.HtmlDecode((string) x.Element("description")),
-                    PublishDate = ParseDate((string) x.Element("pubDate")),
-                    Link = (string) x.Element("link"),
-                    ImageUrl = media != null ? (string)x.Element(media + "content")?.Attribute("url") : null
-                })
-                .ToArray()
-            );
+        private static DateTimeOffset GetDate(FeedItem item)
+        {
+            if (!string.IsNullOrEmpty(item.PublishingDateString)) {
+                return ParseDate(item.PublishingDateString);
+            }
+            if (item.SpecificItem is AtomFeedItem feedItem) {
+                return ParseDate(feedItem.UpdatedDateString);
+            }
+            return default;
+        }
+
+        private static string GetImageUrl(FeedItem item)
+        {
+            if (item.SpecificItem is MediaRssFeedItem feedItem) {
+                return feedItem.Media.FirstOrDefault()?.Url;
+            }
+            if (item.SpecificItem is AtomFeedItem atomFeedItem) {
+                return atomFeedItem.Links.FirstOrDefault(x => x.LinkType == "image/jpeg")?.Href;
+            }
+            return null;
         }
 
         private static DateTimeOffset ParseDate(string dateStr)

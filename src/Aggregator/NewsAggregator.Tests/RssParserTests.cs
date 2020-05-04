@@ -10,7 +10,7 @@ namespace NewsAggregator.Tests
     public class RssParserTests
     {
         [Fact]
-        public void Parse_standard_rss()
+        public void Parse_lemonde_rss()
         {
             var parser = new RssParser();
 
@@ -32,7 +32,7 @@ namespace NewsAggregator.Tests
         }
 
         [Fact]
-        public void Parse_non_standard_rss_with_invalid_date_format()
+        public void Parse_marianne_rss()
         {
             var parser = new RssParser();
 
@@ -51,6 +51,29 @@ namespace NewsAggregator.Tests
                     Summary = "BIIIIP ! Ennuis à l'horizon ! Certains signaux vestimentaires en disent plus qu'une fiche LinkedIn ou même qu'une fréquentation amicale assidue. Ainsi les chantres du poil à gratter, les génies de l'insoumission, les pas “corporate”, qui “ne jouent pas le jeu” s'annoncent-ils par une sémiologie bien spéciale. ",
                     PublishDate = new DateTimeOffset(2020, 5, 3, 11, 30, 0, TimeSpan.FromHours(2)),
                     ImageUrl = null
+                });
+        }
+
+        [Fact]
+        public void Parse_liberation_rss()
+        {
+            var parser = new RssParser();
+
+            var rssContent = parser.Parse(File.OpenRead("./rss_liberation.xml"));
+
+            rssContent.Items.Should().HaveCount(50);
+
+            rssContent.Items
+                .First()
+                .Should()
+                .BeEquivalentTo(new RssItem
+                {
+                    Id = "tag:www.liberation.fr,2020-03-04:/1787260",
+                    Link = "https://www.liberation.fr/planete/2020/05/04/direct-suivez-les-dernieres-informations-sur-la-pandemie-de-covid-19-en-france-et-dans-le-monde_1787260?xtor=rss-450",
+                    Title = "Direct - Education, aide aux jeunes, entreprises... Edouard Philippe précise la stratégie de déconfinement",
+                    Summary = "Pour le philosophe Abdennour Bidar, en voulant sauver la vie, nous l’avons dans le même temps coupée de tous les liens qui la nourrissent, vidée de toutes les significations qui la font grandir.",
+                    PublishDate = new DateTimeOffset(2020, 5, 4, 16, 55, 44, TimeSpan.FromHours(2)),
+                    ImageUrl = "https://medias.liberation.fr/photo/1311179-outbreak-of-the-coronavirus-disease-covid-19-in-paris.jpg?modified_at=1588572140&ratio_x=03&ratio_y=02&width=150"
                 });
         }
     }
