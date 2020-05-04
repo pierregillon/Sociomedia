@@ -4,4 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Linq2Db" Version="2.9.8" />
+  </ItemGroup>
+
 </Project>
