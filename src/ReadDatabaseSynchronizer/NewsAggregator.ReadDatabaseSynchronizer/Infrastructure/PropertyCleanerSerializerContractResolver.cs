@@ -5,7 +5,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace NewsAggregator.ReadDatabaseSynchronizer
+namespace NewsAggregator.ReadDatabaseSynchronizer.Infrastructure
 {
     public class PropertyCleanerSerializerContractResolver : DefaultContractResolver
     {

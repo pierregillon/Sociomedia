@@ -1,7 +1,7 @@
 ﻿using System;
 using LinqToDB.Mapping;
 
-namespace NewsAggregator.ReadDatabaseSynchronizer.ReadModels {
+namespace NewsAggregator.ReadDatabaseSynchronizer.Infrastructure.ReadModels.Tables {
     [Table(Name = "Keywords")]
     public class KeywordTable
     {

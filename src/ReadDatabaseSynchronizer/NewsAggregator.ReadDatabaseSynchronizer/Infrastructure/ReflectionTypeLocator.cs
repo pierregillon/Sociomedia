@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
+using NewsAggregator.ReadDatabaseSynchronizer.Application;
 
-namespace NewsAggregator.ReadDatabaseSynchronizer
+namespace NewsAggregator.ReadDatabaseSynchronizer.Infrastructure
 {
     public class ReflectionTypeLocator : ITypeLocator
     {

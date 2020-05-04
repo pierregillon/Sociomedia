@@ -1,14 +1,15 @@
 ﻿using System.Threading.Tasks;
+using EventStore.ClientAPI;
 
-namespace NewsAggregator.ReadDatabaseSynchronizer
+namespace NewsAggregator.ReadDatabaseSynchronizer.Application
 {
     public class DomainEventSynchronizer
     {
-        private readonly EventStoreOrg _eventStore;
+        private readonly IEventStore _eventStore;
         private readonly IEventPublisher _eventPublisher;
-        private readonly IEventAcknowledger _acknowledger;
+        private readonly IStreamPositionRepository _acknowledger;
 
-        public DomainEventSynchronizer(EventStoreOrg eventStore, IEventPublisher eventPublisher, IEventAcknowledger acknowledger)
+        public DomainEventSynchronizer(IEventStore eventStore, IEventPublisher eventPublisher, IStreamPositionRepository acknowledger)
         {
             _eventStore = eventStore;
             _eventPublisher = eventPublisher;
@@ -23,13 +24,16 @@ namespace NewsAggregator.ReadDatabaseSynchronizer
 
             _eventStore.StartListeningEvents(lastPosition, async (position, @event) => {
                 await _eventPublisher.Publish(@event);
-                await _acknowledger.Acknowledge(position);
+                await _acknowledger.Save(position);
             });
         }
+
 
         public void StopSynchronization()
         {
             _eventStore.StopListeningEvents();
         }
     }
+
+    public delegate Task DomainEventReceived(Position position, IDomainEvent @event);
 }

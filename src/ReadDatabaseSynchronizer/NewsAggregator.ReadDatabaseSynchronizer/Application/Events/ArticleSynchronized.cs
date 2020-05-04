@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NewsAggregator.ReadDatabaseSynchronizer.Events
+namespace NewsAggregator.ReadDatabaseSynchronizer.Application.Events
 {
     public class ArticleSynchronized : IDomainEvent
     {

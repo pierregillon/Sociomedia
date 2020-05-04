@@ -2,18 +2,19 @@
 using System.Text;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
+using NewsAggregator.ReadDatabaseSynchronizer.Application;
 using Newtonsoft.Json;
 
-namespace NewsAggregator.ReadDatabaseSynchronizer
+namespace NewsAggregator.ReadDatabaseSynchronizer.Infrastructure
 {
-    public class EventStoreOrg
+    public class EventStoreOrg : IEventStore
     {
         private IEventStoreConnection _connection;
         private readonly JsonSerializerSettings _serializerSettings;
         private readonly ILogger _logger;
         private readonly ITypeLocator _typeLocator;
         private EventStoreAllCatchUpSubscription _subscription;
-        private Func<Position, IDomainEvent, Task> _onEventReceived;
+        private DomainEventReceived _onEventReceived;
 
         public EventStoreOrg(ILogger logger, ITypeLocator typeLocator)
         {
@@ -38,10 +39,11 @@ namespace NewsAggregator.ReadDatabaseSynchronizer
             await _connection.ConnectAsync();
         }
 
-        public void StartListeningEvents(Position? position, Func<Position, IDomainEvent, Task> onEventReceived)
+        public void StartListeningEvents(Position? position, DomainEventReceived onEventReceived)
         {
             _onEventReceived = onEventReceived;
             _subscription = _connection.SubscribeToAllFrom(position, CatchUpSubscriptionSettings.Default, EventAppeared, LiveProcessingStarted, SubscriptionDropped);
+            _logger.Debug($"Subscribed from position {position}. Replaying missing events.");
         }
 
         public void StopListeningEvents()
@@ -68,7 +70,7 @@ namespace NewsAggregator.ReadDatabaseSynchronizer
         {
             try {
                 if (!evt.OriginalStreamId.StartsWith("$")) {
-                    _logger.Debug($"New event received : {evt.OriginalStreamId}");
+                    _logger.Debug($"New event received. Stream : {evt.OriginalStreamId}, position: {evt.OriginalPosition}");
                     if (TryConvertToDomainEvent(evt, out var @event)) {
                         if (!evt.OriginalPosition.HasValue) {
                             throw new InvalidOperationException("No position in the stream ??");

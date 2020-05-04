@@ -2,8 +2,8 @@
 using System.Linq;
 using LinqToDB.Configuration;
 
-namespace NewsAggregator.ReadDatabaseSynchronizer.ReadModels {
-    public class MySettings : ILinqToDBSettings
+namespace NewsAggregator.ReadDatabaseSynchronizer.Infrastructure.ReadModels {
+    public class DbSettings : ILinqToDBSettings
     {
         public IEnumerable<IDataProviderSettings> DataProviders => Enumerable.Empty<IDataProviderSettings>();
 

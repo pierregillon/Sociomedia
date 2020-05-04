@@ -1,6 +1,7 @@
 ﻿using LinqToDB;
+using NewsAggregator.ReadDatabaseSynchronizer.Infrastructure.ReadModels.Tables;
 
-namespace NewsAggregator.ReadDatabaseSynchronizer.ReadModels
+namespace NewsAggregator.ReadDatabaseSynchronizer.Infrastructure.ReadModels
 {
     public class DbConnectionReadModel : LinqToDB.Data.DataConnection
     {

@@ -1,6 +1,8 @@
 ﻿using EventStore.ClientAPI;
 using EventStore.ClientAPI.Common.Log;
-using NewsAggregator.ReadDatabaseSynchronizer.ReadModels;
+using NewsAggregator.ReadDatabaseSynchronizer.Application;
+using NewsAggregator.ReadDatabaseSynchronizer.Infrastructure;
+using NewsAggregator.ReadDatabaseSynchronizer.Infrastructure.ReadModels;
 using StructureMap;
 using StructureMap.Graph;
 using StructureMap.Graph.Scanning;
@@ -17,7 +19,8 @@ namespace NewsAggregator.ReadDatabaseSynchronizer
                 configuration.For<ITypeLocator>().Use<ReflectionTypeLocator>();
                 configuration.For<ILogger>().Use<ConsoleLogger>();
                 configuration.For<DbConnectionReadModel>().Singleton();
-                configuration.For<IEventAcknowledger>().Use<EventAcknowledger>();
+                configuration.For<IStreamPositionRepository>().Use<StreamPositionRepository>();
+                configuration.For<DbSettings>();
 
                 configuration.Scan(scanner => {
                     scanner.TheCallingAssembly();

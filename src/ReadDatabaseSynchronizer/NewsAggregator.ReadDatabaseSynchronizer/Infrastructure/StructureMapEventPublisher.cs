@@ -1,8 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using NewsAggregator.ReadDatabaseSynchronizer.Application;
 using StructureMap;
 
-namespace NewsAggregator.ReadDatabaseSynchronizer
+namespace NewsAggregator.ReadDatabaseSynchronizer.Infrastructure
 {
     public class StructureMapEventPublisher : IEventPublisher
     {

@@ -1,6 +1,6 @@
 ﻿using LinqToDB.Configuration;
 
-namespace NewsAggregator.ReadDatabaseSynchronizer.ReadModels {
+namespace NewsAggregator.ReadDatabaseSynchronizer.Infrastructure.ReadModels {
     public class ConnectionStringSettings : IConnectionStringSettings
     {
         public string ConnectionString { get; set; }

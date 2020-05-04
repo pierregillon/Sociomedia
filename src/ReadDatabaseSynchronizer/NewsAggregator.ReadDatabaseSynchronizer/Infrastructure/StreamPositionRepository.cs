@@ -3,20 +3,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using LinqToDB;
-using NewsAggregator.ReadDatabaseSynchronizer.ReadModels;
+using NewsAggregator.ReadDatabaseSynchronizer.Application;
+using NewsAggregator.ReadDatabaseSynchronizer.Infrastructure.ReadModels;
+using NewsAggregator.ReadDatabaseSynchronizer.Infrastructure.ReadModels.Tables;
 
-namespace NewsAggregator.ReadDatabaseSynchronizer
+namespace NewsAggregator.ReadDatabaseSynchronizer.Infrastructure
 {
-    public class EventAcknowledger : IEventAcknowledger
+    public class StreamPositionRepository : IStreamPositionRepository
     {
         private readonly DbConnectionReadModel _dbConnection;
 
-        public EventAcknowledger(DbConnectionReadModel dbConnection)
+        public StreamPositionRepository(DbConnectionReadModel dbConnection)
         {
             _dbConnection = dbConnection;
         }
 
-        public async Task Acknowledge(Position position)
+        public async Task Save(Position position)
         {
             if (await _dbConnection.SynchronizationInformation.AnyAsync()) {
                 await _dbConnection.SynchronizationInformation

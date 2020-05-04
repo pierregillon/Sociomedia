@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using EventStore.ClientAPI;
 using LinqToDB.Data;
-using NewsAggregator.ReadDatabaseSynchronizer.ReadModels;
+using NewsAggregator.ReadDatabaseSynchronizer.Application;
+using NewsAggregator.ReadDatabaseSynchronizer.Infrastructure.ReadModels;
 
 namespace NewsAggregator.ReadDatabaseSynchronizer
 {
@@ -9,21 +11,19 @@ namespace NewsAggregator.ReadDatabaseSynchronizer
     {
         private static async Task Main(string[] args)
         {
-            DataConnection.DefaultSettings = new MySettings();
-
             var container = ContainerBuilder.Build();
+
+            DataConnection.DefaultSettings = container.GetInstance<DbSettings>();
 
             var synchronizer = container.GetInstance<DomainEventSynchronizer>();
 
+            container.GetInstance<ILogger>().Debug("Read database synchronizer started.");
+            
             await synchronizer.StartSynchronization();
 
-            Console.WriteLine("Synchronization started.");
-            do {
-                Console.Write("Stop it ? => ");
-            } while (Console.ReadLine() != "y");
-            Console.WriteLine("Stopping...");
+            Console.ReadKey();
+
             synchronizer.StopSynchronization();
-            Console.WriteLine("Stopped.");
         }
     }
 }

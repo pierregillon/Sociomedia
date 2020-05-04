@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using LinqToDB;
-using NewsAggregator.ReadDatabaseSynchronizer.Events;
-using NewsAggregator.ReadDatabaseSynchronizer.ReadModels;
+using NewsAggregator.ReadDatabaseSynchronizer.Application.Events;
+using NewsAggregator.ReadDatabaseSynchronizer.Infrastructure.ReadModels;
+using NewsAggregator.ReadDatabaseSynchronizer.Infrastructure.ReadModels.Tables;
 
-namespace NewsAggregator.ReadDatabaseSynchronizer.EventListeners
+namespace NewsAggregator.ReadDatabaseSynchronizer.Application.EventListeners
 {
     public class ArticleTableSynchronizer : IEventListener<ArticleSynchronized>
     {
