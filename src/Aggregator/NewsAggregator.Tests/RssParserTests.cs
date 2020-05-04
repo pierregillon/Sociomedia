@@ -76,5 +76,28 @@ namespace NewsAggregator.Tests
                     ImageUrl = "https://medias.liberation.fr/photo/1311179-outbreak-of-the-coronavirus-disease-covid-19-in-paris.jpg?modified_at=1588572140&ratio_x=03&ratio_y=02&width=150"
                 });
         }
+
+        [Fact]
+        public void Parse_franceTVInfo_rss()
+        {
+            var parser = new RssParser();
+
+            var rssContent = parser.Parse(File.OpenRead("./rss_francetvinfo.xml"));
+
+            rssContent.Items.Should().HaveCount(20);
+
+            rssContent.Items
+                .First()
+                .Should()
+                .BeEquivalentTo(new RssItem
+                {
+                    Id = "https://www.francetvinfo.fr/sante/maladie/coronavirus/les-detenus-sont-inquiets-surtout-pour-leur-famille-a-mulhouse-les-surveillants-de-prison-doivent-proteger-et-rassurer-face-au-coronavirus_3948277.html#xtor=RSS-3-[france]",
+                    Link = "https://www.francetvinfo.fr/sante/maladie/coronavirus/les-detenus-sont-inquiets-surtout-pour-leur-famille-a-mulhouse-les-surveillants-de-prison-doivent-proteger-et-rassurer-face-au-coronavirus_3948277.html#xtor=RSS-3-[france]",
+                    Title = "\"Les détenus sont inquiets, surtout pour leur famille\" : à Mulhouse, les surveillants de prison doivent protéger et rassurer face au coronavirus",
+                    Summary = "Il a fallu réorganiser le travail pour empêcher le virus de pénétrer les murs des prisons. Christopher Pécoraro travaille à la maison d’arrêt de Mulhouse, au cœur d’un département parmi les plus touchés de France.",
+                    PublishDate = new DateTimeOffset(2020, 5, 4, 17, 50, 19, TimeSpan.FromHours(2)),
+                    ImageUrl = "https://www.francetvinfo.fr/image/75rzejnyj-19ca/600/337/21454101.jpg"
+                });
+        }
     }
 }

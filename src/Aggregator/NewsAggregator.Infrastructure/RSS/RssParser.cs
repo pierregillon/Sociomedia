@@ -56,8 +56,14 @@ namespace NewsAggregator.Infrastructure.RSS
                 return feedItem.Media.FirstOrDefault()?.Url;
             }
             if (item.SpecificItem is AtomFeedItem atomFeedItem) {
-                return atomFeedItem.Links.FirstOrDefault(x => x.LinkType == "image/jpeg")?.Href;
+                return atomFeedItem.Links.FirstOrDefault(x => x.LinkType?.StartsWith("image") == true)?.Href;
             }
+            if (item.SpecificItem is Rss20FeedItem rss20FeedItem) {
+                if (rss20FeedItem.Enclosure.MediaType?.StartsWith("image") == true) {
+                    return rss20FeedItem.Enclosure.Url;
+                }
+            }
+
             return null;
         }
 
