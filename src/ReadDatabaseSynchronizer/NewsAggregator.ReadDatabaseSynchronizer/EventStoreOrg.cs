@@ -12,14 +12,13 @@ namespace NewsAggregator.ReadDatabaseSynchronizer
         private readonly JsonSerializerSettings _serializerSettings;
         private readonly ILogger _logger;
         private readonly ITypeLocator _typeLocator;
-        private readonly IEventPublisher _eventPublisher;
         private EventStoreAllCatchUpSubscription _subscription;
+        private Func<Position, IDomainEvent, Task> _onEventReceived;
 
-        public EventStoreOrg(ILogger logger, ITypeLocator typeLocator, IEventPublisher eventPublisher)
+        public EventStoreOrg(ILogger logger, ITypeLocator typeLocator)
         {
             _logger = logger;
             _typeLocator = typeLocator;
-            _eventPublisher = eventPublisher;
 
             var jsonResolver = new PropertyCleanerSerializerContractResolver();
             jsonResolver.IgnoreProperty(typeof(IDomainEvent), "Version", "TimeStamp");
@@ -39,8 +38,9 @@ namespace NewsAggregator.ReadDatabaseSynchronizer
             await _connection.ConnectAsync();
         }
 
-        public void StartListeningEvents(Position? position)
+        public void StartListeningEvents(Position? position, Func<Position, IDomainEvent, Task> onEventReceived)
         {
+            _onEventReceived = onEventReceived;
             _subscription = _connection.SubscribeToAllFrom(position, CatchUpSubscriptionSettings.Default, EventAppeared, LiveProcessingStarted, SubscriptionDropped);
         }
 
@@ -70,7 +70,10 @@ namespace NewsAggregator.ReadDatabaseSynchronizer
                 if (!evt.OriginalStreamId.StartsWith("$")) {
                     _logger.Debug($"New event received : {evt.OriginalStreamId}");
                     if (TryConvertToDomainEvent(evt, out var @event)) {
-                        await _eventPublisher.Publish(@event);
+                        if (!evt.OriginalPosition.HasValue) {
+                            throw new InvalidOperationException("No position in the stream ??");
+                        }
+                        await _onEventReceived(evt.OriginalPosition.Value, @event);
                     }
                 }
             }

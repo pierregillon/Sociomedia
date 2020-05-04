@@ -6,7 +6,8 @@ namespace NewsAggregator.ReadDatabaseSynchronizer.ReadModels
     [Table(Name = "SynchronizationInformation")]
     public class SynchronizationInformationTable
     {
-        [Column] public long? LastEventId { get; set; }
-        [Column] public DateTime? LastUpdateDate { get; set; }
+        [Column] [PrimaryKey] public long LastCommitPosition { get; set; }
+        [Column] [PrimaryKey] public long LastPreparePosition { get; set; }
+        [Column] [PrimaryKey] public DateTime? LastUpdateDate { get; set; }
     }
 }

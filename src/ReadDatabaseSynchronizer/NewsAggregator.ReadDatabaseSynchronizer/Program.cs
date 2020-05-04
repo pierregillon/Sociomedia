@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using LinqToDB.Data;
-using NewsAggregator.ReadDatabaseSynchronizer.EventListeners;
 using NewsAggregator.ReadDatabaseSynchronizer.ReadModels;
 
 namespace NewsAggregator.ReadDatabaseSynchronizer
@@ -14,18 +13,16 @@ namespace NewsAggregator.ReadDatabaseSynchronizer
 
             var container = ContainerBuilder.Build();
 
-            var eventStore = container.GetInstance<EventStoreOrg>();
+            var synchronizer = container.GetInstance<DomainEventSynchronizer>();
 
-            await eventStore.Connect("localhost");
-
-            eventStore.StartListeningEvents(null);
+            await synchronizer.StartSynchronization();
 
             Console.WriteLine("Synchronization started.");
             do {
                 Console.Write("Stop it ? => ");
             } while (Console.ReadLine() != "y");
             Console.WriteLine("Stopping...");
-            eventStore.StopListeningEvents();
+            synchronizer.StopSynchronization();
             Console.WriteLine("Stopped.");
         }
     }

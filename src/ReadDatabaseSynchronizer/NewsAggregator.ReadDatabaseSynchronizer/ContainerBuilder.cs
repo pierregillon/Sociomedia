@@ -17,6 +17,7 @@ namespace NewsAggregator.ReadDatabaseSynchronizer
                 configuration.For<ITypeLocator>().Use<ReflectionTypeLocator>();
                 configuration.For<ILogger>().Use<ConsoleLogger>();
                 configuration.For<DbConnectionReadModel>().Singleton();
+                configuration.For<IEventAcknowledger>().Use<EventAcknowledger>();
 
                 configuration.Scan(scanner => {
                     scanner.TheCallingAssembly();
