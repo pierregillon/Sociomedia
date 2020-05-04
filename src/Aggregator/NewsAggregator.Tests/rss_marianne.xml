@@ -1,181 +1,191 @@
-<?xml version="1.0" encoding="utf-8" ?><rss version="2.0" xml:base="https://www.marianne.net/rss_marianne.xml" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+<?xml version="1.0" encoding="utf-8"?>
+
+<rss version="2.0" xml:base="https://www.marianne.net/rss_marianne.xml" xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Flux d&#039;actualités de marianne.net</title>
     <link>https://www.marianne.net/rss_marianne.xml</link>
     <description>Les actualités de marianne.net</description>
     <image>
-    <url>https://marianne.net/sites/default/themes/marianne/images/logo.png</url>
-    <title>RSS Le choix de la rédaction</title>
-    <link>https://marianne.net/sites/default/themes/marianne/images/logo.png</link>
- </image>
+      <url>https://marianne.net/sites/default/themes/marianne/images/logo.png</url>
+      <title>RSS Le choix de la rédaction</title>
+      <link>https://marianne.net/sites/default/themes/marianne/images/logo.png</link>
+    </image>
     <language>fr</language>
-     <atom:link href="https://www.marianne.net/rss_marianne.xml" rel="self" type="application/rss+xml" />
-      <item>
-    <title>Sémiologie de Didier Raoult : le look emmerdeur</title>
-    <link>https://www.marianne.net/politique/semiologie-de-didier-raoult-le-look-emmerdeur</link>
-    <description>BIIIIP ! Ennuis à l&amp;#039;horizon ! Certains signaux vestimentaires en disent plus qu&amp;#039;une fiche LinkedIn ou même qu&amp;#039;une fréquentation amicale assidue. Ainsi les chantres du poil à gratter, les génies de l&amp;#039;insoumission, les pas “corporate”, qui “ne jouent pas le jeu” s&amp;#039;annoncent-ils par une sémiologie bien spéciale. </description>
-     <pubDate>dim, 05/03/2020 - 11:30</pubDate>
- <dc:creator>David Oberdan</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/politique/semiologie-de-didier-raoult-le-look-emmerdeur</guid>
-  </item>
-  <item>
-    <title>&quot;Trente Glorieuses&quot;, &quot;Belle Epoque&quot; : quels sont ces &quot;chrononymes&quot;, ces noms qu&#039;on donne aux époques ?</title>
-    <link>https://www.marianne.net/culture/trente-glorieuses-belle-epoque-quels-sont-ces-chrononymes-ces-noms-qu-donne-aux-epoques</link>
-    <description>La “Restauration”, la “Belle Epoque”, les “Trente  Glorieuses”... Pourquoi découper l’histoire en tranches qu’on affuble de sobriquets ? Réponses de l’historien Dominique Kalifa.
+    <atom:link href="https://www.marianne.net/rss_marianne.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Sémiologie de Didier Raoult : le look emmerdeur</title>
+      <link>https://www.marianne.net/politique/semiologie-de-didier-raoult-le-look-emmerdeur</link>
+      <description>BIIIIP ! Ennuis à l&amp;#039;horizon ! Certains signaux vestimentaires en disent plus qu&amp;#039;une fiche LinkedIn ou même qu&amp;#039;une fréquentation amicale assidue. Ainsi les chantres du poil à gratter, les génies de l&amp;#039;insoumission, les pas “corporate”, qui “ne jouent pas le jeu” s&amp;#039;annoncent-ils par une sémiologie bien spéciale. </description>
+      <pubDate>dim, 05/03/2020 - 11:30</pubDate>
+      <dc:creator>David Oberdan</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/politique/semiologie-de-didier-raoult-le-look-emmerdeur</guid>
+    </item>
+    <item>
+      <title>&quot;Trente Glorieuses&quot;, &quot;Belle Epoque&quot; : quels sont ces &quot;chrononymes&quot;, ces noms qu&#039;on donne aux époques ?</title>
+      <link>https://www.marianne.net/culture/trente-glorieuses-belle-epoque-quels-sont-ces-chrononymes-ces-noms-qu-donne-aux-epoques</link>
+      <description>
+        La “Restauration”, la “Belle Epoque”, les “Trente  Glorieuses”... Pourquoi découper l’histoire en tranches qu’on affuble de sobriquets ? Réponses de l’historien Dominique Kalifa.
       </description>
-     <pubDate>dim, 05/03/2020 - 10:50</pubDate>
- <dc:creator>Philippe Petit</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/culture/trente-glorieuses-belle-epoque-quels-sont-ces-chrononymes-ces-noms-qu-donne-aux-epoques</guid>
-  </item>
-  <item>
-    <title>Histoire : les femmes guerrières et espionnes clandestines</title>
-    <link>https://www.marianne.net/culture/histoire-les-femmes-guerrieres-et-espionnes-clandestines</link>
-    <description>Les femmes n&amp;#039;ont pas attendu les droits civiques pour s&amp;#039;engager dans les guerres. Les espionnes et les guerrières clandestines se sont distinguées dans les deux guerres mondiales. En France, où des généraux s&amp;#039;étaient singularisés par leur lâcheté en 1940, le sacrifice de ces figures de l&amp;#039;ombre a imposé le droit de vote pour toutes.
+      <pubDate>dim, 05/03/2020 - 10:50</pubDate>
+      <dc:creator>Philippe Petit</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/culture/trente-glorieuses-belle-epoque-quels-sont-ces-chrononymes-ces-noms-qu-donne-aux-epoques</guid>
+    </item>
+    <item>
+      <title>Histoire : les femmes guerrières et espionnes clandestines</title>
+      <link>https://www.marianne.net/culture/histoire-les-femmes-guerrieres-et-espionnes-clandestines</link>
+      <description>
+        Les femmes n&amp;#039;ont pas attendu les droits civiques pour s&amp;#039;engager dans les guerres. Les espionnes et les guerrières clandestines se sont distinguées dans les deux guerres mondiales. En France, où des généraux s&amp;#039;étaient singularisés par leur lâcheté en 1940, le sacrifice de ces figures de l&amp;#039;ombre a imposé le droit de vote pour toutes.
       </description>
-     <pubDate>dim, 05/03/2020 - 09:00</pubDate>
- <dc:creator>Pierre Feydel</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/culture/histoire-les-femmes-guerrieres-et-espionnes-clandestines</guid>
-  </item>
-  <item>
-    <title>Henri Weber : hommage au fils d&#039;un horloger de Belleville</title>
-    <link>https://www.marianne.net/debattons/editos/henri-weber-hommage-au-fils-d-un-horloger-de-belleville</link>
-    <description>L&amp;#039;histoire a encore rattrapé Henri Weber, seule une épidémie historique pouvait avoir raison de son humour et de sa profonde humanité. </description>
-     <pubDate>sam, 05/02/2020 - 18:14</pubDate>
- <dc:creator>Guy Konopnicki</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/debattons/editos/henri-weber-hommage-au-fils-d-un-horloger-de-belleville</guid>
-  </item>
-  <item>
-    <title>Confinement : les huit commandements du gouvernement</title>
-    <link>https://www.marianne.net/debattons/editos/confinement-les-huit-commandements-du-gouvernement</link>
-    <description>&amp;quot;Les vieux tu protégeras. S&amp;#039;ils sont classés dans la population « à risque », comme les homosexuels au début du sida, ce n&amp;#039;est pas par hasard. Moins tu les verras, mieux ce sera. Console-toi avec les photos et les souvenirs, qui ne sont pas contagieux. Bonne chance.&amp;quot;</description>
-     <pubDate>sam, 05/02/2020 - 16:18</pubDate>
- <dc:creator>Jack Dion</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/debattons/editos/confinement-les-huit-commandements-du-gouvernement</guid>
-  </item>
-  <item>
-    <title>Les obsédés de la race et de l&#039;identité pendant l&#039;épidémie</title>
-    <link>https://www.marianne.net/debattons/editos/les-obsedes-de-la-race-et-de-l-identite-pendant-l-epidemie</link>
-    <description>&amp;quot;Non, ce virus ne révèle pas de &amp;#039;privilège blanc&amp;#039;, comme l&amp;#039;a écrit Rokhaya Diallo dans un journal turc. Pas plus qu&amp;#039;il ne cible les Noirs ou les Latinos, comme le laisse croire le prisme déformant des statistiques ethniques.&amp;quot;</description>
-     <pubDate>sam, 05/02/2020 - 15:10</pubDate>
- <dc:creator>Caroline Fourest</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/debattons/editos/les-obsedes-de-la-race-et-de-l-identite-pendant-l-epidemie</guid>
-  </item>
-  <item>
-    <title>Joker : histoire d&#039;un personnage mythique</title>
-    <link>https://www.marianne.net/culture/joker-histoire-d-un-personnage-mythique</link>
-    <description>Le triomphe international du film de Todd Phillips sorti en octobre 2019 montre que les personnages maléfiques et incontrôlables ont le vent en poupe. Retour sur l&amp;#039;histoire de cet antihéros ultrapopulaire.
+      <pubDate>dim, 05/03/2020 - 09:00</pubDate>
+      <dc:creator>Pierre Feydel</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/culture/histoire-les-femmes-guerrieres-et-espionnes-clandestines</guid>
+    </item>
+    <item>
+      <title>Henri Weber : hommage au fils d&#039;un horloger de Belleville</title>
+      <link>https://www.marianne.net/debattons/editos/henri-weber-hommage-au-fils-d-un-horloger-de-belleville</link>
+      <description>L&amp;#039;histoire a encore rattrapé Henri Weber, seule une épidémie historique pouvait avoir raison de son humour et de sa profonde humanité. </description>
+      <pubDate>sam, 05/02/2020 - 18:14</pubDate>
+      <dc:creator>Guy Konopnicki</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/debattons/editos/henri-weber-hommage-au-fils-d-un-horloger-de-belleville</guid>
+    </item>
+    <item>
+      <title>Confinement : les huit commandements du gouvernement</title>
+      <link>https://www.marianne.net/debattons/editos/confinement-les-huit-commandements-du-gouvernement</link>
+      <description>&amp;quot;Les vieux tu protégeras. S&amp;#039;ils sont classés dans la population « à risque », comme les homosexuels au début du sida, ce n&amp;#039;est pas par hasard. Moins tu les verras, mieux ce sera. Console-toi avec les photos et les souvenirs, qui ne sont pas contagieux. Bonne chance.&amp;quot;</description>
+      <pubDate>sam, 05/02/2020 - 16:18</pubDate>
+      <dc:creator>Jack Dion</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/debattons/editos/confinement-les-huit-commandements-du-gouvernement</guid>
+    </item>
+    <item>
+      <title>Les obsédés de la race et de l&#039;identité pendant l&#039;épidémie</title>
+      <link>https://www.marianne.net/debattons/editos/les-obsedes-de-la-race-et-de-l-identite-pendant-l-epidemie</link>
+      <description>&amp;quot;Non, ce virus ne révèle pas de &amp;#039;privilège blanc&amp;#039;, comme l&amp;#039;a écrit Rokhaya Diallo dans un journal turc. Pas plus qu&amp;#039;il ne cible les Noirs ou les Latinos, comme le laisse croire le prisme déformant des statistiques ethniques.&amp;quot;</description>
+      <pubDate>sam, 05/02/2020 - 15:10</pubDate>
+      <dc:creator>Caroline Fourest</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/debattons/editos/les-obsedes-de-la-race-et-de-l-identite-pendant-l-epidemie</guid>
+    </item>
+    <item>
+      <title>Joker : histoire d&#039;un personnage mythique</title>
+      <link>https://www.marianne.net/culture/joker-histoire-d-un-personnage-mythique</link>
+      <description>
+        Le triomphe international du film de Todd Phillips sorti en octobre 2019 montre que les personnages maléfiques et incontrôlables ont le vent en poupe. Retour sur l&amp;#039;histoire de cet antihéros ultrapopulaire.
       </description>
-     <pubDate>sam, 05/02/2020 - 14:47</pubDate>
- <dc:creator>Olivier De Bruyn</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/culture/joker-histoire-d-un-personnage-mythique</guid>
-  </item>
-  <item>
-    <title>Un légionnaire de la force française Barkhane tué au Mali</title>
-    <link>https://www.marianne.net/monde/un-legionnaire-de-la-force-francaise-barkhane-tue-au-mali</link>
-    <description>L&amp;#039;Elysée a annoncé ce 2 mai le décès du brigadier Dmytro Martynyouk, du 1er REC (Régiment étranger de cavalerie). Il avait été grièvement blessé par un IED (Engin explosif improvisé) le 28 avril, lors d&amp;#039;une opération dans la région du Liptako Gourma, où agissent la force Barkhane et celles du G5 Sahel.</description>
-     <pubDate>sam, 05/02/2020 - 14:45</pubDate>
- <dc:creator>Vladimir de Gmeline</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/monde/un-legionnaire-de-la-force-francaise-barkhane-tue-au-mali</guid>
-  </item>
-  <item>
-    <title>Les forcenés de la &quot;mondialisation heureuse&quot;</title>
-    <link>https://www.marianne.net/politique/les-forcenes-de-la-mondialisation-heureuse</link>
-    <description>Si nombre d&amp;#039;observateurs, de tous bords, admettent que la crise sanitaire que nous traversons est l&amp;#039;occasion de repenser notre modèle de société, d&amp;#039;autres estiment que la mondialisation est indépassable. Petit tour d&amp;#039;horizon.
+      <pubDate>sam, 05/02/2020 - 14:47</pubDate>
+      <dc:creator>Olivier De Bruyn</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/culture/joker-histoire-d-un-personnage-mythique</guid>
+    </item>
+    <item>
+      <title>Un légionnaire de la force française Barkhane tué au Mali</title>
+      <link>https://www.marianne.net/monde/un-legionnaire-de-la-force-francaise-barkhane-tue-au-mali</link>
+      <description>L&amp;#039;Elysée a annoncé ce 2 mai le décès du brigadier Dmytro Martynyouk, du 1er REC (Régiment étranger de cavalerie). Il avait été grièvement blessé par un IED (Engin explosif improvisé) le 28 avril, lors d&amp;#039;une opération dans la région du Liptako Gourma, où agissent la force Barkhane et celles du G5 Sahel.</description>
+      <pubDate>sam, 05/02/2020 - 14:45</pubDate>
+      <dc:creator>Vladimir de Gmeline</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/monde/un-legionnaire-de-la-force-francaise-barkhane-tue-au-mali</guid>
+    </item>
+    <item>
+      <title>Les forcenés de la &quot;mondialisation heureuse&quot;</title>
+      <link>https://www.marianne.net/politique/les-forcenes-de-la-mondialisation-heureuse</link>
+      <description>
+        Si nombre d&amp;#039;observateurs, de tous bords, admettent que la crise sanitaire que nous traversons est l&amp;#039;occasion de repenser notre modèle de société, d&amp;#039;autres estiment que la mondialisation est indépassable. Petit tour d&amp;#039;horizon.
       </description>
-     <pubDate>sam, 05/02/2020 - 14:04</pubDate>
- <dc:creator>Matthieu Giroux</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/politique/les-forcenes-de-la-mondialisation-heureuse</guid>
-  </item>
-  <item>
-    <title>Tony Allen, fin de batterie</title>
-    <link>https://www.marianne.net/culture/tony-allen-fin-de-batterie</link>
-    <description>Le batteur Tony Allen, créateur avec Fela Anikulapo Kuti de l’afrobeat, est brutalement décédé à Paris ce 30 avril. Il avait 79 ans. Inattendue, sa disparition laisse sous le choc le monde de la musique, déjà fortement ébranlé par la situation actuelle. </description>
-     <pubDate>sam, 05/02/2020 - 13:20</pubDate>
- <dc:creator>Frédérique Briard</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/culture/tony-allen-fin-de-batterie</guid>
-  </item>
-  <item>
-    <title>Face au Covid-19, la désindustrialisation massive tue</title>
-    <link>https://www.marianne.net/debattons/tribunes/face-au-covid-19-la-desindustrialisation-massive-tue</link>
-    <description>L’Allemagne, le Japon et la Corée du Sud possèdent deux points communs. Ces pays parviennent à limiter les dégâts sanitaires du Covid et possèdent une puissante industrie. Pas vraiment un hasard.</description>
-     <pubDate>sam, 05/02/2020 - 11:13</pubDate>
- <dc:creator>Jean-Michel Quatrepoint</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/debattons/tribunes/face-au-covid-19-la-desindustrialisation-massive-tue</guid>
-  </item>
-  <item>
-    <title>Pierre-André Taguieff : &quot;Le retour au réel, c&#039;est le retour à la nation&quot; </title>
-    <link>https://www.marianne.net/politique/pierre-andre-taguieff-le-retour-au-reel-c-est-le-retour-la-nation</link>
-    <description>Le politologue vient de publier “la Pandémie par-delà les peurs : réinventer l&amp;#039;Etat-nation ?”, livre numérique qui tire un bilan important sur la crise que nous vivons et esquisse des pistes pour la suite, à travers la démondialisation.
+      <pubDate>sam, 05/02/2020 - 14:04</pubDate>
+      <dc:creator>Matthieu Giroux</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/politique/les-forcenes-de-la-mondialisation-heureuse</guid>
+    </item>
+    <item>
+      <title>Tony Allen, fin de batterie</title>
+      <link>https://www.marianne.net/culture/tony-allen-fin-de-batterie</link>
+      <description>Le batteur Tony Allen, créateur avec Fela Anikulapo Kuti de l’afrobeat, est brutalement décédé à Paris ce 30 avril. Il avait 79 ans. Inattendue, sa disparition laisse sous le choc le monde de la musique, déjà fortement ébranlé par la situation actuelle. </description>
+      <pubDate>sam, 05/02/2020 - 13:20</pubDate>
+      <dc:creator>Frédérique Briard</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/culture/tony-allen-fin-de-batterie</guid>
+    </item>
+    <item>
+      <title>Face au Covid-19, la désindustrialisation massive tue</title>
+      <link>https://www.marianne.net/debattons/tribunes/face-au-covid-19-la-desindustrialisation-massive-tue</link>
+      <description>L’Allemagne, le Japon et la Corée du Sud possèdent deux points communs. Ces pays parviennent à limiter les dégâts sanitaires du Covid et possèdent une puissante industrie. Pas vraiment un hasard.</description>
+      <pubDate>sam, 05/02/2020 - 11:13</pubDate>
+      <dc:creator>Jean-Michel Quatrepoint</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/debattons/tribunes/face-au-covid-19-la-desindustrialisation-massive-tue</guid>
+    </item>
+    <item>
+      <title>Pierre-André Taguieff : &quot;Le retour au réel, c&#039;est le retour à la nation&quot; </title>
+      <link>https://www.marianne.net/politique/pierre-andre-taguieff-le-retour-au-reel-c-est-le-retour-la-nation</link>
+      <description>
+        Le politologue vient de publier “la Pandémie par-delà les peurs : réinventer l&amp;#039;Etat-nation ?”, livre numérique qui tire un bilan important sur la crise que nous vivons et esquisse des pistes pour la suite, à travers la démondialisation.
       </description>
-     <pubDate>sam, 05/02/2020 - 09:45</pubDate>
- <dc:creator>Kévin Boucaud-Victoire</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/politique/pierre-andre-taguieff-le-retour-au-reel-c-est-le-retour-la-nation</guid>
-  </item>
-  <item>
-    <title>Dans n&#039;importe quel pays notre bilan serait tenu pour mauvais : au pays de Pasteur, c&#039;est un Juin 40 sanitaire</title>
-    <link>https://www.marianne.net/debattons/editos/dans-n-importe-quel-pays-notre-bilan-serait-tenu-pour-mauvais-au-pays-de-pasteur-c</link>
-    <description>Avec un tel bilan, le moins que l&amp;#039;on pourrait demander à tous les intervenants, c&amp;#039;est l&amp;#039;humilité. Dans n&amp;#039;importe quel pays du monde, ce bilan serait tenu pour mauvais. Au pays de Pasteur, de Claude Bernard, de Laennec et de tant d&amp;#039;autres savants, il est tout simplement indigne, il est catastrophique. C&amp;#039;est un Juin 40 sanitaire. </description>
-     <pubDate>sam, 05/02/2020 - 08:32</pubDate>
- <dc:creator>Jacques Julliard</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/debattons/editos/dans-n-importe-quel-pays-notre-bilan-serait-tenu-pour-mauvais-au-pays-de-pasteur-c</guid>
-  </item>
-  <item>
-    <title>&quot;Il ne faut pas que les gens inquiets se brident par peur du Covid-19&quot; : il est urgent... de retourner aux urgences</title>
-    <link>https://www.marianne.net/societe/il-ne-faut-pas-que-les-gens-inquiets-se-brident-par-peur-du-covid-19-il-est-urgent-de</link>
-    <description>La peur du coronavirus a convaincu beaucoup de Français de ne plus consulter leur médecin généraliste et de ne pas se rendre aux Urgences, même lorsque cela est nécessaire. Ce défaut de consultation, qu&amp;#039;a pu constater Christophe Choquet, responsable des services d&amp;#039;Urgences de l&amp;#039;hôpital Bichat, lui fait craindre le pire.</description>
-     <pubDate>ven, 05/01/2020 - 16:17</pubDate>
- <dc:creator>Samuel Piquet</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/societe/il-ne-faut-pas-que-les-gens-inquiets-se-brident-par-peur-du-covid-19-il-est-urgent-de</guid>
-  </item>
-  <item>
-    <title>Pas de boîtes de nuit, pas de festivals, pas de long voyages : le casse-tête de l&#039;été 2020</title>
-    <link>https://www.marianne.net/societe/pas-de-boites-de-nuit-pas-de-festivals-pas-de-long-voyages-le-casse-tete-de-l-ete-2020</link>
-    <description>Drôle de saison en perspective avec la menace de la deuxième vague de contamination. Certains vont devoir rester “confinés volontaires”. Les autres pourront circuler, mais pour aller où, avec qui, et pour faire quoi ?
+      <pubDate>sam, 05/02/2020 - 09:45</pubDate>
+      <dc:creator>Kévin Boucaud-Victoire</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/politique/pierre-andre-taguieff-le-retour-au-reel-c-est-le-retour-la-nation</guid>
+    </item>
+    <item>
+      <title>Dans n&#039;importe quel pays notre bilan serait tenu pour mauvais : au pays de Pasteur, c&#039;est un Juin 40 sanitaire</title>
+      <link>https://www.marianne.net/debattons/editos/dans-n-importe-quel-pays-notre-bilan-serait-tenu-pour-mauvais-au-pays-de-pasteur-c</link>
+      <description>Avec un tel bilan, le moins que l&amp;#039;on pourrait demander à tous les intervenants, c&amp;#039;est l&amp;#039;humilité. Dans n&amp;#039;importe quel pays du monde, ce bilan serait tenu pour mauvais. Au pays de Pasteur, de Claude Bernard, de Laennec et de tant d&amp;#039;autres savants, il est tout simplement indigne, il est catastrophique. C&amp;#039;est un Juin 40 sanitaire. </description>
+      <pubDate>sam, 05/02/2020 - 08:32</pubDate>
+      <dc:creator>Jacques Julliard</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/debattons/editos/dans-n-importe-quel-pays-notre-bilan-serait-tenu-pour-mauvais-au-pays-de-pasteur-c</guid>
+    </item>
+    <item>
+      <title>&quot;Il ne faut pas que les gens inquiets se brident par peur du Covid-19&quot; : il est urgent... de retourner aux urgences</title>
+      <link>https://www.marianne.net/societe/il-ne-faut-pas-que-les-gens-inquiets-se-brident-par-peur-du-covid-19-il-est-urgent-de</link>
+      <description>La peur du coronavirus a convaincu beaucoup de Français de ne plus consulter leur médecin généraliste et de ne pas se rendre aux Urgences, même lorsque cela est nécessaire. Ce défaut de consultation, qu&amp;#039;a pu constater Christophe Choquet, responsable des services d&amp;#039;Urgences de l&amp;#039;hôpital Bichat, lui fait craindre le pire.</description>
+      <pubDate>ven, 05/01/2020 - 16:17</pubDate>
+      <dc:creator>Samuel Piquet</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/societe/il-ne-faut-pas-que-les-gens-inquiets-se-brident-par-peur-du-covid-19-il-est-urgent-de</guid>
+    </item>
+    <item>
+      <title>Pas de boîtes de nuit, pas de festivals, pas de long voyages : le casse-tête de l&#039;été 2020</title>
+      <link>https://www.marianne.net/societe/pas-de-boites-de-nuit-pas-de-festivals-pas-de-long-voyages-le-casse-tete-de-l-ete-2020</link>
+      <description>
+        Drôle de saison en perspective avec la menace de la deuxième vague de contamination. Certains vont devoir rester “confinés volontaires”. Les autres pourront circuler, mais pour aller où, avec qui, et pour faire quoi ?
       </description>
-     <pubDate>ven, 05/01/2020 - 15:03</pubDate>
- <dc:creator>Laurent Valdiguié</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/societe/pas-de-boites-de-nuit-pas-de-festivals-pas-de-long-voyages-le-casse-tete-de-l-ete-2020</guid>
-  </item>
-  <item>
-    <title>Air France, Iberia, SAS : ces compagnies aériennes où on ne respecte pas la &quot;distanciation sociale&quot;</title>
-    <link>https://www.marianne.net/societe/air-france-iberia-sas-ces-compagnies-aeriennes-ou-ne-respecte-pas-la-distanciation-sociale</link>
-    <description>Malgré l&amp;#039;épidémie de coronavirus, plusieurs compagnies aériennes continuent de faire voler des avions &amp;quot;bondés&amp;quot;. Interrogés sur une neutralisation des places centrales, les dirigeants refusent, pour des raisons financières.</description>
-     <pubDate>ven, 05/01/2020 - 14:12</pubDate>
- <dc:creator>Thomas Rabino</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/societe/air-france-iberia-sas-ces-compagnies-aeriennes-ou-ne-respecte-pas-la-distanciation-sociale</guid>
-  </item>
-  <item>
-    <title>15 vieux jeux à ressortir des cartons pendant le confinement</title>
-    <link>https://www.marianne.net/culture/15-vieux-jeux-ressortir-des-cartons-pendant-le-confinement</link>
-    <description>La rédaction de Marianne a fouillé dans ses cartons pour ressortir quinze de ses vieux jeux préférés dans lesquels se replonger pour patienter d&amp;#039;ici la fin du confinement.</description>
-     <pubDate>ven, 05/01/2020 - 13:51</pubDate>
- <dc:creator>Anthony Cortes, Louis Nadau</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/culture/15-vieux-jeux-ressortir-des-cartons-pendant-le-confinement</guid>
-  </item>
-  <item>
-    <title>Armée : le défi de protéger sans s&#039;infecter</title>
-    <link>https://www.marianne.net/societe/armee-le-defi-de-proteger-sans-s-infecter</link>
-    <description>L&amp;#039;affaire de la contamination massive sur le “Charles de Gaulle” met au jour un dilemme auquel les militaires doivent faire face. Comment assurer la continuité des missions, tout en préservant la santé des soldats ?
+      <pubDate>ven, 05/01/2020 - 15:03</pubDate>
+      <dc:creator>Laurent Valdiguié</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/societe/pas-de-boites-de-nuit-pas-de-festivals-pas-de-long-voyages-le-casse-tete-de-l-ete-2020</guid>
+    </item>
+    <item>
+      <title>Air France, Iberia, SAS : ces compagnies aériennes où on ne respecte pas la &quot;distanciation sociale&quot;</title>
+      <link>https://www.marianne.net/societe/air-france-iberia-sas-ces-compagnies-aeriennes-ou-ne-respecte-pas-la-distanciation-sociale</link>
+      <description>Malgré l&amp;#039;épidémie de coronavirus, plusieurs compagnies aériennes continuent de faire voler des avions &amp;quot;bondés&amp;quot;. Interrogés sur une neutralisation des places centrales, les dirigeants refusent, pour des raisons financières.</description>
+      <pubDate>ven, 05/01/2020 - 14:12</pubDate>
+      <dc:creator>Thomas Rabino</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/societe/air-france-iberia-sas-ces-compagnies-aeriennes-ou-ne-respecte-pas-la-distanciation-sociale</guid>
+    </item>
+    <item>
+      <title>15 vieux jeux à ressortir des cartons pendant le confinement</title>
+      <link>https://www.marianne.net/culture/15-vieux-jeux-ressortir-des-cartons-pendant-le-confinement</link>
+      <description>La rédaction de Marianne a fouillé dans ses cartons pour ressortir quinze de ses vieux jeux préférés dans lesquels se replonger pour patienter d&amp;#039;ici la fin du confinement.</description>
+      <pubDate>ven, 05/01/2020 - 13:51</pubDate>
+      <dc:creator>Anthony Cortes, Louis Nadau</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/culture/15-vieux-jeux-ressortir-des-cartons-pendant-le-confinement</guid>
+    </item>
+    <item>
+      <title>Armée : le défi de protéger sans s&#039;infecter</title>
+      <link>https://www.marianne.net/societe/armee-le-defi-de-proteger-sans-s-infecter</link>
+      <description>
+        L&amp;#039;affaire de la contamination massive sur le “Charles de Gaulle” met au jour un dilemme auquel les militaires doivent faire face. Comment assurer la continuité des missions, tout en préservant la santé des soldats ?
       </description>
-     <pubDate>ven, 05/01/2020 - 13:30</pubDate>
- <dc:creator>Vladimir de Gmeline</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/societe/armee-le-defi-de-proteger-sans-s-infecter</guid>
-  </item>
-  <item>
-    <title>&quot;Je redoute les répercussions sanitaires à la suite du confinement&quot; : la semaine de Thierry, médecin généraliste</title>
-    <link>https://www.marianne.net/societe/je-redoute-les-repercussions-sanitaires-la-suite-du-confinement-la-semaine-de-thierry</link>
-    <description>Le confinement commence à peser sur Thierry, notre médecin &amp;quot;premier de cordée&amp;quot;. L&amp;#039;idée du déconfinement prochain ne l&amp;#039;effraie pas, même si la décision du gouvernement de rouvrir les écoles primaires l&amp;#039;interroge en termes de risques sanitaires.</description>
-     <pubDate>ven, 05/01/2020 - 13:26</pubDate>
- <dc:creator>Bruno Rieth</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/societe/je-redoute-les-repercussions-sanitaires-la-suite-du-confinement-la-semaine-de-thierry</guid>
-  </item>
-  <item>
-    <title>Etats-Unis, Allemagne, Algérie... Tour du monde des crises post-Covid </title>
-    <link>https://www.marianne.net/monde/etats-unis-allemagne-algerie-tour-du-monde-des-crises-post-covid</link>
-    <description>Outre les conséquences sanitaires, l’épidémie dissémine une série de bombes financières, économiques et sociales aux coins de la planète. Revue de détail des principaux risques.</description>
-     <pubDate>ven, 05/01/2020 - 12:34</pubDate>
- <dc:creator>Benjamin Masse-Stamberger</dc:creator>
- <guid isPermaLink="true">https://www.marianne.net/monde/etats-unis-allemagne-algerie-tour-du-monde-des-crises-post-covid</guid>
-  </item>
+      <pubDate>ven, 05/01/2020 - 13:30</pubDate>
+      <dc:creator>Vladimir de Gmeline</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/societe/armee-le-defi-de-proteger-sans-s-infecter</guid>
+    </item>
+    <item>
+      <title>&quot;Je redoute les répercussions sanitaires à la suite du confinement&quot; : la semaine de Thierry, médecin généraliste</title>
+      <link>https://www.marianne.net/societe/je-redoute-les-repercussions-sanitaires-la-suite-du-confinement-la-semaine-de-thierry</link>
+      <description>Le confinement commence à peser sur Thierry, notre médecin &amp;quot;premier de cordée&amp;quot;. L&amp;#039;idée du déconfinement prochain ne l&amp;#039;effraie pas, même si la décision du gouvernement de rouvrir les écoles primaires l&amp;#039;interroge en termes de risques sanitaires.</description>
+      <pubDate>ven, 05/01/2020 - 13:26</pubDate>
+      <dc:creator>Bruno Rieth</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/societe/je-redoute-les-repercussions-sanitaires-la-suite-du-confinement-la-semaine-de-thierry</guid>
+    </item>
+    <item>
+      <title>Etats-Unis, Allemagne, Algérie... Tour du monde des crises post-Covid </title>
+      <link>https://www.marianne.net/monde/etats-unis-allemagne-algerie-tour-du-monde-des-crises-post-covid</link>
+      <description>Outre les conséquences sanitaires, l’épidémie dissémine une série de bombes financières, économiques et sociales aux coins de la planète. Revue de détail des principaux risques.</description>
+      <pubDate>ven, 05/01/2020 - 12:34</pubDate>
+      <dc:creator>Benjamin Masse-Stamberger</dc:creator>
+      <guid isPermaLink="true">https://www.marianne.net/monde/etats-unis-allemagne-algerie-tour-du-monde-des-crises-post-covid</guid>
+    </item>
   </channel>
 </rss>

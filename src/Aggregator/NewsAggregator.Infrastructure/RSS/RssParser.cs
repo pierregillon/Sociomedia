@@ -17,14 +17,18 @@ namespace NewsAggregator.Infrastructure.RSS
 
             var rss = XElement.Load(reader);
 
+            var mediaAttribute = rss.Attribute(XNamespace.Xmlns + "media");
+            var media = mediaAttribute != null ? XNamespace.Get(mediaAttribute.Value) : null;
+
             return new RssContent(rss
                 .Descendants("item")
                 .Select(x => new RssItem {
                     Id = (string) x.Element("guid"),
                     Title = WebUtility.HtmlDecode((string) x.Element("title")),
-                    Description = WebUtility.HtmlDecode((string) x.Element("description")),
+                    Summary = WebUtility.HtmlDecode((string) x.Element("description")),
                     PublishDate = ParseDate((string) x.Element("pubDate")),
-                    Link = (string) x.Element("link")
+                    Link = (string) x.Element("link"),
+                    ImageUrl = media != null ? (string)x.Element(media + "content")?.Attribute("url") : null
                 })
                 .ToArray()
             );
