@@ -10,10 +10,10 @@ namespace NewsAggregator.Domain.Articles
 
         public Article(string title, Uri url, Guid rssSourceId, IReadOnlyCollection<Keyword> keywords) : this()
         {
-            ApplyChange(new ArticleCreated(Guid.NewGuid(), title, url, keywords, rssSourceId));
+            ApplyChange(new ArticleSynchronized(Guid.NewGuid(), title, url, keywords, rssSourceId));
         }
 
-        private void Apply(ArticleCreated @event)
+        private void Apply(ArticleSynchronized @event)
         {
             Id = @event.Id;
         }

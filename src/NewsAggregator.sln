@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aggregator", "Aggregator", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReadDatabaseSynchronizer", "ReadDatabaseSynchronizer", "{5364BF41-CA1F-4D5C-B87B-58E45316736C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewsAggregator.ReadDatabaseSynchronizer", "ReadDatabaseSynchronizer\NewsAggregator.ReadDatabaseSynchronizer\NewsAggregator.ReadDatabaseSynchronizer.csproj", "{7F53EF84-481F-40BF-8D7A-5D40EE15AD40}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{DC9B45F7-D2E2-4D17-A78A-0A2C4CE1EFA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC9B45F7-D2E2-4D17-A78A-0A2C4CE1EFA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC9B45F7-D2E2-4D17-A78A-0A2C4CE1EFA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F53EF84-481F-40BF-8D7A-5D40EE15AD40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F53EF84-481F-40BF-8D7A-5D40EE15AD40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F53EF84-481F-40BF-8D7A-5D40EE15AD40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F53EF84-481F-40BF-8D7A-5D40EE15AD40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +59,7 @@ Global
 		{A765D43A-1293-4322-8586-1E6F853CD818} = {768CBA79-C202-4BF7-A515-0D2E08C5A051}
 		{E1729118-86AA-4368-8EF9-117B8F2A141B} = {768CBA79-C202-4BF7-A515-0D2E08C5A051}
 		{DC9B45F7-D2E2-4D17-A78A-0A2C4CE1EFA9} = {768CBA79-C202-4BF7-A515-0D2E08C5A051}
+		{7F53EF84-481F-40BF-8D7A-5D40EE15AD40} = {5364BF41-CA1F-4D5C-B87B-58E45316736C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B56ACA9-E22E-44E6-9319-99F16930E4F7}

@@ -46,7 +46,7 @@ namespace NewsAggregator
                 x.For<ReadModelDatabaseFeeder>().Singleton();
                 x.For<InMemoryDatabase>().Singleton();
 
-#if DEBUG
+#if !DEBUG
                 x.For<IEventStore>().Use<InMemoryEventStore>().Singleton();
 #else
                 x.For<IEventStore>().Use<EventStoreOrg>().Singleton();

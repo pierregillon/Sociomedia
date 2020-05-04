@@ -4,7 +4,7 @@ using NewsAggregator.Application.Commands.AddRssSource;
 using NewsAggregator.Application.Commands.SynchronizeRssSources;
 using NewsAggregator.Infrastructure.CQRS;
 
-#if RELEASE
+#if !RELEASE
 using CQRSlite.Events;
 using NewsAggregator.Infrastructure;
 #endif
@@ -17,7 +17,7 @@ namespace NewsAggregator
         {
             var container = ContainerBuilder.Build();
 
-#if RELEASE
+#if !RELEASE
             var eventStore = (EventStoreOrg) container.GetInstance<IEventStore>();
             await eventStore.Connect("localhost");
 #endif

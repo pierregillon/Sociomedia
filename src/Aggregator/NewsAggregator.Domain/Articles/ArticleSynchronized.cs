@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace NewsAggregator.Domain.Articles
 {
-    public class ArticleCreated : DomainEvent
+    public class ArticleSynchronized : DomainEvent
     {
-        public ArticleCreated(Guid id, string title, Uri url, IReadOnlyCollection<Keyword> keywords, Guid rssSourceId)
+        public ArticleSynchronized(Guid id, string title, Uri url, IReadOnlyCollection<Keyword> keywords, Guid rssSourceId)
         {
             Id = id;
             Title = title;
