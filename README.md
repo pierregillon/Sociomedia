@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/0ohnap9efouupl72?svg=true)](https://ci.appveyor.com/project/pierregillon/backgroundr)
+[![Build status](https://ci.appveyor.com/api/projects/status/j9039qpys7s18fnq/branch/master?svg=true)](https://ci.appveyor.com/project/pierregillon/sociomedia/branch/master)
 
 # What is Sociomedia ?
 Sociomedia is a media aggregator and a community that challenges information by evaluating articles.
