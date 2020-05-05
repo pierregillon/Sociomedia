@@ -43,13 +43,12 @@ namespace Sociomedia.FeedAggregator.Tests
             rssContent.Items
                 .First()
                 .Should()
-                .BeEquivalentTo(new RssItem
-                {
+                .BeEquivalentTo(new RssItem {
                     Id = "https://www.marianne.net/politique/semiologie-de-didier-raoult-le-look-emmerdeur",
                     Link = "https://www.marianne.net/politique/semiologie-de-didier-raoult-le-look-emmerdeur",
                     Title = "Sémiologie de Didier Raoult : le look emmerdeur",
                     Summary = "BIIIIP ! Ennuis à l'horizon ! Certains signaux vestimentaires en disent plus qu'une fiche LinkedIn ou même qu'une fréquentation amicale assidue. Ainsi les chantres du poil à gratter, les génies de l'insoumission, les pas “corporate”, qui “ne jouent pas le jeu” s'annoncent-ils par une sémiologie bien spéciale. ",
-                    PublishDate = new DateTimeOffset(2020, 5, 3, 11, 30, 0, TimeSpan.FromHours(2)),
+                    PublishDate = new DateTimeOffset(2020, 5, 3, 11, 30, 0, 0, TimeSpan.FromHours(2)),
                     ImageUrl = null
                 });
         }
@@ -66,8 +65,7 @@ namespace Sociomedia.FeedAggregator.Tests
             rssContent.Items
                 .First()
                 .Should()
-                .BeEquivalentTo(new RssItem
-                {
+                .BeEquivalentTo(new RssItem {
                     Id = "tag:www.liberation.fr,2020-03-04:/1787260",
                     Link = "https://www.liberation.fr/planete/2020/05/04/direct-suivez-les-dernieres-informations-sur-la-pandemie-de-covid-19-en-france-et-dans-le-monde_1787260?xtor=rss-450",
                     Title = "Direct - Education, aide aux jeunes, entreprises... Edouard Philippe précise la stratégie de déconfinement",
@@ -89,8 +87,7 @@ namespace Sociomedia.FeedAggregator.Tests
             rssContent.Items
                 .First()
                 .Should()
-                .BeEquivalentTo(new RssItem
-                {
+                .BeEquivalentTo(new RssItem {
                     Id = "https://www.francetvinfo.fr/sante/maladie/coronavirus/les-detenus-sont-inquiets-surtout-pour-leur-famille-a-mulhouse-les-surveillants-de-prison-doivent-proteger-et-rassurer-face-au-coronavirus_3948277.html#xtor=RSS-3-[france]",
                     Link = "https://www.francetvinfo.fr/sante/maladie/coronavirus/les-detenus-sont-inquiets-surtout-pour-leur-famille-a-mulhouse-les-surveillants-de-prison-doivent-proteger-et-rassurer-face-au-coronavirus_3948277.html#xtor=RSS-3-[france]",
                     Title = "\"Les détenus sont inquiets, surtout pour leur famille\" : à Mulhouse, les surveillants de prison doivent protéger et rassurer face au coronavirus",

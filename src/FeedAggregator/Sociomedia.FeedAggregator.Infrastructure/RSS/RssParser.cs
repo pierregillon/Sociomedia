@@ -89,7 +89,12 @@ namespace Sociomedia.FeedAggregator.Infrastructure.RSS
 
             const string format = "MM/dd/yyyy - HH:mm";
 
-            if (DateTimeOffset.TryParseExact(dateStr, format, new CultureInfo("fr-FR"), DateTimeStyles.AssumeLocal, out date)) {
+            if (DateTimeOffset.TryParseExact(dateStr, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out date)) {
+                date = TimeZoneInfo.ConvertTime(
+                    date.DateTime, 
+                    TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time"), 
+                    TimeZoneInfo.Utc
+                );
                 return true;
             }
 

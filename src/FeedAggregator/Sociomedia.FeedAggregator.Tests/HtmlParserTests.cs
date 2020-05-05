@@ -62,7 +62,7 @@ namespace Sociomedia.FeedAggregator.Tests
 
             htmlArticle
                 .Should()
-                .Be("text outside article alert('some script')");
+                .Be("text outside article");
         }
     }
 }
