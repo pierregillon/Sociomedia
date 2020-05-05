@@ -1,3 +1,4 @@
+using System.Linq;
 using LinqToDB.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,6 +27,17 @@ namespace Sociomedia.Front
             services.AddServerSideBlazor();
             services.AddScoped<ArticleFinder>();
             services.AddSingleton<DbConnectionReadModel>();
+
+            DataConnection.DefaultSettings = new DbSettings(
+                Configuration["sqldatabase:providerName"],
+                Configuration["sqldatabase:connectionString"]
+            );
+        }
+
+        public class AppSettings
+        {
+            public string ApplicationName { get; set; }
+            public string ApplicationUrl { get; set; }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,8 +61,6 @@ namespace Sociomedia.Front
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
-
-            DataConnection.DefaultSettings = new DbSettings();
         }
     }
 }

@@ -1,0 +1,8 @@
+{
+  "eventstore": {
+    "server": "localhost",
+    "port": 1113,
+    "login": "admin",
+    "password": "changeit" 
+  }
+}

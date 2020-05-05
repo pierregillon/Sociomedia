@@ -11,22 +11,25 @@ namespace Sociomedia.ProjectionSynchronizer
 {
     public class ContainerBuilder
     {
-        public static IContainer Build()
+        public static IContainer Build(Configuration configuration)
         {
-            return new Container(configuration => {
-                configuration.For<EventStoreOrg>().Singleton();
-                configuration.For<IEventPublisher>().Use<StructureMapEventPublisher>();
-                configuration.For<ITypeLocator>().Use<ReflectionTypeLocator>();
-                configuration.For<ILogger>().Use<ConsoleLogger>();
-                configuration.For<DbConnectionReadModel>().Singleton();
-                configuration.For<IStreamPositionRepository>().Use<StreamPositionRepository>();
-                configuration.For<DbSettings>();
+            return new Container(x => {
+                x.For<EventStoreOrg>().Singleton();
+                x.For<IEventPublisher>().Use<StructureMapEventPublisher>();
+                x.For<ITypeLocator>().Use<ReflectionTypeLocator>();
+                x.For<ILogger>().Use<ConsoleLogger>();
+                x.For<DbConnectionReadModel>().Singleton();
+                x.For<IStreamPositionRepository>().Use<StreamPositionRepository>();
+                x.For<DbSettings>();
 
-                configuration.Scan(scanner => {
+                x.Scan(scanner => {
                     scanner.TheCallingAssembly();
                     scanner.Convention<AllInterfacesConvention>();
                     scanner.AddAllTypesOf(typeof(IEventListener<>));
                 });
+
+                x.For<EventStoreConfiguration>().Use(configuration.EventStore).Singleton();
+                x.For<SqlDatabaseConfiguration>().Use(configuration.SqlDatabase).Singleton();
             });
         }
 

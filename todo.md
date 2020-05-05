@@ -8,3 +8,5 @@
 * continuous integration
 * database configuration access (event store + sql db)
 * rss / atom ressources creation
+* projection synchronizer : infinite loop
+* feed aggregator : infinite loop.

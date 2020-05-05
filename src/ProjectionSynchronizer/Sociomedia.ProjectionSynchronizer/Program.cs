@@ -11,19 +11,27 @@ namespace Sociomedia.ProjectionSynchronizer
     {
         private static async Task Main(string[] args)
         {
-            var container = ContainerBuilder.Build();
+            try {
+                var configuration = ConfigurationManager<Configuration>.Read();
 
-            DataConnection.DefaultSettings = container.GetInstance<DbSettings>();
+                var container = ContainerBuilder.Build(configuration);
 
-            var synchronizer = container.GetInstance<DomainEventSynchronizer>();
+                DataConnection.DefaultSettings = container.GetInstance<DbSettings>();
 
-            container.GetInstance<ILogger>().Debug("Read database synchronizer started.");
+                var synchronizer = container.GetInstance<DomainEventSynchronizer>();
+
+                container.GetInstance<ILogger>().Debug("Read database synchronizer started.");
             
-            await synchronizer.StartSynchronization();
+                await synchronizer.StartSynchronization();
 
-            Console.ReadKey();
+                Console.ReadKey();
 
-            synchronizer.StopSynchronization();
+                synchronizer.StopSynchronization();
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex);
+                throw;
+            }
         }
     }
 }

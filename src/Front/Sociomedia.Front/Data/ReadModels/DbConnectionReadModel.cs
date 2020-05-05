@@ -5,7 +5,7 @@ namespace Sociomedia.Front.Data.ReadModels
 {
     public class DbConnectionReadModel : LinqToDB.Data.DataConnection
     {
-        public DbConnectionReadModel() : base("Sociomedia") { }
+        public DbConnectionReadModel() : base("Sociomedia.Front") { }
 
         public ITable<ArticleTable> Articles => GetTable<ArticleTable>();
         public ITable<KeywordTable> Keywords => GetTable<KeywordTable>();

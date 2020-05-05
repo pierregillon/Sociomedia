@@ -56,9 +56,10 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
 
         // ----- Internal logic
 
-        private void SubscriptionDropped(EventStoreCatchUpSubscription arg1, SubscriptionDropReason arg2, Exception arg3)
+        private void SubscriptionDropped(EventStoreCatchUpSubscription subscription, SubscriptionDropReason reason, Exception ex)
         {
-            _logger.Debug("Subscription dropped");
+            _logger.Debug($"Subscription dropped : {reason}.");
+            _logger.Error(ex.ToString());
         }
 
         private void LiveProcessingStarted(EventStoreCatchUpSubscription obj)

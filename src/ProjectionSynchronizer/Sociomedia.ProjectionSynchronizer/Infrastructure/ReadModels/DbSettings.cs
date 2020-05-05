@@ -5,19 +5,26 @@ using LinqToDB.Configuration;
 namespace Sociomedia.ProjectionSynchronizer.Infrastructure.ReadModels {
     public class DbSettings : ILinqToDBSettings
     {
+        private readonly SqlDatabaseConfiguration _configuration;
+
+        public DbSettings(SqlDatabaseConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public IEnumerable<IDataProviderSettings> DataProviders => Enumerable.Empty<IDataProviderSettings>();
 
-        public string DefaultConfiguration => "SqlServer";
-        public string DefaultDataProvider => "SqlServer";
+        public string DefaultConfiguration => _configuration.ProviderName;
+        public string DefaultDataProvider => _configuration.ProviderName;
 
         public IEnumerable<IConnectionStringSettings> ConnectionStrings
         {
             get {
                 yield return
                     new ConnectionStringSettings {
-                        Name = "Sociomedia",
-                        ProviderName = "SqlServer",
-                        ConnectionString = @"Server=.\SQLEXPRESS;Database=Sociomedia;Trusted_Connection=True;Enlist=False;"
+                        Name = "Sociomedia.Synchronizer",
+                        ProviderName = _configuration.ProviderName,
+                        ConnectionString = _configuration.ConnectionString
                     };
             }
         }
