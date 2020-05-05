@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using Newtonsoft.Json;
 using Sociomedia.ProjectionSynchronizer.Application;
+using Sociomedia.ProjectionSynchronizer.Application.Events;
 
 namespace Sociomedia.ProjectionSynchronizer.Infrastructure
 {
@@ -13,8 +14,8 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
         private readonly JsonSerializerSettings _serializerSettings;
         private readonly ILogger _logger;
         private readonly ITypeLocator _typeLocator;
-        private EventStoreAllCatchUpSubscription _subscription;
         private DomainEventReceived _onEventReceived;
+        private EventStoreStreamCatchUpSubscription _subscription;
 
         public EventStoreOrg(ILogger logger, ITypeLocator typeLocator)
         {
@@ -39,11 +40,11 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
             await _connection.ConnectAsync();
         }
 
-        public void StartListeningEvents(Position? position, DomainEventReceived onEventReceived)
+        public void StartListeningEvents(long? lastPosition, DomainEventReceived onEventReceived)
         {
             _onEventReceived = onEventReceived;
-            _subscription = _connection.SubscribeToAllFrom(position, CatchUpSubscriptionSettings.Default, EventAppeared, LiveProcessingStarted, SubscriptionDropped);
-            _logger.Debug($"Subscribed from position {position}. Replaying missing events.");
+            _subscription = _connection.SubscribeToStreamFrom("$et-" + typeof(ArticleSynchronized).Name, lastPosition, CatchUpSubscriptionSettings.Default, EventAppeared, LiveProcessingStarted, SubscriptionDropped);
+            _logger.Debug($"Subscribed from position {lastPosition}. Replaying missing events.");
         }
 
         public void StopListeningEvents()
@@ -70,14 +71,9 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
         private async Task EventAppeared(EventStoreCatchUpSubscription arg1, ResolvedEvent evt)
         {
             try {
-                if (!evt.OriginalStreamId.StartsWith("$")) {
-                    _logger.Debug($"New event received. Stream : {evt.OriginalStreamId}, position: {evt.OriginalPosition}");
-                    if (TryConvertToDomainEvent(evt, out var @event)) {
-                        if (!evt.OriginalPosition.HasValue) {
-                            throw new InvalidOperationException("No position in the stream ??");
-                        }
-                        await _onEventReceived(evt.OriginalPosition.Value, @event);
-                    }
+                _logger.Debug($"New event received. Stream : {evt.Event.EventStreamId}, position: {evt.OriginalEventNumber}");
+                if (TryConvertToDomainEvent(evt, out var @event)) {
+                    await _onEventReceived(evt.OriginalEventNumber, @event);
                 }
             }
             catch (Exception ex) {

@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using EventStore.ClientAPI;
 
 namespace Sociomedia.ProjectionSynchronizer.Application
 {
@@ -7,14 +6,14 @@ namespace Sociomedia.ProjectionSynchronizer.Application
     {
         private readonly IEventStore _eventStore;
         private readonly IEventPublisher _eventPublisher;
-        private readonly IStreamPositionRepository _acknowledger;
+        private readonly IStreamPositionRepository _streamPositionRepository;
         private readonly EventStoreConfiguration _configuration;
 
-        public DomainEventSynchronizer(IEventStore eventStore, IEventPublisher eventPublisher, IStreamPositionRepository acknowledger, EventStoreConfiguration configuration)
+        public DomainEventSynchronizer(IEventStore eventStore, IEventPublisher eventPublisher, IStreamPositionRepository streamPositionRepository, EventStoreConfiguration configuration)
         {
             _eventStore = eventStore;
             _eventPublisher = eventPublisher;
-            _acknowledger = acknowledger;
+            _streamPositionRepository = streamPositionRepository;
             _configuration = configuration;
         }
 
@@ -27,11 +26,11 @@ namespace Sociomedia.ProjectionSynchronizer.Application
                 _configuration.Password
             );
 
-            var lastPosition = await _acknowledger.GetLastPosition();
+            var lastPosition = await _streamPositionRepository.GetLastPosition();
 
             _eventStore.StartListeningEvents(lastPosition, async (position, @event) => {
                 await _eventPublisher.Publish(@event);
-                await _acknowledger.Save(position);
+                await _streamPositionRepository.Save(position);
             });
         }
 
@@ -42,5 +41,5 @@ namespace Sociomedia.ProjectionSynchronizer.Application
         }
     }
 
-    public delegate Task DomainEventReceived(Position position, IDomainEvent @event);
+    public delegate Task DomainEventReceived(long position, IDomainEvent @event);
 }

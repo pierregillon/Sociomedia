@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using EventStore.ClientAPI;
 using LinqToDB;
 using Sociomedia.ProjectionSynchronizer.Application;
 using Sociomedia.ProjectionSynchronizer.Infrastructure.ReadModels;
@@ -18,29 +17,27 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
             _dbConnection = dbConnection;
         }
 
-        public async Task Save(Position position)
+        public async Task Save(long position)
         {
             if (await _dbConnection.SynchronizationInformation.AnyAsync()) {
                 await _dbConnection.SynchronizationInformation
-                    .Set(x => x.LastCommitPosition, position.CommitPosition)
-                    .Set(x => x.LastPreparePosition, position.PreparePosition)
+                    .Set(x => x.LastPosition, position)
                     .Set(x => x.LastUpdateDate, DateTime.Now)
                     .UpdateAsync();
             }
             else {
                 await _dbConnection.SynchronizationInformation
                     .InsertAsync(() => new SynchronizationInformationTable {
-                        LastCommitPosition = position.CommitPosition,
-                        LastPreparePosition = position.PreparePosition,
+                        LastPosition = position,
                         LastUpdateDate = DateTime.Now
                     });
             }
         }
 
-        public async Task<Position?> GetLastPosition()
+        public async Task<long?> GetLastPosition()
         {
             return await _dbConnection.SynchronizationInformation
-                .Select(x => new Position(x.LastCommitPosition, x.LastPreparePosition))
+                .Select(x => x.LastPosition)
                 .SingleOrDefaultAsync();
         }
     }
