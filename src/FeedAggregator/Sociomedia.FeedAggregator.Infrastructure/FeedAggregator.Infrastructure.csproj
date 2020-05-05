@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Sociomedia.FeedAggregator.Infrastructure</RootNamespace>
+    <AssemblyName>Sociomedia.FeedAggregator.Infrastructure</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

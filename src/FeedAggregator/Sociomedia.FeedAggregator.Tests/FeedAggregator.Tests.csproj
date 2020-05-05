@@ -6,6 +6,8 @@
     <IsPackable>false</IsPackable>
 
     <RootNamespace>Sociomedia.FeedAggregator.Tests</RootNamespace>
+
+    <AssemblyName>Sociomedia.FeedAggregator.Tests</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

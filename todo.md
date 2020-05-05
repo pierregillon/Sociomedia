@@ -3,3 +3,8 @@
 * remove useless words.
   * keep only nouns ? 
 * analyse word that starts with a capital letter : important words (location, personnality, ...)
+
+
+* continuous integration
+* database configuration access (event store + sql db)
+* rss / atom ressources creation

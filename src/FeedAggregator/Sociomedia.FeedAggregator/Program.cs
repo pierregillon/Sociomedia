@@ -6,10 +6,6 @@ using Sociomedia.FeedAggregator.Application.Commands.SynchronizeRssSources;
 using Sociomedia.FeedAggregator.Infrastructure;
 using Sociomedia.FeedAggregator.Infrastructure.CQRS;
 
-#if !RELEASE
-
-#endif
-
 namespace Sociomedia.FeedAggregator
 {
     internal class Program
@@ -18,10 +14,9 @@ namespace Sociomedia.FeedAggregator
         {
             var container = ContainerBuilder.Build();
 
-#if !RELEASE
             var eventStore = (EventStoreOrg) container.GetInstance<IEventStore>();
+
             await eventStore.Connect("localhost");
-#endif
 
             var commandDispatcher = container.GetInstance<ICommandDispatcher>();
 

@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Sociomedia.FeedAggregator</RootNamespace>
+    <AssemblyName>Sociomedia.FeedAggregator</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +18,21 @@
     <ProjectReference Include="..\Sociomedia.FeedAggregator.Application\FeedAggregator.Application.csproj" />
     <ProjectReference Include="..\Sociomedia.FeedAggregator.Domain\FeedAggregator.Domain.csproj" />
     <ProjectReference Include="..\Sociomedia.FeedAggregator.Infrastructure\FeedAggregator.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="App.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>App.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="App.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>App.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 </Project>
