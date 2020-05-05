@@ -3,5 +3,7 @@ image: Visual Studio 2019
 configuration: Release
 before_build:
   ps: dotnet restore src/Sociomedia.sln
+build:
+  verbosity: minimal
 after_build:
   ps: dotnet test src/Sociomedia.sln
