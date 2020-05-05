@@ -10,7 +10,7 @@
     <PackageReference Include="CodeHollow.FeedReader" Version="1.2.1" />
     <PackageReference Include="CqrsLite" Version="1.31.1" />
     <PackageReference Include="EventStore.Client" Version="5.0.8" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.4.9.5" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.23" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="StructureMap" Version="4.7.1" />
     <PackageReference Include="System.ServiceModel.Syndication" Version="4.7.0" />
