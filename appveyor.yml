@@ -1,0 +1,22 @@
+version: '{branch}.{build}'
+image: Visual Studio 2019 Preview
+configuration: Release
+before_build:
+  ps: nuget restore src/backgroundr.sln
+build:
+  verbosity: minimal
+after_build:
+  ps: >-
+    $publishPath = "src/backgroundr.view/bin/Release/"
+    
+    Compress-Archive -Path "$($publishPath)/*" -DestinationPath "$($publishPath)/backgroundr.zip"
+artifacts:
+  path: 'src/backgroundr.view/bin/Release/backgroundr.zip'
+  name: dist
+deploy:
+  provider: GitHub
+  auth_token:
+    secure: KFtQRWu6GvBEv9H5UreTcjYAcanFOY1bA2Q/76gmouBZvKbBFe8YqoJbxY0vGU4k
+  artifact: dist
+  on:
+    APPVEYOR_REPO_TAG: true
