@@ -17,11 +17,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RssAggregator", "RssAggrega
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReadDatabaseSynchronizer", "ReadDatabaseSynchronizer", "{5364BF41-CA1F-4D5C-B87B-58E45316736C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewsAggregator.ReadDatabaseSynchronizer", "ReadDatabaseSynchronizer\NewsAggregator.ReadDatabaseSynchronizer\NewsAggregator.ReadDatabaseSynchronizer.csproj", "{7F53EF84-481F-40BF-8D7A-5D40EE15AD40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsAggregator.ReadDatabaseSynchronizer", "ReadDatabaseSynchronizer\NewsAggregator.ReadDatabaseSynchronizer\NewsAggregator.ReadDatabaseSynchronizer.csproj", "{7F53EF84-481F-40BF-8D7A-5D40EE15AD40}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Front", "Front", "{13F5545E-7271-441C-8769-39B2ECD9589C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewsAggregator.Front", "Front\NewsAggregator.Front\NewsAggregator.Front.csproj", "{31A12A4E-7D5C-4808-A6D2-BED3B96AB88A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsAggregator.Front", "Front\NewsAggregator.Front\NewsAggregator.Front.csproj", "{31A12A4E-7D5C-4808-A6D2-BED3B96AB88A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A3D52629-86DB-473C-A4A0-545E524A911F}"
+	ProjectSection(SolutionItems) = preProject
+		..\appveyor.yml = ..\appveyor.yml
+		..\LICENSE.md = ..\LICENSE.md
+		..\README.md = ..\README.md
+		..\todo.md = ..\todo.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
