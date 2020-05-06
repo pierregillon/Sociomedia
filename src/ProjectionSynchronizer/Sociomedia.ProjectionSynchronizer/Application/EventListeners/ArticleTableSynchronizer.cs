@@ -1,24 +1,22 @@
 ﻿using System;
 using System.Threading.Tasks;
-using LinqToDB;
 using Sociomedia.DomainEvents.Article;
-using Sociomedia.ReadModel.DataAccess;
 using Sociomedia.ReadModel.DataAccess.Tables;
 
 namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
 {
     public class ArticleTableSynchronizer : IEventListener<ArticleSynchronized>
     {
-        private readonly DbConnectionReadModel _connection;
+        private readonly IArticleRepository _articleRepository;
 
-        public ArticleTableSynchronizer(DbConnectionReadModel connection)
+        public ArticleTableSynchronizer(IArticleRepository articleRepository)
         {
-            _connection = connection;
+            _articleRepository = articleRepository;
         }
 
         public async Task On(ArticleSynchronized @event)
         {
-            await _connection.Articles.InsertAsync(() => new ArticleTable {
+            await _articleRepository.AddArticle(new ArticleTable {
                 Id = @event.Id,
                 Title = @event.Title,
                 Url = @event.Url,
@@ -28,7 +26,7 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
             });
 
             foreach (var keyword in @event.Keywords) {
-                await _connection.Keywords.InsertAsync(() => new KeywordTable {
+                await _articleRepository.AddKeywords(new KeywordTable {
                     FK_Article = @event.Id,
                     Value = keyword.Substring(0, Math.Min(keyword.Length, 50))
                 });

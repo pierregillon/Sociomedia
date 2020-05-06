@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
@@ -9,17 +10,19 @@ using Sociomedia.ProjectionSynchronizer.Application;
 
 namespace Sociomedia.ProjectionSynchronizer.Infrastructure
 {
-    public class EventStoreOrg : IEventStore
+    public class EventStoreOrg : IEventBus
     {
         private IEventStoreConnection _connection;
         private readonly JsonSerializerSettings _serializerSettings;
+        private readonly EventStoreConfiguration _configuration;
         private readonly ILogger _logger;
         private readonly IDomainEventTypeLocator _typeLocator;
         private DomainEventReceived _onEventReceived;
         private EventStoreStreamCatchUpSubscription _subscription;
 
-        public EventStoreOrg(ILogger logger, IDomainEventTypeLocator typeLocator)
+        public EventStoreOrg(EventStoreConfiguration configuration, ILogger logger, IDomainEventTypeLocator typeLocator)
         {
+            _configuration = configuration;
             _logger = logger;
             _typeLocator = typeLocator;
 
@@ -35,16 +38,16 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
 
         // ----- Public methods
 
-        public async Task Connect(string server, int port = 1113, string login = "admin", string password = "changeit")
+        public async Task StartListeningEvents(long? lastPosition, DomainEventReceived onEventReceived)
         {
-            _connection = EventStoreConnection.Create(new Uri($"tcp://{login}:{password}@{server}:{port}"), "Aggregator");
+            _connection = EventStoreConnection.Create(_configuration.Uri, Assembly.GetExecutingAssembly().GetName().Name);
+            
             await _connection.ConnectAsync();
-        }
 
-        public void StartListeningEvents(long? lastPosition, DomainEventReceived onEventReceived)
-        {
             _onEventReceived = onEventReceived;
+            
             _subscription = _connection.SubscribeToStreamFrom("$et-" + typeof(ArticleSynchronized).Name, lastPosition, CatchUpSubscriptionSettings.Default, EventAppeared, LiveProcessingStarted, SubscriptionDropped);
+            
             _logger.Debug($"Subscribed from position {lastPosition}. Replaying missing events.");
         }
 

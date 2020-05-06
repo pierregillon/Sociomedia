@@ -1,4 +1,5 @@
-﻿using Sociomedia.ReadModel.DataAccess;
+﻿using System;
+using Sociomedia.ReadModel.DataAccess;
 
 namespace Sociomedia.ProjectionSynchronizer
 {
@@ -15,5 +16,6 @@ namespace Sociomedia.ProjectionSynchronizer
         public int Port { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
+        public Uri Uri => new Uri($"tcp://{Login}:{Password}@{Server}:{Port}");
     }
 }
