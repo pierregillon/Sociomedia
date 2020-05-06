@@ -1,12 +1,15 @@
 {
-  "eventstore": {
+  "EventStore": {
     "server": "localhost",
     "port": 1113,
     "login": "admin",
     "password": "changeit"
   },
-  "sqldatabase": {
+  "SqlDatabase": {
     "providerName": "SqlServer",
     "connectionString": "Server=.\\SQLEXPRESS;Database=Sociomedia;Trusted_Connection=True;Enlist=False;"
+  },
+  "ProjectionSynchronization": {
+    "ReconnectionDelayMs": 5000
   }
 }

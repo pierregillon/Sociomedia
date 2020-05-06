@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Sociomedia.ProjectionSynchronizer.Application
 {
     public interface IEventBus
     {
-        Task StartListeningEvents(long? lastPosition, DomainEventReceived domainEventReceived);
+        Task StartListeningEvents(long? lastPosition, DomainEventReceived domainEventReceived, Func<Task> disconnected);
         void StopListeningEvents();
     }
 }

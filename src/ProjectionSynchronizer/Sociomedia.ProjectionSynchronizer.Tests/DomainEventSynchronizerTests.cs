@@ -27,6 +27,9 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
             _container.Inject<ILogger>(new EmptyLogger());
             _container.Inject(_articleRepository);
             _container.Inject(_streamPositionRepository);
+
+            var configuration = _container.GetInstance<ProjectionSynchronizationConfiguration>();
+            configuration.ReconnectionDelayMs = 1;
         }
 
         [Theory]
@@ -135,6 +138,20 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
             await _streamPositionRepository.Received(1).Save(1);
             await _streamPositionRepository.Received(1).Save(2);
             await _streamPositionRepository.Received(1).Save(3);
+        }
+
+        [Fact]
+        public async Task Restart_connection_on_connection_lost()
+        {
+            var synchronizer = _container.GetInstance<DomainEventSynchronizer>();
+
+            await synchronizer.StartSynchronization();
+
+            await _inMemoryBus.SimulateConnectionLost();
+
+            _inMemoryBus.IsListening
+                .Should()
+                .Be(true);
         }
 
         // ----- Internal logic

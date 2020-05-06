@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
+using EventStore.ClientAPI.Exceptions;
 using Newtonsoft.Json;
 using Sociomedia.DomainEvents;
 using Sociomedia.DomainEvents.Article;
@@ -19,6 +20,7 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
         private readonly IDomainEventTypeLocator _typeLocator;
         private DomainEventReceived _onEventReceived;
         private EventStoreStreamCatchUpSubscription _subscription;
+        private Func<Task> _disconnected;
 
         public EventStoreOrg(EventStoreConfiguration configuration, ILogger logger, IDomainEventTypeLocator typeLocator)
         {
@@ -38,16 +40,21 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
 
         // ----- Public methods
 
-        public async Task StartListeningEvents(long? lastPosition, DomainEventReceived onEventReceived)
+        public async Task StartListeningEvents(long? lastPosition, DomainEventReceived onEventReceived, Func<Task> disconnected)
         {
+            if (_connection != null) {
+                throw new InvalidOperationException("Cannot listen events : already listening !");
+            }
+
             _connection = EventStoreConnection.Create(_configuration.Uri, Assembly.GetExecutingAssembly().GetName().Name);
-            
+
             await _connection.ConnectAsync();
 
             _onEventReceived = onEventReceived;
-            
+            _disconnected = disconnected;
+
             _subscription = _connection.SubscribeToStreamFrom("$et-" + typeof(ArticleSynchronized).Name, lastPosition, CatchUpSubscriptionSettings.Default, EventAppeared, LiveProcessingStarted, SubscriptionDropped);
-            
+
             _logger.Debug($"Subscribed from position {lastPosition}. Replaying missing events.");
         }
 
@@ -57,6 +64,9 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
                 throw new InvalidOperationException("Subscription not started");
             }
             _subscription.Stop();
+            _subscription = null;
+            _connection.Close();
+            _connection = null;
         }
 
         // ----- Internal logic
@@ -64,7 +74,14 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
         private void SubscriptionDropped(EventStoreCatchUpSubscription subscription, SubscriptionDropReason reason, Exception ex)
         {
             _logger.Debug($"Subscription dropped : {reason}.");
-            _logger.Error(ex.ToString());
+
+            if (ex is ConnectionClosedException) {
+                _logger.Error(ex.Message);
+                _disconnected.Invoke().Wait();
+            }
+            else {
+                _logger.Error(ex, string.Empty);
+            }
         }
 
         private void LiveProcessingStarted(EventStoreCatchUpSubscription obj)
