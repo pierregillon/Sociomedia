@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Sociomedia.FeedAggregator.Infrastructure;
 using Sociomedia.Front.Data;
 using Sociomedia.ReadModel.DataAccess;
+using Sotsera.Blazor.Toaster.Core.Models;
 using StructureMap;
 
 namespace Sociomedia.Front
@@ -25,6 +26,12 @@ namespace Sociomedia.Front
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+
+            services.AddToaster(config => {
+                config.PositionClass = Defaults.Classes.Position.TopRight;
+                config.PreventDuplicates = true;
+                config.NewestOnTop = true;
+            });
         }
 
         public void ConfigureContainer(Registry services)

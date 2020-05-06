@@ -4,11 +4,8 @@
 @using Sociomedia.FeedAggregator.Infrastructure.CQRS
 @using Sociomedia.Front.Models
 
-@inject ICommandDispatcher CommandDispatcher
-
 
 <h1>Ajout d'un nouveau média :</h1>
-<span>@errorMessage</span>
 <EditForm Model="@article" OnSubmit="@FormSubmitted" class="edit-media">
     <DataAnnotationsValidator/>
     <ValidationSummary/>
@@ -51,8 +48,17 @@
 </EditForm>
 
 @code {
-    readonly ArticleViewModel article = new ArticleViewModel();
-    private string errorMessage;
+
+    [Inject]
+    protected Sotsera.Blazor.Toaster.IToaster Toaster { get; set; }
+
+    [Inject]
+    protected ICommandDispatcher CommandDispatcher { get; set; }
+
+    [Inject]
+    protected NavigationManager NavigationManager { get; set; }
+
+    private readonly ArticleViewModel article = new ArticleViewModel();
     private bool isLoading = false;
 
     async Task FormSubmitted(EditContext editContext)
@@ -67,10 +73,12 @@
                     article.PoliticalOrientation,
                     article.Feeds.Select(x => x.Url).ToArray()
                 ));
+                Toaster.Success("Ajout du nouveau média terminé");
+                NavigationManager.NavigateTo("/medias");
             }
         }
         catch (Exception ex) {
-            errorMessage = ex.Message;
+            Toaster.Error("Impossible d'ajouter le média. " + ex.Message);
         }
         finally {
             isLoading = false;

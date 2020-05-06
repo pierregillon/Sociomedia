@@ -15,6 +15,7 @@ namespace Sociomedia.Front
         {
             return WebHost.CreateDefaultBuilder(args)
                 .UseStructureMap()
+                .UseStaticWebAssets()
                 .UseStartup<Startup>();
         }
     }
