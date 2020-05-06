@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sociomedia.FeedAggregator.Domain.Rss
+namespace Sociomedia.FeedAggregator.Domain.Medias
 {
     public class RssSourceAdded : DomainEvents.RssSource.RssSourceAdded, IDomainEvent
     {

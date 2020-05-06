@@ -1,3 +1,4 @@
+using System;
 using Lamar;
 using LinqToDB.Data;
 using Microsoft.AspNetCore.Builder;
@@ -5,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Sociomedia.FeedAggregator.Infrastructure;
 using Sociomedia.Front.Data;
 using Sociomedia.ReadModel.DataAccess;
 
@@ -25,12 +27,12 @@ namespace Sociomedia.Front
             services.AddServerSideBlazor();
             services.For<ArticleFinder>();
             services.For<MediaFinder>();
-            services.IncludeRegistry<ServiceRegistry>();
+            services.IncludeRegistry<SociomediaRegistry>();
+
             DataConnection.DefaultSettings = new DbSettings(Configuration.GetSection("sqldatabase").Get<SqlDatabaseConfiguration>());
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
@@ -50,6 +52,9 @@ namespace Sociomedia.Front
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+
+            var instance = (EventStoreOrg)serviceProvider.GetService(typeof(EventStoreOrg));
+            instance.Connect("localhost").Wait();
         }
     }
 }

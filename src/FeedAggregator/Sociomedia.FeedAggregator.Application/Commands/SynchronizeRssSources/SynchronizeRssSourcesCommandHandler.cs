@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using CQRSlite.Domain;
 using Sociomedia.FeedAggregator.Application.Queries;
 using Sociomedia.FeedAggregator.Domain.Articles;
-using Sociomedia.FeedAggregator.Domain.Rss;
+using Sociomedia.FeedAggregator.Domain.Medias;
 
 namespace Sociomedia.FeedAggregator.Application.Commands.SynchronizeRssSources
 {

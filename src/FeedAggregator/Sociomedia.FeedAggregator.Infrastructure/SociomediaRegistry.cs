@@ -4,7 +4,7 @@ using Lamar;
 using Sociomedia.FeedAggregator.Application;
 using Sociomedia.FeedAggregator.Application.Queries;
 using Sociomedia.FeedAggregator.Domain.Articles;
-using Sociomedia.FeedAggregator.Domain.Rss;
+using Sociomedia.FeedAggregator.Domain.Medias;
 using Sociomedia.FeedAggregator.Infrastructure.CQRS;
 using Sociomedia.FeedAggregator.Infrastructure.Logging;
 using Sociomedia.FeedAggregator.Infrastructure.RSS;

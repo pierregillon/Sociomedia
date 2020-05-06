@@ -1,7 +1,7 @@
 ﻿using System;
 using CQRSlite.Domain;
 
-namespace Sociomedia.FeedAggregator.Domain.Rss
+namespace Sociomedia.FeedAggregator.Domain.Medias
 {
     public class RssSource : AggregateRoot
     {

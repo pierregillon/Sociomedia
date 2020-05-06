@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sociomedia.FeedAggregator.Domain.Rss;
+using Sociomedia.FeedAggregator.Domain.Medias;
 
 namespace Sociomedia.FeedAggregator.Infrastructure.RSS
 {

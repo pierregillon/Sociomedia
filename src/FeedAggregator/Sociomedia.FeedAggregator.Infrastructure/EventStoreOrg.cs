@@ -110,6 +110,9 @@ namespace Sociomedia.FeedAggregator.Infrastructure
 
         private async Task<IEnumerable<ResolvedEvent>> ReadAllEventsInStream(string streamId, int fromVersion)
         {
+            if (_connection == null) {
+                await Connect("localhost");
+            }
             var streamEvents = new List<ResolvedEvent>();
             StreamEventsSlice currentSlice;
             var nextSliceStart = fromVersion == -1 ? StreamPosition.Start : (long)fromVersion;

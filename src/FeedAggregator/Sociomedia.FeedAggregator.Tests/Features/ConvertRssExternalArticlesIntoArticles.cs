@@ -5,7 +5,7 @@ using FluentAssertions;
 using NSubstitute;
 using Sociomedia.FeedAggregator.Application.Commands.SynchronizeRssSources;
 using Sociomedia.FeedAggregator.Domain;
-using Sociomedia.FeedAggregator.Domain.Rss;
+using Sociomedia.FeedAggregator.Domain.Medias;
 using Xunit;
 
 namespace Sociomedia.FeedAggregator.Tests.Features

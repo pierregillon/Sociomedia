@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Sociomedia.DomainEvents.RssSource;
 
 namespace Sociomedia.Front.Models
 {
@@ -7,14 +8,5 @@ namespace Sociomedia.Front.Models
         [Required] public string Name { get; set; }
         public string ImageUrl { get; set; }
         [Required] public PoliticalOrientation PoliticalOrientation { get; set; }
-    }
-
-    public enum PoliticalOrientation
-    {
-        ExtremeLeft,
-        Left,
-        Center,
-        Right,
-        ExtremeRight
     }
 }

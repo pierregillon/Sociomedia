@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CQRSlite.Domain;
-using Sociomedia.FeedAggregator.Domain.Rss;
+using Sociomedia.FeedAggregator.Domain.Medias;
 
 namespace Sociomedia.FeedAggregator.Application.Commands.AddRssSource
 {
