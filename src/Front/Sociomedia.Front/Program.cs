@@ -1,6 +1,6 @@
-using Lamar.Microsoft.DependencyInjection;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using StructureMap.AspNetCore;
 
 namespace Sociomedia.Front
 {
@@ -11,12 +11,11 @@ namespace Sociomedia.Front
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args)
+        public static IWebHostBuilder CreateHostBuilder(string[] args)
         {
-            return Host
-                .CreateDefaultBuilder(args)
-                .UseLamar()
-                .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
+            return WebHost.CreateDefaultBuilder(args)
+                .UseStructureMap()
+                .UseStartup<Startup>();
         }
     }
 }

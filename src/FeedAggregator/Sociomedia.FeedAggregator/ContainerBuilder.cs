@@ -1,5 +1,5 @@
-﻿using Lamar;
-using Sociomedia.FeedAggregator.Infrastructure;
+﻿using Sociomedia.FeedAggregator.Infrastructure;
+using StructureMap;
 
 namespace Sociomedia.FeedAggregator
 {

@@ -1,14 +1,13 @@
-﻿using BaselineTypeDiscovery;
-using EventStore.ClientAPI;
+﻿using EventStore.ClientAPI;
 using EventStore.ClientAPI.Common.Log;
-using Lamar;
-using Lamar.Scanning.Conventions;
-using Microsoft.Extensions.DependencyInjection;
 using Sociomedia.DomainEvents;
 using Sociomedia.ProjectionSynchronizer.Application;
 using Sociomedia.ProjectionSynchronizer.Application.EventListeners;
 using Sociomedia.ProjectionSynchronizer.Infrastructure;
 using Sociomedia.ReadModel.DataAccess;
+using StructureMap;
+using StructureMap.Graph;
+using StructureMap.Graph.Scanning;
 
 namespace Sociomedia.ProjectionSynchronizer
 {
@@ -27,7 +26,7 @@ namespace Sociomedia.ProjectionSynchronizer
 
                 x.Scan(scanner => {
                     scanner.TheCallingAssembly();
-                    scanner.WithDefaultConventions();
+                    scanner.Convention<AllInterfacesConvention>();
                     scanner.AddAllTypesOf(typeof(IEventListener<>));
                 });
 
@@ -36,17 +35,12 @@ namespace Sociomedia.ProjectionSynchronizer
                 x.For<ProjectionSynchronizationConfiguration>().Use(configuration.ProjectionSynchronization).Singleton();
 
                 x.For<ArticleTableSynchronizer>().Use<ArticleTableSynchronizer>().Singleton();
-
-                x.Injectable<IArticleRepository>();
-                x.Injectable<IStreamPositionRepository>();
-                x.Injectable<IEventBus>();
-                x.Injectable<ILogger>();
             });
         }
 
         public class AllInterfacesConvention : IRegistrationConvention
         {
-            public void ScanTypes(TypeSet types, ServiceRegistry services)
+            public void ScanTypes(TypeSet types, Registry services)
             {
                 foreach (var type in types.FindTypes(TypeClassification.Concretes | TypeClassification.Closed)) {
                     foreach (var @interface in type.GetInterfaces()) {

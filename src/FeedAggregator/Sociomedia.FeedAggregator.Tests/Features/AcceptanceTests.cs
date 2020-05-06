@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using Lamar;
 using NSubstitute;
 using Sociomedia.FeedAggregator.Application.Queries;
 using Sociomedia.FeedAggregator.Domain.Articles;
 using Sociomedia.FeedAggregator.Infrastructure;
 using Sociomedia.FeedAggregator.Infrastructure.CQRS;
 using Sociomedia.FeedAggregator.Infrastructure.Logging;
+using StructureMap;
 
 namespace Sociomedia.FeedAggregator.Tests.Features
 {

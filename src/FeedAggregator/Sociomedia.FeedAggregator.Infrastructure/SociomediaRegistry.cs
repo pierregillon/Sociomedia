@@ -1,6 +1,5 @@
 ﻿using CQRSlite.Domain;
 using CQRSlite.Events;
-using Lamar;
 using Sociomedia.FeedAggregator.Application;
 using Sociomedia.FeedAggregator.Application.Queries;
 using Sociomedia.FeedAggregator.Domain.Articles;
@@ -8,10 +7,13 @@ using Sociomedia.FeedAggregator.Domain.Medias;
 using Sociomedia.FeedAggregator.Infrastructure.CQRS;
 using Sociomedia.FeedAggregator.Infrastructure.Logging;
 using Sociomedia.FeedAggregator.Infrastructure.RSS;
+using StructureMap;
+using StructureMap.Graph;
+using StructureMap.Graph.Scanning;
 
 namespace Sociomedia.FeedAggregator.Infrastructure
 {
-    public class SociomediaRegistry : ServiceRegistry
+    public class SociomediaRegistry : Registry
     {
         public SociomediaRegistry()
         {
@@ -26,7 +28,7 @@ namespace Sociomedia.FeedAggregator.Infrastructure
             Scan(scanner => {
                 scanner.AssemblyContainingType(typeof(ICommand));
                 scanner.IncludeNamespaceContainingType<ICommand>();
-                scanner.WithDefaultConventions();
+                scanner.Convention<AllInterfacesConvention>();
                 scanner.AddAllTypesOf(typeof(IEventListener<>));
                 scanner.AddAllTypesOf(typeof(ICommandHandler<>));
             });
@@ -41,11 +43,18 @@ namespace Sociomedia.FeedAggregator.Infrastructure
             For<IRepository>().Use(context => new Repository(context.GetInstance<IEventStore>()));
             For<InMemoryDatabase>().Use<InMemoryDatabase>().Singleton();
             For<IEventStore>().Use<EventStoreOrg>().Singleton();
+        }
 
-            Injectable<IEventStore>();
-            Injectable<ILogger>();
-            Injectable<IHtmlPageDownloader>();
-            Injectable<IRssSourceReader>();
+        private class AllInterfacesConvention : IRegistrationConvention
+        {
+            public void ScanTypes(TypeSet types, Registry services)
+            {
+                foreach (var type in types.FindTypes(TypeClassification.Concretes | TypeClassification.Closed)) {
+                    foreach (var @interface in type.GetInterfaces()) {
+                        services.For(@interface).Use(type);
+                    }
+                }
+            }
         }
     }
 }

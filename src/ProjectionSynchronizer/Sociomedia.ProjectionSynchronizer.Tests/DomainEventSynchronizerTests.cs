@@ -2,27 +2,26 @@
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using FluentAssertions;
-using Lamar;
 using NSubstitute;
 using Sociomedia.DomainEvents.Article;
 using Sociomedia.ProjectionSynchronizer.Application;
 using Sociomedia.ReadModel.DataAccess.Tables;
+using StructureMap;
 using Xunit;
 
 namespace Sociomedia.ProjectionSynchronizer.Tests
 {
     public class DomainEventSynchronizerTests
     {
-        private readonly INestedContainer _container;
+        private readonly IContainer _container;
         private readonly InMemoryBus _inMemoryBus = new InMemoryBus();
         private readonly IArticleRepository _articleRepository = Substitute.For<IArticleRepository>();
         private readonly IStreamPositionRepository _streamPositionRepository = Substitute.For<IStreamPositionRepository>();
 
         public DomainEventSynchronizerTests()
         {
-            var mainContainer = ContainerBuilder.Build(new Configuration());
+            _container = ContainerBuilder.Build(new Configuration());
 
-            _container = mainContainer.GetNestedContainer();
             _container.Inject<IEventBus>(_inMemoryBus);
             _container.Inject<ILogger>(new EmptyLogger());
             _container.Inject(_articleRepository);

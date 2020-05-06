@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="EventStore.Client" Version="5.0.8" />
-    <PackageReference Include="Lamar" Version="4.3.0" />
+    <PackageReference Include="structuremap" Version="4.7.1" />
   </ItemGroup>
 
   <ItemGroup>

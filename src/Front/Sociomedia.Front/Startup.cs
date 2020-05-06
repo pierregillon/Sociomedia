@@ -1,5 +1,4 @@
 using System;
-using Lamar;
 using LinqToDB.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Sociomedia.FeedAggregator.Infrastructure;
 using Sociomedia.Front.Data;
 using Sociomedia.ReadModel.DataAccess;
+using StructureMap;
 
 namespace Sociomedia.Front
 {
@@ -21,10 +21,14 @@ namespace Sociomedia.Front
 
         public IConfiguration Configuration { get; }
 
-        public void ConfigureContainer(ServiceRegistry services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+        }
+
+        public void ConfigureContainer(Registry services)
+        {
             services.For<ArticleFinder>();
             services.For<MediaFinder>();
             services.IncludeRegistry<SociomediaRegistry>();
@@ -52,9 +56,6 @@ namespace Sociomedia.Front
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
-
-            var instance = (EventStoreOrg)serviceProvider.GetService(typeof(EventStoreOrg));
-            instance.Connect("localhost").Wait();
         }
     }
 }
