@@ -1,14 +1,9 @@
 ﻿using System;
 
-namespace Sociomedia.FeedAggregator.Domain.Rss {
-    public class RssSourceAdded : DomainEvent
+namespace Sociomedia.FeedAggregator.Domain.Rss
+{
+    public class RssSourceAdded : DomainEvents.RssSource.RssSourceAdded, IDomainEvent
     {
-        public RssSourceAdded(Guid aggregateId, Uri url)
-        {
-            Id = aggregateId;
-            Url = url;
-        }
-
-        public Uri Url { get; }
+        public RssSourceAdded(Guid id, Uri url) : base(id, url) { }
     }
 }

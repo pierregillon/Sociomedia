@@ -6,6 +6,7 @@ namespace Sociomedia.FeedAggregator.Domain.Rss
     public class RssSource : AggregateRoot
     {
         private RssSource() { }
+
         public RssSource(Uri url) : this()
         {
             ApplyChange(new RssSourceAdded(Guid.NewGuid(), url));

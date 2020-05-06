@@ -40,6 +40,4 @@ namespace Sociomedia.ProjectionSynchronizer.Application
             _eventStore.StopListeningEvents();
         }
     }
-
-    public delegate Task DomainEventReceived(long position, IDomainEvent @event);
 }

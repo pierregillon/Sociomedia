@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using EventStore.ClientAPI;
 
 namespace Sociomedia.ProjectionSynchronizer.Application {
     public interface IStreamPositionRepository

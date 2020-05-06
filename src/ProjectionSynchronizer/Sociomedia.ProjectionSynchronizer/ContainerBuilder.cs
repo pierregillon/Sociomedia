@@ -1,5 +1,6 @@
 ﻿using EventStore.ClientAPI;
 using EventStore.ClientAPI.Common.Log;
+using Sociomedia.DomainEvents;
 using Sociomedia.ProjectionSynchronizer.Application;
 using Sociomedia.ProjectionSynchronizer.Infrastructure;
 using Sociomedia.ReadModel.DataAccess;
@@ -16,7 +17,7 @@ namespace Sociomedia.ProjectionSynchronizer
             return new Container(x => {
                 x.For<EventStoreOrg>().Singleton();
                 x.For<IEventPublisher>().Use<StructureMapEventPublisher>();
-                x.For<ITypeLocator>().Use<ReflectionTypeLocator>();
+                x.For<IDomainEventTypeLocator>().Use<ReflectionDomainEventTypeLocator>().Singleton();
                 x.For<ILogger>().Use<ConsoleLogger>();
                 x.For<DbConnectionReadModel>().Singleton();
                 x.For<IStreamPositionRepository>().Use<StreamPositionRepository>();

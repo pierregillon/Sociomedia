@@ -10,4 +10,8 @@
     <PackageReference Include="CqrsLite" Version="1.31.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Sociomedia.DomainEvents\Sociomedia.DomainEvents.csproj" />
+  </ItemGroup>
+
 </Project>

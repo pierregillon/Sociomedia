@@ -3,8 +3,5 @@ using Sociomedia.DomainEvents;
 
 namespace Sociomedia.ProjectionSynchronizer.Application
 {
-    public interface IEventListener<in T> where T : DomainEvent
-    {
-        Task On(T @event);
-    }
+    public delegate Task DomainEventReceived(long position, DomainEvent @event);
 }

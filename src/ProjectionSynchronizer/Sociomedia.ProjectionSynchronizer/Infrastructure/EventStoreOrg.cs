@@ -3,8 +3,9 @@ using System.Text;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using Newtonsoft.Json;
+using Sociomedia.DomainEvents;
+using Sociomedia.DomainEvents.Article;
 using Sociomedia.ProjectionSynchronizer.Application;
-using Sociomedia.ProjectionSynchronizer.Application.Events;
 
 namespace Sociomedia.ProjectionSynchronizer.Infrastructure
 {
@@ -13,18 +14,18 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
         private IEventStoreConnection _connection;
         private readonly JsonSerializerSettings _serializerSettings;
         private readonly ILogger _logger;
-        private readonly ITypeLocator _typeLocator;
+        private readonly IDomainEventTypeLocator _typeLocator;
         private DomainEventReceived _onEventReceived;
         private EventStoreStreamCatchUpSubscription _subscription;
 
-        public EventStoreOrg(ILogger logger, ITypeLocator typeLocator)
+        public EventStoreOrg(ILogger logger, IDomainEventTypeLocator typeLocator)
         {
             _logger = logger;
             _typeLocator = typeLocator;
 
             var jsonResolver = new PropertyCleanerSerializerContractResolver();
-            jsonResolver.IgnoreProperty(typeof(IDomainEvent), "Version", "TimeStamp");
-            jsonResolver.RenameProperty(typeof(IDomainEvent), "Id", "AggregateId");
+            jsonResolver.IgnoreProperty(typeof(DomainEvent), "Version", "TimeStamp");
+            jsonResolver.RenameProperty(typeof(DomainEvent), "Id", "AggregateId");
 
             _serializerSettings = new JsonSerializerSettings {
                 ContractResolver = jsonResolver,
@@ -82,7 +83,7 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
             }
         }
 
-        private bool TryConvertToDomainEvent(ResolvedEvent @event, out IDomainEvent result)
+        private bool TryConvertToDomainEvent(ResolvedEvent @event, out DomainEvent result)
         {
             try {
                 result = ConvertToDomainEvent(@event);
@@ -95,14 +96,14 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
             }
         }
 
-        private IDomainEvent ConvertToDomainEvent(ResolvedEvent @event)
+        private DomainEvent ConvertToDomainEvent(ResolvedEvent @event)
         {
             var json = Encoding.UTF8.GetString(@event.Event.Data);
             var type = _typeLocator.FindEventType(@event.Event.EventType);
             if (type == null) {
                 throw new UnknownEvent(@event.Event.EventType);
             }
-            return (IDomainEvent) JsonConvert.DeserializeObject(json, type, _serializerSettings);
+            return (DomainEvent) JsonConvert.DeserializeObject(json, type, _serializerSettings);
         }
     }
 }

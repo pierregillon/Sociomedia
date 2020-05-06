@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Sociomedia.DomainEvents;
 using Sociomedia.ProjectionSynchronizer.Application;
 using StructureMap;
 
@@ -14,19 +15,19 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
             _container = container;
         }
 
-        public async Task Publish(IDomainEvent @event)
+        public async Task Publish(DomainEvent @event)
         {
             foreach (var listener in _container.GetAllInstances(typeof(IEventListener<>).MakeGenericType(@event.GetType()))) {
                 await On(listener, @event);
             }
         }
 
-        private static async Task On(object listener, IDomainEvent domainEvent)
+        private static async Task On(object listener, DomainEvent domainEvent)
         {
             await (Task) listener
                 .GetType()
                 .GetMethods()
-                .Where(x => x.Name == nameof(IEventListener<IDomainEvent>.On))
+                .Where(x => x.Name == nameof(IEventListener<DomainEvent>.On))
                 .Single(x => x.GetParameters()[0].ParameterType == domainEvent.GetType())
                 .Invoke(listener, new[] { domainEvent });
         }

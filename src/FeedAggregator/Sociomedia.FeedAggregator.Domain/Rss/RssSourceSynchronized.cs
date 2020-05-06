@@ -1,14 +1,8 @@
 ﻿using System;
 
 namespace Sociomedia.FeedAggregator.Domain.Rss {
-    public class RssSourceSynchronized : DomainEvent
+    public class RssSourceSynchronized : DomainEvents.RssSource.RssSourceSynchronized, IDomainEvent
     {
-        public RssSourceSynchronized(Guid id, DateTime synchronizedDate)
-        {
-            Id = id;
-            SynchronizedDate = synchronizedDate;
-        }
-
-        public DateTime SynchronizedDate { get; }
+        public RssSourceSynchronized(Guid id, DateTime synchronizedDate) : base(id, synchronizedDate) { }
     }
 }

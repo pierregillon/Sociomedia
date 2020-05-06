@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using LinqToDB;
-using Sociomedia.ProjectionSynchronizer.Application.Events;
+using Sociomedia.DomainEvents.Article;
 using Sociomedia.ReadModel.DataAccess;
 using Sociomedia.ReadModel.DataAccess.Tables;
 

@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Sociomedia.DomainEvents\Sociomedia.DomainEvents.csproj" />
     <ProjectReference Include="..\..\Common\Sociomedia.ReadModel.DataAccess\Sociomedia.ReadModel.DataAccess.csproj" />
   </ItemGroup>
 

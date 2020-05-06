@@ -1,8 +1,9 @@
 ﻿using System.Threading.Tasks;
+using Sociomedia.DomainEvents;
 
 namespace Sociomedia.ProjectionSynchronizer.Application {
     public interface IEventPublisher
     {
-        Task Publish(IDomainEvent domainEvent);
+        Task Publish(DomainEvent domainEvent);
     }
 }

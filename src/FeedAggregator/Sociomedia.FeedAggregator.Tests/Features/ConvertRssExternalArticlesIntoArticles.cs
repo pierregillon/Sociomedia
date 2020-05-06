@@ -106,9 +106,9 @@ namespace Sociomedia.FeedAggregator.Tests.Features
                 .Skip(2)
                 .Should()
                 .ContainEquivalentOf(new {
-                    Url = new Uri("https://www.test.com/newpage.html"),
+                    Url = "https://www.test.com/newpage.html",
                     RssSourceId = sourceId,
-                    Keywords = new Keyword[0],
+                    Keywords = Array.Empty<string>(),
                     Version = 1
                 });
         }
