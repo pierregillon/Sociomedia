@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using Sociomedia.FeedAggregator.Application.Commands.AddRssSource;
-using Sociomedia.FeedAggregator.Application.Commands.SynchronizeRssSources;
+using Sociomedia.FeedAggregator.Application.Commands.SynchronizeAllMediaFeeds;
 using Sociomedia.FeedAggregator.Infrastructure;
 using Sociomedia.FeedAggregator.Infrastructure.CQRS;
 
@@ -27,13 +26,13 @@ namespace Sociomedia.FeedAggregator
 
             var commandDispatcher = container.GetInstance<ICommandDispatcher>();
 
-            await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.lemonde.fr/rss/une.xml")));
-            await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.marianne.net/rss_marianne.xml")));
-            await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("http://rss.liberation.fr/rss/9/")));
-            await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.francetvinfo.fr/france.rss")));
+            //await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.lemonde.fr/rss/une.xml")));
+            //await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.marianne.net/rss_marianne.xml")));
+            //await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("http://rss.liberation.fr/rss/9/")));
+            //await commandDispatcher.Dispatch(new AddRssSourceCommand(new Uri("https://www.francetvinfo.fr/france.rss")));
 
-            await commandDispatcher.Dispatch(new SynchronizeRssSourcesCommand());
-            await commandDispatcher.Dispatch(new SynchronizeRssSourcesCommand());
+            await commandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
+            await commandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
 
             Console.WriteLine("ended.");
             Console.ReadKey();

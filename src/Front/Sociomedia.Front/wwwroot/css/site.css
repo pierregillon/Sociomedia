@@ -238,3 +238,12 @@ app {
     font-size: 30px;
     margin: 10px;
 }
+
+.edit-media {
+    max-width: 900px;
+}
+
+.edit-media .row {
+    margin-right: 0;
+    margin-left: 0;
+}

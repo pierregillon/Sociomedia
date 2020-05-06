@@ -9,7 +9,7 @@ namespace Sociomedia.FeedAggregator.Domain.Articles
     {
         private Article() { }
 
-        public Article(ExternalArticle externalArticle, Guid rssSourceId, IReadOnlyCollection<string> keywords) : this()
+        public Article(Guid mediaId, ExternalArticle externalArticle, IReadOnlyCollection<string> keywords) : this()
         {
             ApplyChange(new ArticleSynchronized(
                 Guid.NewGuid(), 
@@ -19,7 +19,7 @@ namespace Sociomedia.FeedAggregator.Domain.Articles
                 externalArticle.Url,
                 externalArticle.ImageUrl,
                 keywords, 
-                rssSourceId));
+                mediaId));
         }
 
         private void Apply(ArticleSynchronized @event)

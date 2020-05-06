@@ -19,7 +19,7 @@ namespace Sociomedia.FeedAggregator.Infrastructure
         {
             For<IHtmlParser>().Use<HtmlParser>();
             For<IHtmlPageDownloader>().Use<HtmlPageDownloader>();
-            For<IRssSourceReader>().Use<RssSourceReader>();
+            For<IFeedReader>().Use<FeedReader>();
             For<IRssParser>().Use<RssParser>();
 
             For<ICommandDispatcher>().Use<StructureMapCommandDispatcher>();
@@ -39,7 +39,7 @@ namespace Sociomedia.FeedAggregator.Infrastructure
             For<ILogger>().Use<ConsoleLogger>();
             For<ITypeLocator>().Use<ReflectionTypeLocator>();
 
-            For<IRssSourceFinder>().Use<RssSourceFinder>();
+            For<IMediaFeedFinder>().Use<MediaFeedFinder>();
             For<IRepository>().Use(context => new Repository(context.GetInstance<IEventStore>()));
             For<InMemoryDatabase>().Use<InMemoryDatabase>().Singleton();
             For<IEventStore>().Use<EventStoreOrg>().Singleton();

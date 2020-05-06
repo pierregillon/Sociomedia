@@ -15,7 +15,7 @@ namespace Sociomedia.FeedAggregator.Infrastructure.RSS
         {
             using var ms = new MemoryStream();
             rssStream.CopyTo(ms);
-            var feed = FeedReader.ReadFromByteArray(ms.ToArray());
+            var feed = CodeHollow.FeedReader.FeedReader.ReadFromByteArray(ms.ToArray());
             return new RssContent(feed.Items.Select(ConvertToRssItem).ToArray());
         }
 

@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 namespace Sociomedia.FeedAggregator.Domain.Medias
 {
-    public interface IRssSourceReader
+    public interface IFeedReader
     {
-        Task<IReadOnlyCollection<ExternalArticle>> ReadNewArticles(Uri url, DateTimeOffset? from);
+        Task<IReadOnlyCollection<ExternalArticle>> ReadNewArticles(string url, DateTimeOffset? from);
     }
 }

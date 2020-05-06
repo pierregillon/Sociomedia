@@ -1,26 +1,25 @@
 ﻿@page "/medias/new"
-
-@using Models
-@using Sociomedia.DomainEvents.RssSource
+@using Sociomedia.DomainEvents.Media
 @using Sociomedia.FeedAggregator.Application.Commands.AddMedia
 @using Sociomedia.FeedAggregator.Infrastructure.CQRS
+@using Sociomedia.Front.Models
 
 @inject ICommandDispatcher CommandDispatcher
 
 
 <h1>Ajout d'un nouveau média :</h1>
 <span>@errorMessage</span>
-<EditForm Model=@article OnSubmit=@FormSubmitted>
+<EditForm Model="@article" OnSubmit="@FormSubmitted" class="edit-media">
     <DataAnnotationsValidator/>
     <ValidationSummary/>
     <div class="form-group">
         <label for="Name">Nom</label>
-        <InputText @bind-Value=@article.Name class="form-control" id="Name" />
+        <InputText @bind-Value="@article.Name" class="form-control" id="Name"/>
         <ValidationMessage For="@(() => article.Name)"/>
     </div>
     <div class="form-group">
         <label for="PoliticalOrientation">Orientation politique</label>
-        <InputSelect @bind-Value=@article.PoliticalOrientation class="form-control" id="PoliticalOrientation">
+        <InputSelect @bind-Value="@article.PoliticalOrientation" class="form-control" id="PoliticalOrientation">
             <option value="@PoliticalOrientation.ExtremeLeft">Extrême gauche</option>
             <option value="@PoliticalOrientation.Left">Gauche</option>
             <option value="@PoliticalOrientation.Center">Centre</option>
@@ -31,30 +30,51 @@
     </div>
     <div class="form-group">
         <label for="ImageUrl">Image (url ou svg)</label>
-        <InputTextArea @bind-Value=@article.ImageUrl class="form-control" id="ImageUrl"/>
-        <ValidationMessage For=@(() => article.ImageUrl) />
+        <InputTextArea @bind-Value="@article.ImageUrl" class="form-control" id="ImageUrl"/>
+        <ValidationMessage For="@(() => article.ImageUrl)"/>
     </div>
-    <input type="submit" class="btn btn-primary" value="Save"/>
+    @foreach (var feed in article.Feeds) {
+        <div class="form-group">
+            <label for="@("FeedUrl" + feed.Id)">Url du flux RSS / ATOM (@feed.Id)</label>
+            <div class="row">
+                <InputText @bind-Value=@feed.Url class="form-control col-md-11" id="@("FeedUrl" + feed.Id)"/>
+                <button class="btn btn-secondary col-md-1" @onclick="@(x => article.Feeds.Remove(feed))">
+                    <span class="oi oi-trash" aria-hidden="true"></span>
+                </button>
+            </div>
+            <ValidationMessage For="@(() => feed.Url)"/>
+        </div>
+    }
+    <button class="btn btn-secondary" @onclick="@article.AddFeed">Ajouter un flux</button>
+
+    <input type="submit" class="btn btn-primary" value="Save" disabled="@isLoading"/>
 </EditForm>
 
 @code {
     readonly ArticleViewModel article = new ArticleViewModel();
     private string errorMessage;
+    private bool isLoading = false;
 
     async Task FormSubmitted(EditContext editContext)
     {
         try {
-            bool formIsValid = editContext.Validate();
+            isLoading = true;
+            var formIsValid = editContext.Validate();
             if (formIsValid) {
                 await CommandDispatcher.Dispatch(new AddMediaCommand(
                     article.Name,
                     article.ImageUrl,
-                    article.PoliticalOrientation
-                    ));
+                    article.PoliticalOrientation,
+                    article.Feeds.Select(x => x.Url).ToArray()
+                ));
             }
         }
         catch (Exception ex) {
             errorMessage = ex.Message;
         }
+        finally {
+            isLoading = false;
+        }
     }
+
 }

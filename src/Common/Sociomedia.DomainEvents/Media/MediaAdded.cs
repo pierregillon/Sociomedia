@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sociomedia.DomainEvents.RssSource
+namespace Sociomedia.DomainEvents.Media
 {
     public class MediaAdded : DomainEvent
     {

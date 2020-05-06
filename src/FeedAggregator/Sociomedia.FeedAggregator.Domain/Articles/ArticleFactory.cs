@@ -16,7 +16,7 @@ namespace Sociomedia.FeedAggregator.Domain.Articles
             _htmlPageDownloader = htmlPageDownloader;
         }
 
-        public async Task<Article> Build(Guid rssSourceId, ExternalArticle externalArticle)
+        public async Task<Article> Build(Guid mediaId, ExternalArticle externalArticle)
         {
             var html = await _htmlPageDownloader.Download(externalArticle.Url);
 
@@ -24,7 +24,7 @@ namespace Sociomedia.FeedAggregator.Domain.Articles
 
             var keywords = new KeywordsParser().Parse(articleContent).Take(50).ToArray();
 
-            return new Article(externalArticle, rssSourceId, keywords.Select(x => x.ToString()).ToArray());
+            return new Article(mediaId, externalArticle, keywords.Select(x => x.ToString()).ToArray());
         }
     }
 }

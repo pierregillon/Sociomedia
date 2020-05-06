@@ -8,16 +8,16 @@ using Sociomedia.FeedAggregator.Domain.Medias;
 
 namespace Sociomedia.FeedAggregator.Infrastructure.RSS
 {
-    public class RssSourceReader : IRssSourceReader
+    public class FeedReader : IFeedReader
     {
         private readonly IRssParser _rssParser;
 
-        public RssSourceReader(IRssParser rssParser)
+        public FeedReader(IRssParser rssParser)
         {
             _rssParser = rssParser;
         }
 
-        public async Task<IReadOnlyCollection<ExternalArticle>> ReadNewArticles(Uri url, DateTimeOffset? from)
+        public async Task<IReadOnlyCollection<ExternalArticle>> ReadNewArticles(string url, DateTimeOffset? from)
         {
             return await url
                 .Pipe(Download)
@@ -26,10 +26,10 @@ namespace Sociomedia.FeedAggregator.Infrastructure.RSS
                 .Pipe(x => x.ToExternalArticles(from).ToArray());
         }
 
-        private static async Task<HttpResponseMessage> Download(Uri url)
+        private static async Task<HttpResponseMessage> Download(string url)
         {
             using var client = new HttpClient();
-            return await client.GetAsync(url.AbsoluteUri);
+            return await client.GetAsync(url);
         }
     }
 }

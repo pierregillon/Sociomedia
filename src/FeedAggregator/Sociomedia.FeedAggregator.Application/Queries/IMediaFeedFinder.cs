@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 
 namespace Sociomedia.FeedAggregator.Application.Queries {
-    public interface IRssSourceFinder
+    public interface IMediaFeedFinder
     {
-        Task<IReadOnlyCollection<RssSourceReadModel>> GetAll();
+        Task<IReadOnlyCollection<MediaFeedReadModel>> GetAll();
     }
 }

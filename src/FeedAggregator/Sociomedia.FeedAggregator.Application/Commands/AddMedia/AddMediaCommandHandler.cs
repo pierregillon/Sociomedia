@@ -17,6 +17,10 @@ namespace Sociomedia.FeedAggregator.Application.Commands.AddMedia
         {
             var media = new Media(command.Name, command.ImageUrl, command.PoliticalOrientation);
 
+            foreach (var feed in command.Feeds) {
+                media.AddFeed(feed);
+            }
+
             await _repository.Save(media);
         }
     }

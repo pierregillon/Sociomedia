@@ -1,10 +1,10 @@
 ﻿using System;
 
 namespace Sociomedia.FeedAggregator.Application.Queries {
-    public class RssSourceReadModel
+    public class MediaFeedReadModel
     {
-        public Guid Id { get; set; }
+        public Guid MediaId { get; set; }
         public DateTime? LastSynchronizationDate { get; set; }
-        public Uri Url { get; set; }
+        public string FeedUrl { get; set; }
     }
 }

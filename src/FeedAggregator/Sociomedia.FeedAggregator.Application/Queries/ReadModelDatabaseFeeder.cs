@@ -4,7 +4,7 @@ using Sociomedia.FeedAggregator.Domain.Medias;
 
 namespace Sociomedia.FeedAggregator.Application.Queries
 {
-    public class ReadModelDatabaseFeeder : IEventListener<RssSourceAdded>, IEventListener<RssSourceSynchronized>
+    public class ReadModelDatabaseFeeder : IEventListener<MediaFeedAdded>, IEventListener<MediaFeedSynchronized>
     {
         private readonly InMemoryDatabase _database;
 
@@ -13,22 +13,22 @@ namespace Sociomedia.FeedAggregator.Application.Queries
             _database = database;
         }
 
-        public Task On(RssSourceAdded @event)
+        public Task On(MediaFeedAdded @event)
         {
-            _database.Add(new RssSourceReadModel {
-                Id = @event.Id,
-                Url = @event.Url,
+            _database.Add(new MediaFeedReadModel {
+                MediaId = @event.Id,
+                FeedUrl = @event.FeedUrl,
                 LastSynchronizationDate = null
             });
 
             return Task.CompletedTask;
         }
 
-        public Task On(RssSourceSynchronized @event)
+        public Task On(MediaFeedSynchronized @event)
         {
-            var source = _database.List<RssSourceReadModel>().SingleOrDefault(x => x.Id == @event.Id);
+            var source = _database.List<MediaFeedReadModel>().SingleOrDefault(x => x.MediaId == @event.Id);
             if (source != null) {
-                source.LastSynchronizationDate = @event.SynchronizedDate;
+                source.LastSynchronizationDate = @event.SynchronizationDate;
             }
             return Task.CompletedTask;
         }

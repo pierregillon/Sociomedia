@@ -5,7 +5,7 @@ namespace Sociomedia.DomainEvents.Article
 {
     public class ArticleSynchronized : DomainEvent
     {
-        public ArticleSynchronized(Guid id, string title, string summary, DateTimeOffset publishDate, string url, string imageUrl, IReadOnlyCollection<string> keywords, Guid rssSourceId) : base(id)
+        public ArticleSynchronized(Guid id, string title, string summary, DateTimeOffset publishDate, string url, string imageUrl, IReadOnlyCollection<string> keywords, Guid mediaId) : base(id)
         {
             Title = title;
             Summary = summary;
@@ -13,7 +13,7 @@ namespace Sociomedia.DomainEvents.Article
             Url = url;
             ImageUrl = imageUrl;
             Keywords = keywords;
-            RssSourceId = rssSourceId;
+            MediaId = mediaId;
         }
 
         public string Title { get; }
@@ -22,6 +22,6 @@ namespace Sociomedia.DomainEvents.Article
         public IReadOnlyCollection<string> Keywords { get; }
         public string Url { get; set; }
         public string ImageUrl { get; }
-        public Guid RssSourceId { get; }
+        public Guid MediaId { get; }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Sociomedia.DomainEvents.RssSource {
+﻿namespace Sociomedia.DomainEvents.Media {
     public enum PoliticalOrientation
     {
         ExtremeLeft,

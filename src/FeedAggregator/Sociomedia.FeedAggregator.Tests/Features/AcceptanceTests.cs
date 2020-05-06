@@ -15,7 +15,7 @@ namespace Sociomedia.FeedAggregator.Tests.Features
     {
         protected readonly ICommandDispatcher CommandDispatcher;
         protected readonly InMemoryEventStore EventStore;
-        protected readonly IRssSourceFinder RssSourceFinder;
+        protected readonly IMediaFeedFinder MediaFeedFinder;
         protected readonly Container Container;
 
         protected AcceptanceTests()
@@ -26,7 +26,7 @@ namespace Sociomedia.FeedAggregator.Tests.Features
             Container.Inject(Substitute.For<IHtmlPageDownloader>());
             Container.Inject<IEventStore>(Container.GetInstance<InMemoryEventStore>());
 
-            RssSourceFinder = Container.GetInstance<IRssSourceFinder>();
+            MediaFeedFinder = Container.GetInstance<IMediaFeedFinder>();
             CommandDispatcher = Container.GetInstance<ICommandDispatcher>();
             EventStore = (InMemoryEventStore) Container.GetInstance<IEventStore>();
         }
