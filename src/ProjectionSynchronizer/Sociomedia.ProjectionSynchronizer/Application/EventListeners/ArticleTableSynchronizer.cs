@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using LinqToDB;
 using Sociomedia.ProjectionSynchronizer.Application.Events;
-using Sociomedia.ProjectionSynchronizer.Infrastructure.ReadModels;
-using Sociomedia.ProjectionSynchronizer.Infrastructure.ReadModels.Tables;
+using Sociomedia.ReadModel.DataAccess;
+using Sociomedia.ReadModel.DataAccess.Tables;
 
 namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
 {

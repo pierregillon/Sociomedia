@@ -1,4 +1,3 @@
-using System.Linq;
 using LinqToDB.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -6,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Sociomedia.Front.Data;
-using Sociomedia.Front.Data.ReadModels;
+using Sociomedia.ReadModel.DataAccess;
 
 namespace Sociomedia.Front
 {
@@ -28,10 +27,7 @@ namespace Sociomedia.Front
             services.AddScoped<ArticleFinder>();
             services.AddSingleton<DbConnectionReadModel>();
 
-            DataConnection.DefaultSettings = new DbSettings(
-                Configuration["sqldatabase:providerName"],
-                Configuration["sqldatabase:connectionString"]
-            );
+            DataConnection.DefaultSettings = new DbSettings(Configuration.GetSection("sqldatabase").Get<SqlDatabaseConfiguration>());
         }
 
         public class AppSettings

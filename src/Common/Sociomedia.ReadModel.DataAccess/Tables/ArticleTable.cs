@@ -1,7 +1,7 @@
 ﻿using System;
 using LinqToDB.Mapping;
 
-namespace Sociomedia.Front.Data.ReadModels.Tables
+namespace Sociomedia.ReadModel.DataAccess.Tables
 {
     [Table(Name = "Articles")]
     public class ArticleTable
@@ -16,6 +16,6 @@ namespace Sociomedia.Front.Data.ReadModels.Tables
 
         [Column] [NotNull] public DateTimeOffset PublishDate { get; set; }
 
-        [Column] public Uri ImageUrl { get; set; }
+        [Column] public string ImageUrl { get; set; }
     }
 }

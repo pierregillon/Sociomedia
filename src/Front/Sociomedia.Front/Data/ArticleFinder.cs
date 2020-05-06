@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LinqToDB;
-using Sociomedia.Front.Data.ReadModels;
+using Sociomedia.ReadModel.DataAccess;
 
 namespace Sociomedia.Front.Data
 {
@@ -24,7 +24,7 @@ namespace Sociomedia.Front.Data
                     Title = x.Title,
                     Url = x.Url,
                     Summary = x.Summary,
-                    ImageUrl = x.ImageUrl.AbsoluteUri,
+                    ImageUrl = x.ImageUrl,
                     PublishDate = x.PublishDate
                 })
                 .ToArrayAsync();

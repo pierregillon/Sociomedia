@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using LinqToDB.Data;
 using Sociomedia.ProjectionSynchronizer.Application;
-using Sociomedia.ProjectionSynchronizer.Infrastructure.ReadModels;
+using Sociomedia.ReadModel.DataAccess;
 
 namespace Sociomedia.ProjectionSynchronizer
 {

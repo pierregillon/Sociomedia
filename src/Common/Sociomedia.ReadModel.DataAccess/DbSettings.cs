@@ -2,7 +2,7 @@
 using System.Linq;
 using LinqToDB.Configuration;
 
-namespace Sociomedia.ProjectionSynchronizer.Infrastructure.ReadModels {
+namespace Sociomedia.ReadModel.DataAccess {
     public class DbSettings : ILinqToDBSettings
     {
         private readonly SqlDatabaseConfiguration _configuration;

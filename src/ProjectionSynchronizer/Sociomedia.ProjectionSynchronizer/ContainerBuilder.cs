@@ -2,7 +2,7 @@
 using EventStore.ClientAPI.Common.Log;
 using Sociomedia.ProjectionSynchronizer.Application;
 using Sociomedia.ProjectionSynchronizer.Infrastructure;
-using Sociomedia.ProjectionSynchronizer.Infrastructure.ReadModels;
+using Sociomedia.ReadModel.DataAccess;
 using StructureMap;
 using StructureMap.Graph;
 using StructureMap.Graph.Scanning;

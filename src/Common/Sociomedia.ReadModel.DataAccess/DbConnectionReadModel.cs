@@ -1,11 +1,11 @@
 ﻿using LinqToDB;
-using Sociomedia.Front.Data.ReadModels.Tables;
+using Sociomedia.ReadModel.DataAccess.Tables;
 
-namespace Sociomedia.Front.Data.ReadModels
+namespace Sociomedia.ReadModel.DataAccess
 {
     public class DbConnectionReadModel : LinqToDB.Data.DataConnection
     {
-        public DbConnectionReadModel() : base("Sociomedia.Front") { }
+        public DbConnectionReadModel() : base("Sociomedia.Synchronizer") { }
 
         public ITable<ArticleTable> Articles => GetTable<ArticleTable>();
         public ITable<KeywordTable> Keywords => GetTable<KeywordTable>();

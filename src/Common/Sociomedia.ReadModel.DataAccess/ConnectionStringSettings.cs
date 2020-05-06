@@ -1,6 +1,6 @@
 ﻿using LinqToDB.Configuration;
 
-namespace Sociomedia.Front.Data.ReadModels {
+namespace Sociomedia.ReadModel.DataAccess {
     public class ConnectionStringSettings : IConnectionStringSettings
     {
         public string ConnectionString { get; set; }

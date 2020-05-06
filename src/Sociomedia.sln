@@ -31,6 +31,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.Front", "Front\S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.ProjectionSynchronizer", "ProjectionSynchronizer\Sociomedia.ProjectionSynchronizer\Sociomedia.ProjectionSynchronizer.csproj", "{2012451A-344C-493F-9323-14A6BF47D87A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{67FCA056-07A3-46C0-AC9B-093426B8CC7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sociomedia.ReadModel.DataAccess", "Common\Sociomedia.ReadModel.DataAccess\Sociomedia.ReadModel.DataAccess.csproj", "{6B9CCCCA-4EAC-407B-97C3-2F3C3E5F741B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +69,10 @@ Global
 		{2012451A-344C-493F-9323-14A6BF47D87A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2012451A-344C-493F-9323-14A6BF47D87A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2012451A-344C-493F-9323-14A6BF47D87A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B9CCCCA-4EAC-407B-97C3-2F3C3E5F741B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B9CCCCA-4EAC-407B-97C3-2F3C3E5F741B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B9CCCCA-4EAC-407B-97C3-2F3C3E5F741B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B9CCCCA-4EAC-407B-97C3-2F3C3E5F741B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +85,7 @@ Global
 		{695FE373-CF58-4DDA-B82D-2085B7FED116} = {768CBA79-C202-4BF7-A515-0D2E08C5A051}
 		{D9E31DA9-C51B-451F-8F73-8C3C04C63BCD} = {13F5545E-7271-441C-8769-39B2ECD9589C}
 		{2012451A-344C-493F-9323-14A6BF47D87A} = {5364BF41-CA1F-4D5C-B87B-58E45316736C}
+		{6B9CCCCA-4EAC-407B-97C3-2F3C3E5F741B} = {67FCA056-07A3-46C0-AC9B-093426B8CC7B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B56ACA9-E22E-44E6-9319-99F16930E4F7}
