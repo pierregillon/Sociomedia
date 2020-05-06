@@ -1,30 +1,30 @@
-﻿@page "/fetchdata"
+﻿@page "/articles"
 @using Sociomedia.Front.Data
-@inject ArticleFinder ForecastService
+@inject ArticleFinder ArticleFinder
 
 <h1>Articles list</h1>
 
-@if (articles == null) {
+@if (_articles == null) {
     <p>
         <em>Loading...</em>
     </p>
 }
 else {
     <div class="row articles">
-        @foreach (var article in articles) {
+        @foreach (var article in _articles) {
             <div class="col-sm-6 col-md-6 col-lg-4">
-                <Article @key="article.Id" Value="@article"></Article>
+                <Article @key="@article.Id" Value="@article"></Article>
             </div>
         }
     </div>
 }
 
 @code {
-    private IReadOnlyCollection<ArticleListItem> articles;
+    private IReadOnlyCollection<ArticleListItem> _articles;
 
     protected override async Task OnInitializedAsync()
     {
-        articles = await ForecastService.List();
+        _articles = await ArticleFinder.List();
     }
 
 }

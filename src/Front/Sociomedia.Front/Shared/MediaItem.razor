@@ -1,0 +1,15 @@
+﻿@using Sociomedia.Front.Data
+<div class="media">
+    @if (!string.IsNullOrEmpty(Value.ImageUrl)) {
+        <img class="logo" src="@Value.ImageUrl" alt="@Value.Name"/>
+    }
+    else {
+        <p class="name">@Value.Name</p>
+    }
+</div>
+
+@code {
+
+    [Parameter]
+    public MediaListItem Value { get; set; }
+}

@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Lamar;
 using Sociomedia.DomainEvents;
 using Sociomedia.ProjectionSynchronizer.Application;
-using StructureMap;
 
 namespace Sociomedia.ProjectionSynchronizer.Infrastructure
 {

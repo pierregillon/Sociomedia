@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
+using Lamar;
 using Sociomedia.FeedAggregator.Application;
-using StructureMap;
 
 namespace Sociomedia.FeedAggregator.Infrastructure.CQRS
 {

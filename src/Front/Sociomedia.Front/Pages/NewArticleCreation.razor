@@ -1,0 +1,45 @@
+﻿@page "/medias/new"
+
+@using Models
+@*@inject ArticleRepository ArticleRepository*@
+
+
+<h1>Ajout d'un nouveau média :</h1>
+<EditForm Model=@article OnSubmit=@FormSubmitted>
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+    <div class="form-group">
+        <label for="Name">Nom</label>
+        <InputText @bind-Value=@article.Name class="form-control" id="Name" />
+        <ValidationMessage For="@(() => article.Name)"/>
+    </div>
+    <div class="form-group">
+        <label for="PoliticalOrientation">Orientation politique</label>
+        <InputSelect @bind-Value=@article.PoliticalOrientation class="form-control" id="PoliticalOrientation">
+            <option value="@PoliticalOrientation.ExtremeLeft">Extrême gauche</option>
+            <option value="@PoliticalOrientation.Left">Gauche</option>
+            <option value="@PoliticalOrientation.Center">Centre</option>
+            <option value="@PoliticalOrientation.Right">Droite</option>
+            <option value="@PoliticalOrientation.ExtremeRight">Extrême droite</option>
+        </InputSelect>
+        <ValidationMessage For="@(() => article.PoliticalOrientation)"/>
+    </div>
+    <div class="form-group">
+        <label for="ImageUrl">Image (url ou svg)</label>
+        <InputTextArea @bind-Value=@article.ImageUrl class="form-control" id="ImageUrl"/>
+        <ValidationMessage For=@(() => article.ImageUrl) />
+    </div>
+    <input type="submit" class="btn btn-primary" value="Save"/>
+</EditForm>
+
+@code {
+    readonly ArticleViewModel article = new ArticleViewModel();
+
+    void FormSubmitted(EditContext editContext)
+    {
+        bool formIsValid = editContext.Validate();
+        if (formIsValid) {
+            //ArticleRepository.Add(article);
+        }
+    }
+}

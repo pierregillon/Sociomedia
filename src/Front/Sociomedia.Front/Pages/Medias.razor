@@ -1,0 +1,34 @@
+﻿@page "/medias"
+@using Sociomedia.Front.Data
+@inject MediaFinder MediaFinder
+
+<h1>
+    Medias list
+    <a class="btn btn-outline-primary" href="/medias/new">
+        <span class="oi oi-plus" aria-hidden="true"></span>
+    </a>
+</h1>
+
+@if (_medias == null) {
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else {
+    <div class="row">
+        @foreach (var media in _medias) {
+            <MediaItem @key="@media.Id" Value="@media"></MediaItem>
+        }
+    </div>
+}
+
+@code {
+    private IReadOnlyCollection<MediaListItem> _medias;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _medias = await MediaFinder.List();
+    }
+
+}
+

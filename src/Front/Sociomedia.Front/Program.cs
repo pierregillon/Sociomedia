@@ -1,3 +1,4 @@
+using Lamar.Microsoft.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -12,7 +13,9 @@ namespace Sociomedia.Front
 
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
-            return Host.CreateDefaultBuilder(args)
+            return Host
+                .CreateDefaultBuilder(args)
+                .UseLamar()
                 .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
         }
     }

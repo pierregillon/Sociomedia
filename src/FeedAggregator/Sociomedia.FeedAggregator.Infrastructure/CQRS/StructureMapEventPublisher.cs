@@ -2,8 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
+using Lamar;
 using Sociomedia.FeedAggregator.Application;
-using StructureMap;
 
 namespace Sociomedia.FeedAggregator.Infrastructure.CQRS
 {

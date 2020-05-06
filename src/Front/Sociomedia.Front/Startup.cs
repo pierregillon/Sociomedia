@@ -1,3 +1,4 @@
+using Lamar;
 using LinqToDB.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,22 +19,14 @@ namespace Sociomedia.Front
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureContainer(ServiceRegistry services)
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddScoped<ArticleFinder>();
-            services.AddSingleton<DbConnectionReadModel>();
-
+            services.For<ArticleFinder>();
+            services.For<MediaFinder>();
+            services.IncludeRegistry<ServiceRegistry>();
             DataConnection.DefaultSettings = new DbSettings(Configuration.GetSection("sqldatabase").Get<SqlDatabaseConfiguration>());
-        }
-
-        public class AppSettings
-        {
-            public string ApplicationName { get; set; }
-            public string ApplicationUrl { get; set; }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,11 +1,18 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Common\Sociomedia.ReadModel.DataAccess\Sociomedia.ReadModel.DataAccess.csproj" />
+    <ProjectReference Include="..\..\FeedAggregator\Sociomedia.FeedAggregator.Application\FeedAggregator.Application.csproj" />
+    <ProjectReference Include="..\..\FeedAggregator\Sociomedia.FeedAggregator.Domain\FeedAggregator.Domain.csproj" />
+    <ProjectReference Include="..\..\FeedAggregator\Sociomedia.FeedAggregator.Infrastructure\FeedAggregator.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
