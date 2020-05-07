@@ -183,9 +183,8 @@ app {
 }
 
 .articles {
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 1300px;
+    margin: auto;
 }
 
 .article {
@@ -206,8 +205,10 @@ app {
 
 .article .image {
     width: 100%;
-    min-height: 135px;
+    height: 150px;
     background-color: lightblue;
+    -webkit-object-fit: cover;
+    object-fit: cover;
 }
 
 .article .title {
@@ -231,7 +232,6 @@ app {
 
 .media .logo {
     height: 70px;
-    max-width: 330px;
     margin: 10px;
 }
 
@@ -254,6 +254,7 @@ app {
     margin: auto;
     max-height: 200px;
     max-width: 500px;
+    min-width: 410px;
 }
 
 .media-details > .information {

@@ -2,17 +2,15 @@
 @using Sociomedia.Front.Data
 @inject ArticleFinder ArticleFinder
 
-<h1>Articles list</h1>
-
 @if (_articles == null) {
     <p>
         <em>Loading...</em>
     </p>
 }
 else {
-    <div class="row articles">
+    <div class="row articles justify-content-center">
         @foreach (var article in _articles) {
-            <div class="col-sm-6 col-md-6 col-lg-4">
+            <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
                 <Article @key="@article.Id" Value="@article"></Article>
             </div>
         }

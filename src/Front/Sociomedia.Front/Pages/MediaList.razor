@@ -15,7 +15,7 @@
     </p>
 }
 else {
-    <div class="row">
+    <div class="row justify-content-center">
         @foreach (var media in _medias) {
             <MediaItem @key="@media.Id" Value="@media"></MediaItem>
         }
