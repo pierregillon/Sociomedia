@@ -44,7 +44,7 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
         {
             await _dbConnection.MediaFeeds
                 .Value(x => x.MediaId, @event.Id)
-                .Value(x => x.FeedUrl, @event.FeedUrl)
+                .Value(x => x.FeedUrl, @event.FeedUrl ?? "")
                 .InsertAsync();
         }
 
