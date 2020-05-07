@@ -20,7 +20,7 @@ namespace FeedAggregator.Tests
 
         protected AcceptanceTests()
         {
-            Container = ContainerBuilder.Build();
+            Container = ContainerBuilder.Build(new Configuration());
 
             Container.Inject<ILogger>(new EmptyLogger());
             Container.Inject(Substitute.For<IHtmlPageDownloader>());

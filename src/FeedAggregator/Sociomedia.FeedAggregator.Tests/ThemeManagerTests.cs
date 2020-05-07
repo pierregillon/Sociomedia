@@ -3,7 +3,7 @@ using FluentAssertions;
 using Sociomedia.Domain.Themes;
 using Xunit;
 
-namespace Sociomedia.FeedAggregator.Tests
+namespace Sociomedia.Tests
 {
     public class ThemeManagerTests
     {

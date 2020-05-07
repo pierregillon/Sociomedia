@@ -13,7 +13,7 @@ namespace Sociomedia.FeedAggregator
 {
     public class ContainerBuilder
     {
-        public static Container Build()
+        public static Container Build(Configuration configuration)
         {
             return new Container(registry => {
                 registry.IncludeRegistry<SociomediaRegistry>();
@@ -28,6 +28,9 @@ namespace Sociomedia.FeedAggregator
                     scanner.AddAllTypesOf(typeof(IEventListener<>));
                     scanner.AddAllTypesOf(typeof(ICommandHandler<>));
                 });
+
+                registry.For<Aggregator>().Singleton();
+                registry.For<Configuration>().Use(configuration).Singleton();
             });
         }
 

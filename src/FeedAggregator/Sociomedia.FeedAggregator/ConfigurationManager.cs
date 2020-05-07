@@ -16,4 +16,28 @@ namespace Sociomedia.FeedAggregator
             return JsonConvert.DeserializeObject<T>(File.ReadAllText(CONFIG_JSON));
         }
     }
+
+    public class Configuration
+    {
+        public EventStoreConfiguration EventStore { get; set; } = new EventStoreConfiguration();
+
+        public FeedAggregatorConfiguration FeedAggregator { get; set; } = new FeedAggregatorConfiguration();
+    }
+
+    public class FeedAggregatorConfiguration
+    {
+        public string SynchronizationInterval { get; set; }
+
+        public TimeSpan SynchronizationTimespan => TimeSpan.TryParse(SynchronizationInterval, out var result)
+            ? result
+            : throw new Exception("Unable to parse SynchronizationInterval from configuration.");
+    }
+
+    public class EventStoreConfiguration
+    {
+        public string Server { get; set; }
+        public int Port { get; set; }
+        public string Login { get; set; }
+        public string Password { get; set; }
+    }
 }

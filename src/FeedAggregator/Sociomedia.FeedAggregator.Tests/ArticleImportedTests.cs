@@ -3,7 +3,7 @@ using FluentAssertions;
 using Sociomedia.DomainEvents.Article;
 using Xunit;
 
-namespace Sociomedia.FeedAggregator.Tests
+namespace Sociomedia.Tests
 {
     public class ArticleImportedTests
     {

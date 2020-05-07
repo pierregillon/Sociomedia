@@ -1,8 +1,11 @@
 {
-  "eventstore": {
+  "EventStore": {
     "server": "localhost",
     "port": 1113,
     "login": "admin",
-    "password": "changeit" 
+    "password": "changeit"
+  },
+  "FeedAggregator": {
+    "SynchronizationInterval": "00:01:00"
   }
 }

@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
-using EventStore.ClientAPI.Exceptions;
 using Newtonsoft.Json;
 using Sociomedia.DomainEvents;
 
@@ -20,15 +19,14 @@ namespace Sociomedia.Infrastructure
         private readonly JsonSerializerSettings _serializerSettings;
         private readonly ILogger _logger;
         private readonly ITypeLocator _typeLocator;
-        private readonly IEventPublisher _eventPublisher;
         private Func<Task> _disconnected;
         private EventStoreAllCatchUpSubscription _subscription;
+        private DomainEventReceived _domainEventReceived;
 
-        public EventStoreOrg(ILogger logger, ITypeLocator typeLocator, IEventPublisher eventPublisher)
+        public EventStoreOrg(ILogger logger, ITypeLocator typeLocator)
         {
             _logger = logger;
             _typeLocator = typeLocator;
-            _eventPublisher = eventPublisher;
 
             var jsonResolver = new PropertyCleanerSerializerContractResolver();
             jsonResolver.IgnoreProperty(typeof(IEvent), "Version", "TimeStamp");
@@ -70,42 +68,38 @@ namespace Sociomedia.Infrastructure
                 );
                 var version = @event.Version - 2; // CQRSLite start event version at 1. EventStore at -1.
                 await _connection.AppendToStreamAsync(@event.Id.ToString(), version, eventData);
-                await _eventPublisher.Publish(@event, cancellationToken);
             }
         }
 
-        public async Task StartRepublishingEvents(Func<Task> disconnected)
+        public async Task StartRepublishingEvents(long? position, DomainEventReceived domainEventReceived, Func<Task> disconnected)
         {
             _disconnected = disconnected;
+            _domainEventReceived = domainEventReceived;
 
             _subscription = _connection.SubscribeToAllFrom(
-                null,
+                position.HasValue ? new Position(position.Value, position.Value) : (Position?) null,
                 CatchUpSubscriptionSettings.Default,
                 EventAppeared,
                 LiveProcessingStarted,
                 SubscriptionDropped
             );
 
-            _logger.Debug($"Subscribed from beginning. Replaying missing events.");
+            Debug($"Replaying all events from beginning ...");
         }
+
+        // ----- Callback
 
         private void SubscriptionDropped(EventStoreCatchUpSubscription subscription, SubscriptionDropReason reason, Exception ex)
         {
-            _logger.Debug($"Subscription dropped : {reason}.");
-
-            if (ex is ConnectionClosedException) {
-                _logger.Error(ex.Message);
-            }
-            else {
-                _logger.Error(ex, string.Empty);
-            }
+            Error($"Subscription dropped : {reason}.");
+            Error(ex);
 
             _disconnected.Invoke().Wait();
         }
 
         private void LiveProcessingStarted(EventStoreCatchUpSubscription obj)
         {
-            _logger.Debug("Switched to live mode");
+            Debug("Switched to live mode");
         }
 
         private async Task EventAppeared(EventStoreCatchUpSubscription subscription, ResolvedEvent resolvedEvent)
@@ -117,32 +111,20 @@ namespace Sociomedia.Infrastructure
             try {
                 var position = resolvedEvent.OriginalPosition.GetValueOrDefault().CommitPosition;
                 if (TryConvertToDomainEvent(resolvedEvent, out var @event)) {
-                    _logger.Debug($"{resolvedEvent.Event.EventType} received. Stream: {resolvedEvent.Event.EventStreamId}, position: {position}");
-                    await _eventPublisher.Publish(@event);
+                    Debug($"{resolvedEvent.Event.EventType} received. Stream: {resolvedEvent.Event.EventStreamId}, position: {position}");
+                    await _domainEventReceived.Invoke(position, @event);
                 }
                 else {
-                    _logger.Debug($"[UNKNOWN EVENT] {resolvedEvent.Event.EventType} received. Stream: {resolvedEvent.Event.EventStreamId}, position: {position}");
+                    Debug($"[UNKNOWN EVENT] {resolvedEvent.Event.EventType} received. Stream: {resolvedEvent.Event.EventStreamId}, position: {position}");
                 }
             }
             catch (Exception ex) {
-                _logger.Error(ex.Message);
+                Error(ex);
                 throw;
             }
         }
 
-        public void StopListeningEvents()
-        {
-            if (_subscription == null) {
-                throw new InvalidOperationException("Subscription not started");
-            }
-            _subscription.Stop();
-            _subscription = null;
-            _connection.Close();
-            _connection = null;
-        }
-
         // ----- Internal logic
-
 
         private bool TryConvertToDomainEvent(ResolvedEvent @event, out IEvent result)
         {
@@ -155,7 +137,6 @@ namespace Sociomedia.Infrastructure
                 return false;
             }
         }
-
 
         private IEvent ConvertToDomainEvent(ResolvedEvent @event)
         {
@@ -201,7 +182,22 @@ namespace Sociomedia.Infrastructure
 
             return streamEvents;
         }
+
+        private void Debug(string message)
+        {
+            _logger.Debug("[EVENTSTORE] " + message);
+        }
+
+        private void Error(string message)
+        {
+            _logger.Error("[EVENTSTORE] " + message);
+        }
+
+        private void Error(Exception ex)
+        {
+            _logger.Error(ex, "[EVENTSTORE]");
+        }
     }
 
-    public delegate Task DomainEventReceived(long position, DomainEvent @event);
+    public delegate Task DomainEventReceived(long position, IEvent @event);
 }

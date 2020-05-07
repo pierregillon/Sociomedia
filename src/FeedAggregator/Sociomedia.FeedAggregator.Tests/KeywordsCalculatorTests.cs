@@ -2,7 +2,7 @@ using FluentAssertions;
 using Sociomedia.Domain;
 using Xunit;
 
-namespace Sociomedia.FeedAggregator.Tests
+namespace Sociomedia.Tests
 {
     public class KeywordsCalculatorTests
     {

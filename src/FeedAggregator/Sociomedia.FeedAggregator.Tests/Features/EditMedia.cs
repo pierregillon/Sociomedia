@@ -8,7 +8,7 @@ using Sociomedia.DomainEvents;
 using Sociomedia.DomainEvents.Media;
 using Xunit;
 
-namespace Sociomedia.FeedAggregator.Tests.Features
+namespace Sociomedia.Tests.Features
 {
     public class EditMedia : AcceptanceTests
     {

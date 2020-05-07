@@ -5,7 +5,7 @@
 
     <IsPackable>false</IsPackable>
 
-    <RootNamespace>Sociomedia.FeedAggregator.Tests</RootNamespace>
+    <RootNamespace>Sociomedia.Tests</RootNamespace>
 
     <AssemblyName>Sociomedia.Tests</AssemblyName>
   </PropertyGroup>
@@ -23,7 +23,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Sociomedia.FeedAggregator.Domain\Sociomedia.Domain.csproj" />
     <ProjectReference Include="..\Sociomedia.FeedAggregator.Infrastructure\Sociomedia.Infrastructure.csproj" />
-    <ProjectReference Include="..\Sociomedia.FeedAggregator\FeedAggregator.csproj" />
   </ItemGroup>
 
   <ItemGroup>
