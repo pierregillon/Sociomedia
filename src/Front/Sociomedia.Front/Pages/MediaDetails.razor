@@ -1,0 +1,78 @@
+﻿@page "/medias/{MediaId:guid}"
+@using Sociomedia.Front.Data
+
+@if (_mediaDetails == null) {
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+
+else {
+    <div class="media-details">
+        <img class="logo" src="@_mediaDetails.ImageUrl" alt="@_mediaDetails.Name"/>
+        <div class="information row justify-content-center">
+            <div class="col-9 col-md-8 col-lg-6 col-xl-5 alert alert-primary">
+                <h2>
+                Fiche descriptive :
+                <a class="btn btn-outline-primary" href="@($"/medias/{MediaId.Value}/edit")">
+                    <span class="oi oi-pencil" aria-hidden="true"></span>
+                </a>
+                </h2>
+                <ul>
+                    <li>
+                        <span>Orientation politique : @_mediaDetails.PoliticalOrientation.ToString()</span>
+                    </li>
+                    <li>
+                        <span>Propriétaire du média : xxx</span>
+                    </li>
+                    <li>
+                        <span>Mode de financement : xxx</span>
+                    </li>
+                    <li>
+                        <span>Status juridique : xxx</span>
+                    </li>
+                    <li>
+                        <span>Date de création : xxx</span>
+                    </li>
+                </ul>
+                <span>Pour en savoir plus, consultez <a href="https://fr.wikipedia.org/wiki/Le_Monde" target="_blank">le site web officiel</a> ou <a href="https://fr.wikipedia.org/wiki/Le_Monde" target="_blank">le lien Wikipédia</a></span>
+            </div>
+        </div>
+        <h2 class="articles">Les articles</h2>
+
+        <div class="row articles">
+            @foreach (var article in _mediaDetails.Articles) {
+                <div class="col-sm-6 col-md-6 col-lg-4">
+                    <Article @key="@article.Id" Value="@article"></Article>
+                </div>
+            }
+        </div>
+    </div>
+    
+}
+
+
+@code {
+
+    [Inject]
+    protected NavigationManager NavigationManager { get; set; }
+
+    [Inject]
+    protected MediaFinder MediaFinder { get; set; }
+
+    [Parameter]
+    public Guid? MediaId { get; set; }
+
+    private MediaDetailDto _mediaDetails;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!MediaId.HasValue) {
+            NavigationManager.NavigateTo("/articles");
+        }
+        else {
+            _mediaDetails = await MediaFinder.GetDetails(MediaId.Value);
+        }
+    }
+
+}

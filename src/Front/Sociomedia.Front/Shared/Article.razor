@@ -1,6 +1,8 @@
 ﻿@using Sociomedia.Front.Data
 <div class="article">
-    <img class="logo" src="@Value.MediaImageUrl"/>
+    <a href="@("/medias/" + Value.MediaId)">
+        <img class="logo" src="@Value.MediaImageUrl" />
+    </a>
     <img class="image" src="@Value.ImageUrl"/>
     <a class="title" href="@Value.Url" target="_blank">@Value.Title</a>
     <p class="date">@Value.PublishDate.ToString("G")</p>

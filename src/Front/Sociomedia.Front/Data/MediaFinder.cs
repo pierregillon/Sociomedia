@@ -60,5 +60,48 @@ namespace Sociomedia.Front.Data
 
             return null;
         }
+
+        public async Task<MediaDetailDto> GetDetails(Guid mediaId)
+        {
+            var mediaDetail = await _dbConnection.Medias
+                .Where(x => x.Id == mediaId)
+                .Select(media => new {
+                    Id = media.Id,
+                    Name = media.Name,
+                    ImageUrl = media.ImageUrl,
+                    PoliticalOrientation = (PoliticalOrientation) media.PoliticalOrientation
+                })
+                .SingleOrDefaultAsync();
+
+            var articles = from article in _dbConnection.Articles
+                join media in _dbConnection.Medias on article.MediaId equals media.Id
+                orderby article.PublishDate descending
+                where media.Id == mediaId
+                select new ArticleListItem {
+                    Id = article.Id,
+                    Title = article.Title,
+                    Url = article.Url,
+                    Summary = article.Summary,
+                    ImageUrl = article.ImageUrl,
+                    PublishDate = article.PublishDate,
+                    MediaId = article.MediaId,
+                    MediaImageUrl = media.ImageUrl
+                };
+
+            return new MediaDetailDto {
+                Name = mediaDetail.Name,
+                ImageUrl = mediaDetail.ImageUrl,
+                PoliticalOrientation = mediaDetail.PoliticalOrientation,
+                Articles = await articles.ToArrayAsync()
+            };
+        }
+    }
+
+    public class MediaDetailDto
+    {
+        public string Name { get; set; }
+        public string ImageUrl { get; set; }
+        public PoliticalOrientation PoliticalOrientation { get; set; }
+        public IReadOnlyCollection<ArticleListItem> Articles { get; set; }
     }
 }

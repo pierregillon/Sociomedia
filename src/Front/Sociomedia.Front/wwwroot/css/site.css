@@ -231,6 +231,7 @@ app {
 
 .media .logo {
     height: 70px;
+    max-width: 330px;
     margin: 10px;
 }
 
@@ -246,4 +247,20 @@ app {
 .edit-media .row {
     margin-right: 0;
     margin-left: 0;
+}
+
+.media-details > .logo {
+    display: block;
+    margin: auto;
+    max-height: 200px;
+    max-width: 500px;
+}
+
+.media-details > .information {
+    margin-top: 20px;
+}
+
+.media-details h2.articles {
+    text-align: center;
+    margin-bottom: 20px;
 }

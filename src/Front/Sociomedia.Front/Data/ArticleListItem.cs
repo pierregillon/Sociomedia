@@ -11,5 +11,6 @@ namespace Sociomedia.Front.Data
         public string Summary { get; set; }
         public DateTimeOffset PublishDate { get; set; }
         public string MediaImageUrl { get; set; }
+        public Guid MediaId { get; set; }
     }
 }

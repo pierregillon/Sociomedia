@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace Sociomedia.Front.Data
             _dbConnection = dbConnection;
         }
 
-        public async Task<IReadOnlyCollection<ArticleListItem>> List()
+        public async Task<IReadOnlyCollection<ArticleListItem>> List(Guid? mediaId = null)
         {
             var query = from article in _dbConnection.Articles
                 join media in _dbConnection.Medias on article.MediaId equals media.Id
@@ -27,8 +28,13 @@ namespace Sociomedia.Front.Data
                     Summary = article.Summary,
                     ImageUrl = article.ImageUrl,
                     PublishDate = article.PublishDate,
+                    MediaId = article.MediaId,
                     MediaImageUrl = media.ImageUrl
                 };
+
+            if (mediaId.HasValue) {
+                query = query.Where(x => x.MediaId == mediaId.Value);
+            }
 
             return await query.ToArrayAsync();
         }
