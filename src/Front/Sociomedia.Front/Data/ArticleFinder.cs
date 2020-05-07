@@ -17,17 +17,20 @@ namespace Sociomedia.Front.Data
 
         public async Task<IReadOnlyCollection<ArticleListItem>> List()
         {
-            return await _dbConnection.Articles
-                .OrderByDescending(x => x.PublishDate)
-                .Select(x => new ArticleListItem {
-                    Id = x.Id,
-                    Title = x.Title,
-                    Url = x.Url,
-                    Summary = x.Summary,
-                    ImageUrl = x.ImageUrl,
-                    PublishDate = x.PublishDate
-                })
-                .ToArrayAsync();
+            var query = from article in _dbConnection.Articles
+                join media in _dbConnection.Medias on article.MediaId equals media.Id
+                orderby article.PublishDate descending
+                select new ArticleListItem {
+                    Id = article.Id,
+                    Title = article.Title,
+                    Url = article.Url,
+                    Summary = article.Summary,
+                    ImageUrl = article.ImageUrl,
+                    PublishDate = article.PublishDate,
+                    MediaImageUrl = media.ImageUrl
+                };
+
+            return await query.ToArrayAsync();
         }
     }
 }

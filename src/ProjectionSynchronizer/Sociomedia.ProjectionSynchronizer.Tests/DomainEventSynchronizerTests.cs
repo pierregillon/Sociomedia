@@ -81,7 +81,8 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
                         ImageUrl = articleSynchronized.ImageUrl,
                         Url = articleSynchronized.Url,
                         Summary = articleSynchronized.Summary,
-                        PublishDate = articleSynchronized.PublishDate
+                        PublishDate = articleSynchronized.PublishDate,
+                        MediaId = articleSynchronized.MediaId
                     }
                 });
         }

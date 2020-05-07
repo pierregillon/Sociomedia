@@ -17,5 +17,7 @@ namespace Sociomedia.ReadModel.DataAccess.Tables
         [Column] [NotNull] public DateTimeOffset PublishDate { get; set; }
 
         [Column] public string ImageUrl { get; set; }
+
+        [Column]  public Guid MediaId { get; set; }
     }
 }

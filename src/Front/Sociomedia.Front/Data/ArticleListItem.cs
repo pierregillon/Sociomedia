@@ -10,6 +10,6 @@ namespace Sociomedia.Front.Data
         public string ImageUrl { get; set; }
         public string Summary { get; set; }
         public DateTimeOffset PublishDate { get; set; }
-        public string WebSiteSource => new Uri(Url).Host;
+        public string MediaImageUrl { get; set; }
     }
 }

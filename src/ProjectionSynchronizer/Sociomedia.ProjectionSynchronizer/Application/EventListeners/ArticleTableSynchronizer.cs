@@ -24,6 +24,7 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
                 .Value(x => x.Summary, @event.Summary)
                 .Value(x => x.ImageUrl, @event.ImageUrl)
                 .Value(x => x.PublishDate, @event.PublishDate)
+                .Value(x => x.MediaId, @event.MediaId)
                 .InsertAsync();
 
             foreach (var keyword in @event.Keywords) {

@@ -15,3 +15,4 @@
 * Clear logging from EventPublisher decorator
 * add tests on FeedReader when url unreachable
 * fix add/remove rss/atom feed url to existing media
+* ArticleImported => check summary format, it should not be html !
