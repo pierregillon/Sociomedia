@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CQRSlite.Domain;
 using Sociomedia.FeedAggregator.Domain.Medias;
 
 namespace Sociomedia.FeedAggregator.Application.Commands.AddMedia
 {
-    public class AddMediaCommandHandler : ICommandHandler<AddMediaCommand>
+    public class AddMediaCommandHandler : ICommandHandler<AddMediaCommand, Guid>
     {
         private readonly IRepository _repository;
 
@@ -13,7 +14,7 @@ namespace Sociomedia.FeedAggregator.Application.Commands.AddMedia
             _repository = repository;
         }
 
-        public async Task Handle(AddMediaCommand command)
+        public async Task<Guid> Handle(AddMediaCommand command)
         {
             var media = new Media(command.Name, command.ImageUrl, command.PoliticalOrientation);
 
@@ -22,6 +23,8 @@ namespace Sociomedia.FeedAggregator.Application.Commands.AddMedia
             }
 
             await _repository.Save(media);
+
+            return media.Id;
         }
     }
 }

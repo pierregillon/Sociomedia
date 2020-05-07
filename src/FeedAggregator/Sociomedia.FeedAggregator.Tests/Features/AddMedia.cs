@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Sociomedia.DomainEvents;
 using Sociomedia.DomainEvents.Media;
 using Sociomedia.FeedAggregator.Application.Commands.AddMedia;
 using Xunit;
@@ -21,25 +23,14 @@ namespace Sociomedia.FeedAggregator.Tests.Features
                 }
             );
 
-            await CommandDispatcher.Dispatch(command);
+            await CommandDispatcher.Dispatch<AddMediaCommand, Guid>(command);
 
-            var events = await EventStore.GetAllEvents();
-
-            events
-                .OfType<MediaAdded>()
+            (await EventStore.GetNewEvents())
                 .Should()
-                .BeEquivalentTo(new {
-                    Name = command.Name,
-                    ImageUrl = command.ImageUrl,
-                    PoliticalOrientation = command.PoliticalOrientation
-                });
-
-            events
-                .OfType<MediaFeedAdded>()
-                .Should()
-                .BeEquivalentTo(new {
-                    FeedUrl = command.Feeds.Single()
-                });
+                .BeEquivalentTo(new DomainEvent[] {
+                    new MediaAdded(default, command.Name, command.ImageUrl, command.PoliticalOrientation),
+                    new MediaFeedAdded(default, command.Feeds.Single())
+                }, x => x.ExcludeDomainEventTechnicalFields());
         }
     }
 }

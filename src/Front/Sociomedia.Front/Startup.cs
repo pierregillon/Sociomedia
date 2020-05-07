@@ -31,6 +31,7 @@ namespace Sociomedia.Front
                 config.PositionClass = Defaults.Classes.Position.TopRight;
                 config.PreventDuplicates = true;
                 config.NewestOnTop = true;
+                config.VisibleStateDuration = 5000;
             });
         }
 

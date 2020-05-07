@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Sociomedia.DomainEvents.Media;
+using Sociomedia.Front.Models;
 using Sociomedia.ReadModel.DataAccess;
 
 namespace Sociomedia.Front.Data
@@ -31,6 +33,18 @@ namespace Sociomedia.Front.Data
                     PoliticalOrientation = "gauche",
                     ImageUrl = "https://www.marianne.net/sites/default/themes/marianne/images/logo-marianne.svg"
                 },
+            };
+        }
+
+        public async Task<ArticleViewModel> Get(Guid mediaId)
+        {
+            await Task.Delay(0);
+            return new ArticleViewModel {
+                Id = mediaId,
+                Name = "Marianne",
+                Feeds = { new FeedItem { Id = 1, Url = "test" }, new FeedItem { Id = 2, Url = "test2" } },
+                PoliticalOrientation = PoliticalOrientation.ExtremeRight,
+                ImageUrl = "qsdfjqsjfjqsdfj"
             };
         }
     }

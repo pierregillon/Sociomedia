@@ -1,48 +1,51 @@
 ﻿@page "/medias/new"
+@page "/medias/{MediaId:guid}"
 @using Sociomedia.DomainEvents.Media
 @using Sociomedia.FeedAggregator.Application.Commands.AddMedia
+@using Sociomedia.FeedAggregator.Application.Commands.EditMedia
 @using Sociomedia.FeedAggregator.Infrastructure.CQRS
+@using Sociomedia.Front.Data
 @using Sociomedia.Front.Models
 
 
 <h1>Ajout d'un nouveau média :</h1>
-<EditForm Model="@article" OnSubmit="@FormSubmitted" class="edit-media">
+<EditForm Model="@_article" OnSubmit="@FormSubmitted" class="edit-media">
     <DataAnnotationsValidator/>
     <ValidationSummary/>
     <div class="form-group">
         <label for="Name">Nom</label>
-        <InputText @bind-Value="@article.Name" class="form-control" id="Name"/>
-        <ValidationMessage For="@(() => article.Name)"/>
+        <InputText @bind-Value="@_article.Name" class="form-control" id="Name"/>
+        <ValidationMessage For="@(() => _article.Name)"/>
     </div>
     <div class="form-group">
         <label for="PoliticalOrientation">Orientation politique</label>
-        <InputSelect @bind-Value="@article.PoliticalOrientation" class="form-control" id="PoliticalOrientation">
+        <InputSelect @bind-Value="@_article.PoliticalOrientation" class="form-control" id="PoliticalOrientation">
             <option value="@PoliticalOrientation.ExtremeLeft">Extrême gauche</option>
             <option value="@PoliticalOrientation.Left">Gauche</option>
             <option value="@PoliticalOrientation.Center">Centre</option>
             <option value="@PoliticalOrientation.Right">Droite</option>
             <option value="@PoliticalOrientation.ExtremeRight">Extrême droite</option>
         </InputSelect>
-        <ValidationMessage For="@(() => article.PoliticalOrientation)"/>
+        <ValidationMessage For="@(() => _article.PoliticalOrientation)"/>
     </div>
     <div class="form-group">
         <label for="ImageUrl">Image (url ou svg)</label>
-        <InputTextArea @bind-Value="@article.ImageUrl" class="form-control" id="ImageUrl"/>
-        <ValidationMessage For="@(() => article.ImageUrl)"/>
+        <InputTextArea @bind-Value="@_article.ImageUrl" class="form-control" id="ImageUrl"/>
+        <ValidationMessage For="@(() => _article.ImageUrl)"/>
     </div>
-    @foreach (var feed in article.Feeds) {
+    @foreach (var feed in _article.Feeds) {
         <div class="form-group">
             <label for="@("FeedUrl" + feed.Id)">Url du flux RSS / ATOM (@feed.Id)</label>
             <div class="row">
                 <InputText @bind-Value=@feed.Url class="form-control col-md-11" id="@("FeedUrl" + feed.Id)"/>
-                <button class="btn btn-secondary col-md-1" @onclick="@(x => article.Feeds.Remove(feed))">
+                <button class="btn btn-secondary col-md-1" @onclick="@(x => _article.Feeds.Remove(feed))">
                     <span class="oi oi-trash" aria-hidden="true"></span>
                 </button>
             </div>
             <ValidationMessage For="@(() => feed.Url)"/>
         </div>
     }
-    <button class="btn btn-secondary" @onclick="@article.AddFeed">Ajouter un flux</button>
+    <button class="btn btn-secondary" @onclick="@_article.AddFeed">Ajouter un flux</button>
 
     <input type="submit" class="btn btn-primary" value="Save" disabled="@isLoading"/>
 </EditForm>
@@ -58,8 +61,24 @@
     [Inject]
     protected NavigationManager NavigationManager { get; set; }
 
-    private readonly ArticleViewModel article = new ArticleViewModel();
+    [Inject]
+    protected MediaFinder MediaFinder { get; set; }
+
+    [Parameter]
+    public Guid? MediaId { get; set; }
+
+    private ArticleViewModel _article = new ArticleViewModel();
     private bool isLoading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (MediaId.HasValue) {
+            _article = await MediaFinder.Get(MediaId.Value);
+        }
+        else {
+            _article = new ArticleViewModel();
+        }
+    }
 
     async Task FormSubmitted(EditContext editContext)
     {
@@ -67,13 +86,26 @@
             isLoading = true;
             var formIsValid = editContext.Validate();
             if (formIsValid) {
-                await CommandDispatcher.Dispatch(new AddMediaCommand(
-                    article.Name,
-                    article.ImageUrl,
-                    article.PoliticalOrientation,
-                    article.Feeds.Select(x => x.Url).ToArray()
-                ));
-                Toaster.Success("Ajout du nouveau média terminé");
+                if (MediaId.HasValue) {
+                    await CommandDispatcher.Dispatch(new EditMediaCommand(
+                        _article.Id,
+                        _article.Name,
+                        _article.ImageUrl,
+                        _article.PoliticalOrientation,
+                        _article.Feeds.Select(x => x.Url).ToArray()
+                    ));
+                    Toaster.Success("Les informations du média ont bien été mise à jour.");
+                }
+                else {
+                    await CommandDispatcher.Dispatch<AddMediaCommand, Guid>(new AddMediaCommand(
+                        _article.Name,
+                        _article.ImageUrl,
+                        _article.PoliticalOrientation,
+                        _article.Feeds.Select(x => x.Url).ToArray()
+                    ));
+                    Toaster.Success("Ajout du nouveau média réussie.");
+                }
+
                 NavigationManager.NavigateTo("/medias");
             }
         }

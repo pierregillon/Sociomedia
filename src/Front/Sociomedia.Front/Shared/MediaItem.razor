@@ -1,5 +1,5 @@
 ﻿@using Sociomedia.Front.Data
-<div class="media">
+<div class="media" @onclick="@Edit">
     @if (!string.IsNullOrEmpty(Value.ImageUrl)) {
         <img class="logo" src="@Value.ImageUrl" alt="@Value.Name"/>
     }
@@ -10,6 +10,15 @@
 
 @code {
 
+    [Inject]
+    protected NavigationManager NavigationManager { get; set; }
+
     [Parameter]
     public MediaListItem Value { get; set; }
+
+    public void Edit()
+    {
+        NavigationManager.NavigateTo("/medias/" + Value.Id);
+    }
+
 }

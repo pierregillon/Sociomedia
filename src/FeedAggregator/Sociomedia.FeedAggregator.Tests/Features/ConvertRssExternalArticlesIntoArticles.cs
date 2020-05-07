@@ -33,7 +33,7 @@ namespace Sociomedia.FeedAggregator.Tests.Features
         {
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
 
-            (await EventStore.GetAllEvents())
+            (await EventStore.GetNewEvents())
                 .Should()
                 .BeEmpty();
         }
@@ -48,8 +48,7 @@ namespace Sociomedia.FeedAggregator.Tests.Features
 
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
 
-            (await EventStore.GetAllEvents())
-                .Skip(2)
+            (await EventStore.GetNewEvents())
                 .Should()
                 .BeEmpty();
         }
@@ -92,6 +91,7 @@ namespace Sociomedia.FeedAggregator.Tests.Features
         [Fact]
         public async Task Create_new_article_when_new_external_article()
         {
+            // Arrange
             var mediaId = Guid.NewGuid();
 
             await EventStore.Save(new IDomainEvent[] {
@@ -99,6 +99,8 @@ namespace Sociomedia.FeedAggregator.Tests.Features
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 },
                 new MediaFeedSynchronized(mediaId, "https://www.test.com/rss.xml", new DateTime(2020, 05, 01)) { Version = 3 }
             });
+
+            EventStore.CommitEvents();
 
             _feedReader
                 .ReadNewArticles("https://www.test.com/rss.xml", new DateTime(2020, 05, 01))
@@ -109,9 +111,11 @@ namespace Sociomedia.FeedAggregator.Tests.Features
                     }
                 });
 
+            // Act
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
 
-            var events = (await EventStore.GetAllEvents()).Skip(3).ToArray();
+            // Assert
+            var events = (await EventStore.GetNewEvents()).ToArray();
 
             events
                 .OfType<ArticleSynchronized>()

@@ -11,35 +11,27 @@ namespace Sociomedia.FeedAggregator.Infrastructure
     {
         private readonly IEventPublisher _eventPublisher;
         private readonly Dictionary<Guid, List<IEvent>> _domainEventsPerGuid = new Dictionary<Guid, List<IEvent>>();
+        private DateTimeOffset _now;
 
         public InMemoryEventStore(IEventPublisher eventPublisher)
         {
             _eventPublisher = eventPublisher;
         }
 
-        public async Task<IReadOnlyCollection<IEvent>> GetAllEvents()
+        public async Task<IReadOnlyCollection<IEvent>> GetNewEvents()
         {
             await Task.Delay(0);
 
-            return _domainEventsPerGuid.SelectMany(x => x.Value).ToArray();
+            return _domainEventsPerGuid
+                .SelectMany(x => x.Value)
+                .Where(x => x.TimeStamp > _now)
+                .ToArray();
         }
 
         public async Task Save(IEnumerable<IEvent> events, CancellationToken cancellationToken = new CancellationToken())
         {
-            await Task.Delay(0, cancellationToken);
-
-            var fixedEvents = events.ToArray();
-
-            foreach (var @event in fixedEvents) {
-                if (_domainEventsPerGuid.TryGetValue(@event.Id, out var existingEvents)) {
-                    existingEvents.Add(@event);
-                }
-                else {
-                    _domainEventsPerGuid.Add(@event.Id, new List<IEvent> { @event });
-                }
-            }
-
-            foreach (var @event in fixedEvents) {
+            foreach (var @event in events) {
+                Add(@event);
                 await _eventPublisher.Publish(@event, cancellationToken);
             }
         }
@@ -52,6 +44,21 @@ namespace Sociomedia.FeedAggregator.Infrastructure
                 return events.Where(x => x.Version > fromVersion).ToArray();
             }
             return Array.Empty<IEvent>();
+        }
+
+        private void Add(IEvent @event)
+        {
+            if (_domainEventsPerGuid.TryGetValue(@event.Id, out var existingEvents)) {
+                existingEvents.Add(@event);
+            }
+            else {
+                _domainEventsPerGuid.Add(@event.Id, new List<IEvent> { @event });
+            }
+        }
+
+        public void CommitEvents()
+        {
+            _now = DateTimeOffset.Now;
         }
     }
 }

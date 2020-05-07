@@ -5,4 +5,9 @@ namespace Sociomedia.FeedAggregator.Application {
     {
         Task Handle(T command);
     }
+
+    public interface ICommandHandler<in T, TResult> where T : ICommand<TResult>
+    {
+        Task<TResult> Handle(T command);
+    }
 }

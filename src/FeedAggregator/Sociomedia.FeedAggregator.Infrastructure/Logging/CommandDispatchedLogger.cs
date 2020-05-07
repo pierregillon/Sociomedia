@@ -27,5 +27,19 @@ namespace Sociomedia.FeedAggregator.Infrastructure.Logging {
                 await _logger.LogInformation("END " + command.GetType().Name, watch.ElapsedMilliseconds);
             }
         }
+
+        public async Task<TResult> Dispatch<T, TResult>(T command) where T : ICommand<TResult>
+        {
+            var watch = Stopwatch.StartNew();
+            await _logger.LogInformation("START " + command.GetType().Name);
+            try
+            {
+                return await _commandDispatcher.Dispatch<T, TResult>(command);
+            }
+            finally
+            {
+                await _logger.LogInformation("END " + command.GetType().Name, watch.ElapsedMilliseconds);
+            }
+        }
     }
 }

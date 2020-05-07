@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Sociomedia.DomainEvents.Media;
 
@@ -13,6 +14,7 @@ namespace Sociomedia.Front.Models
         [Required] public PoliticalOrientation PoliticalOrientation { get; set; }
 
         public List<FeedItem> Feeds { get; } = new List<FeedItem>();
+        public Guid Id { get; set; }
 
         public ArticleViewModel()
         {
