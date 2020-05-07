@@ -12,3 +12,4 @@
 * feed aggregator : infinite loop.
 * sanitize image url from width/height format parameters
     => https://medias.liberation.fr/photo/1311428-emmanuel-macron-dans-une-ecole-des-yvelines-le-5-mai-2020-a-poissy.jpg?modified_at=1588686002&ratio_x=03&ratio_y=02&width=150
+* Clear logging from EventPublisher decorator
