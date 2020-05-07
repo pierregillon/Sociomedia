@@ -17,18 +17,21 @@ namespace FeedAggregator.Tests
         protected readonly InMemoryEventStore EventStore;
         protected readonly IMediaFeedFinder MediaFeedFinder;
         protected readonly Container Container;
+        private readonly IHtmlPageDownloader _htmlPageDownloader = Substitute.For<IHtmlPageDownloader>();
 
         protected AcceptanceTests()
         {
             Container = ContainerBuilder.Build(new Configuration());
 
             Container.Inject<ILogger>(new EmptyLogger());
-            Container.Inject(Substitute.For<IHtmlPageDownloader>());
+            Container.Inject(_htmlPageDownloader);
             Container.Inject<IEventStore>(Container.GetInstance<InMemoryEventStore>());
 
             MediaFeedFinder = Container.GetInstance<IMediaFeedFinder>();
             CommandDispatcher = Container.GetInstance<ICommandDispatcher>();
             EventStore = (InMemoryEventStore) Container.GetInstance<IEventStore>();
+
+            _htmlPageDownloader.Download(Arg.Any<Uri>()).Returns("<html>bla</html>");
         }
 
         private class EmptyLogger : ILogger

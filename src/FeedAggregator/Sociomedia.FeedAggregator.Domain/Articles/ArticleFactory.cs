@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Sociomedia.Domain.Medias;
 
 namespace Sociomedia.Domain.Articles
 {
@@ -19,6 +18,9 @@ namespace Sociomedia.Domain.Articles
         public async Task<Article> Build(Guid mediaId, ExternalArticle externalArticle)
         {
             var html = await _htmlPageDownloader.Download(externalArticle.Url);
+            if (string.IsNullOrEmpty(html)) {
+                throw new ArticleNotFound($"The article with url '{externalArticle.Url}' was not found.");
+            }
 
             var articleContent = _htmlParser.ExtractPlainTextArticleContent(html);
 
@@ -26,5 +28,10 @@ namespace Sociomedia.Domain.Articles
 
             return new Article(mediaId, externalArticle, keywords.Select(x => x.ToString()).ToArray());
         }
+    }
+
+    public class ArticleNotFound : Exception
+    {
+        public ArticleNotFound(string message) : base(message) { }
     }
 }

@@ -16,3 +16,11 @@
 * add tests on FeedReader when url unreachable
 * fix add/remove rss/atom feed url to existing media
 * ArticleImported => check summary format, it should not be html !
+* Better management when article in unreachable : improve ArticleNotFound ?
+* Be sure to not introduce article duplication : use article external id and store it
+* Show indication about free / paid articles
+* Paging for articles
+* Display media details and its articles when clicking on a media in the media list or the logo in the articles list
+* Add an article viewer to show article content without living website
+* Removing articles when removing media
+* Simplify article import : take all articles from feed and compare with ones existing

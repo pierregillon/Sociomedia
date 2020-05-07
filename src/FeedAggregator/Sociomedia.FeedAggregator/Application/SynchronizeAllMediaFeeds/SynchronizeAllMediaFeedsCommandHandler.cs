@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CQRSlite.Domain;
+using EventStore.ClientAPI;
 using Sociomedia.Application;
 using Sociomedia.Domain.Articles;
 using Sociomedia.Domain.Medias;
@@ -16,17 +17,20 @@ namespace Sociomedia.FeedAggregator.Application.SynchronizeAllMediaFeeds
         private readonly IFeedReader _feedReader;
         private readonly ArticleFactory _articleFactory;
         private readonly IMediaFeedFinder _mediaFeedFinder;
+        private readonly ILogger _logger;
 
         public SynchronizeAllMediaFeedsCommandHandler(
             IRepository repository,
             IFeedReader feedReader,
             ArticleFactory articleFactory,
-            IMediaFeedFinder mediaFeedFinder)
+            IMediaFeedFinder mediaFeedFinder,
+            ILogger logger)
         {
             _repository = repository;
             _feedReader = feedReader;
             _articleFactory = articleFactory;
             _mediaFeedFinder = mediaFeedFinder;
+            _logger = logger;
         }
 
         public async Task Handle(SynchronizeAllMediaFeedsCommand command)
@@ -44,8 +48,13 @@ namespace Sociomedia.FeedAggregator.Application.SynchronizeAllMediaFeeds
         private async Task SynchronizeArticles(Guid mediaId, IEnumerable<ExternalArticle> externalArticles)
         {
             foreach (var externalArticle in externalArticles) {
-                var article = await _articleFactory.Build(mediaId, externalArticle);
-                await _repository.Save(article);
+                try {
+                    var article = await _articleFactory.Build(mediaId, externalArticle);
+                    await _repository.Save(article);
+                }
+                catch (ArticleNotFound ex) {
+                    _logger.Error(ex, null);
+                }
             }
         }
 
