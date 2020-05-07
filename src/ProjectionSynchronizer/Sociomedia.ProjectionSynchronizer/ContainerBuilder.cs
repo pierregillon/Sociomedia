@@ -33,8 +33,6 @@ namespace Sociomedia.ProjectionSynchronizer
                 x.For<EventStoreConfiguration>().Use(configuration.EventStore).Singleton();
                 x.For<SqlDatabaseConfiguration>().Use(configuration.SqlDatabase).Singleton();
                 x.For<ProjectionSynchronizationConfiguration>().Use(configuration.ProjectionSynchronization).Singleton();
-
-                x.For<ArticleTableSynchronizer>().Use<ArticleTableSynchronizer>().Singleton();
             });
         }
 

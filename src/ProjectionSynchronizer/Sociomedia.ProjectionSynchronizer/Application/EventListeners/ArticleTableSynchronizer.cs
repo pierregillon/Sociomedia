@@ -1,35 +1,36 @@
 ﻿using System;
 using System.Threading.Tasks;
+using LinqToDB;
 using Sociomedia.DomainEvents.Article;
-using Sociomedia.ReadModel.DataAccess.Tables;
+using Sociomedia.ReadModel.DataAccess;
 
 namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
 {
     public class ArticleTableSynchronizer : IEventListener<ArticleImported>
     {
-        private readonly IArticleRepository _articleRepository;
+        private readonly DbConnectionReadModel _dbConnection;
 
-        public ArticleTableSynchronizer(IArticleRepository articleRepository)
+        public ArticleTableSynchronizer(DbConnectionReadModel dbConnection)
         {
-            _articleRepository = articleRepository;
+            _dbConnection = dbConnection;
         }
 
         public async Task On(ArticleImported @event)
         {
-            await _articleRepository.AddArticle(new ArticleTable {
-                Id = @event.Id,
-                Title = @event.Title,
-                Url = @event.Url,
-                Summary = @event.Summary,
-                ImageUrl = @event.ImageUrl,
-                PublishDate = @event.PublishDate
-            });
+            await _dbConnection.Articles
+                .Value(x => x.Id, @event.Id)
+                .Value(x => x.Title, @event.Title)
+                .Value(x => x.Url, @event.Url)
+                .Value(x => x.Summary, @event.Summary)
+                .Value(x => x.ImageUrl, @event.ImageUrl)
+                .Value(x => x.PublishDate, @event.PublishDate)
+                .InsertAsync();
 
             foreach (var keyword in @event.Keywords) {
-                await _articleRepository.AddKeywords(new KeywordTable {
-                    FK_Article = @event.Id,
-                    Value = keyword.Substring(0, Math.Min(keyword.Length, 50))
-                });
+                await _dbConnection.Keywords
+                    .Value(x => x.FK_Article, @event.Id)
+                    .Value(x => x.Value, keyword.Substring(0, Math.Min(keyword.Length, 50)))
+                    .InsertAsync();
             }
         }
     }

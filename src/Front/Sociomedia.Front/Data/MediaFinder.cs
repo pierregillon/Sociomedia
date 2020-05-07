@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using LinqToDB;
 using Sociomedia.DomainEvents.Media;
 using Sociomedia.Front.Models;
 using Sociomedia.ReadModel.DataAccess;
@@ -18,34 +20,45 @@ namespace Sociomedia.Front.Data
 
         public async Task<IReadOnlyCollection<MediaListItem>> List()
         {
-            await Task.Delay(0);
-
-            return new[] {
-                new MediaListItem {
-                    Id = Guid.NewGuid(),
-                    Name = "Libération",
-                    PoliticalOrientation = "droite",
-                    ImageUrl = "https://statics.liberation.fr/newsite/images/logo-libe.svg"
-                },
-                new MediaListItem {
-                    Id = Guid.NewGuid(),
-                    Name = "Marianne",
-                    PoliticalOrientation = "gauche",
-                    ImageUrl = "https://www.marianne.net/sites/default/themes/marianne/images/logo-marianne.svg"
-                },
-            };
+            return await _dbConnection.Medias
+                .Select(x => new MediaListItem {
+                    Id = x.Id,
+                    Name = x.Name,
+                    ImageUrl = x.ImageUrl
+                })
+                .ToArrayAsync();
         }
 
         public async Task<ArticleViewModel> Get(Guid mediaId)
         {
-            await Task.Delay(0);
-            return new ArticleViewModel {
-                Id = mediaId,
-                Name = "Marianne",
-                Feeds = { new FeedItem { Id = 1, Url = "test" }, new FeedItem { Id = 2, Url = "test2" } },
-                PoliticalOrientation = PoliticalOrientation.ExtremeRight,
-                ImageUrl = "qsdfjqsjfjqsdfj"
-            };
+            var media = await _dbConnection.Medias
+                .Where(x => x.Id == mediaId)
+                .Select(media => new {
+                    Id = media.Id,
+                    Name = media.Name,
+                    ImageUrl = media.ImageUrl,
+                    PoliticalOrientation = (PoliticalOrientation) media.PoliticalOrientation
+                })
+                .SingleOrDefaultAsync();
+
+            if (media != null) {
+                var feeds = await _dbConnection.MediaFeeds
+                    .Where(x => x.MediaId == mediaId)
+                    .Select((x, i) => new FeedItem {
+                        Url = x.FeedUrl,
+                        Id = i + 1
+                    }).ToListAsync();
+
+                return new ArticleViewModel {
+                    Id = media.Id,
+                    Name = media.Name,
+                    ImageUrl = media.ImageUrl,
+                    PoliticalOrientation = media.PoliticalOrientation,
+                    Feeds = feeds
+                };
+            }
+
+            return null;
         }
     }
 }

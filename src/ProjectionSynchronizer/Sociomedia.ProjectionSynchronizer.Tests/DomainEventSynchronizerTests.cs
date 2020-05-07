@@ -1,60 +1,58 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using FluentAssertions;
+using LinqToDB;
+using LinqToDB.Data;
+using Microsoft.Data.Sqlite;
 using NSubstitute;
 using Sociomedia.DomainEvents.Article;
+using Sociomedia.DomainEvents.Media;
 using Sociomedia.ProjectionSynchronizer.Application;
+using Sociomedia.ReadModel.DataAccess;
 using Sociomedia.ReadModel.DataAccess.Tables;
 using StructureMap;
 using Xunit;
 
 namespace Sociomedia.ProjectionSynchronizer.Tests
 {
-    public class DomainEventSynchronizerTests
+    public class DomainEventSynchronizerTests : AcceptanceTests
     {
-        private readonly IContainer _container;
         private readonly InMemoryBus _inMemoryBus = new InMemoryBus();
-        private readonly IArticleRepository _articleRepository = Substitute.For<IArticleRepository>();
-        private readonly IStreamPositionRepository _streamPositionRepository = Substitute.For<IStreamPositionRepository>();
+        private readonly DomainEventSynchronizer _synchronizer;
+        private readonly DbConnectionReadModel _dbConnection;
 
         public DomainEventSynchronizerTests()
         {
-            _container = ContainerBuilder.Build(new Configuration());
+            Container.Inject<IEventBus>(_inMemoryBus);
+            Container.Inject<ILogger>(new EmptyLogger());
 
-            _container.Inject<IEventBus>(_inMemoryBus);
-            _container.Inject<ILogger>(new EmptyLogger());
-            _container.Inject(_articleRepository);
-            _container.Inject(_streamPositionRepository);
-
-            var configuration = _container.GetInstance<ProjectionSynchronizationConfiguration>();
+            var configuration = Container.GetInstance<ProjectionSynchronizationConfiguration>();
             configuration.ReconnectionDelayMs = 1;
+
+            _synchronizer = Container.GetInstance<DomainEventSynchronizer>();
+            _dbConnection = Container.GetInstance<DbConnectionReadModel>();
         }
 
-        [Theory]
-        [InlineData(null)]
-        [InlineData(10)]
-        public async Task Start_synchronization_from_last_stream_position(long? lastStreamPosition)
+        [Fact]
+        public async Task Synchronization_start_by_default_with_no_last_position()
         {
-            // Arrange
-            var synchronizer = _container.GetInstance<DomainEventSynchronizer>();
-            _streamPositionRepository.GetLastPosition().Returns(lastStreamPosition);
-
             // Act
-            await synchronizer.StartSynchronization();
+            await _synchronizer.StartSynchronization();
 
             // Asserts
             _inMemoryBus.LastStreamPosition
                 .Should()
-                .Be(lastStreamPosition);
+                .Be(null);
         }
 
         [Fact]
         public async Task Create_article_when_receiving_article_synchronized_event()
         {
-            var synchronizer = _container.GetInstance<DomainEventSynchronizer>();
-
-            await synchronizer.StartSynchronization();
+            await _synchronizer.StartSynchronization();
 
             // Acts
 
@@ -73,78 +71,124 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
 
             // Asserts
 
-            await _articleRepository.Received(1).AddArticle(Arg.Any<ArticleTable>());
-            await _articleRepository
-                .Received(1)
-                .AddArticle(Arg.Is<ArticleTable>(article =>
-                    article.Id == articleSynchronized.Id &&
-                    article.Title == articleSynchronized.Title &&
-                    article.ImageUrl == articleSynchronized.ImageUrl &&
-                    article.Summary == articleSynchronized.Summary &&
-                    article.PublishDate == articleSynchronized.PublishDate &&
-                    article.Url == articleSynchronized.Url
-                ));
+            var articles = await _dbConnection.Articles.ToArrayAsync();
+
+            articles
+                .Should()
+                .BeEquivalentTo(new[] {
+                    new ArticleTable {
+                        Id = articleSynchronized.Id,
+                        Title = articleSynchronized.Title,
+                        ImageUrl = articleSynchronized.ImageUrl,
+                        Url = articleSynchronized.Url,
+                        Summary = articleSynchronized.Summary,
+                        PublishDate = articleSynchronized.PublishDate
+                    }
+                });
         }
 
         [Fact]
         public async Task Create_keywords_when_receiving_article_synchronized_event()
         {
-            var synchronizer = _container.GetInstance<DomainEventSynchronizer>();
-
-            await synchronizer.StartSynchronization();
+            await _synchronizer.StartSynchronization();
 
             // Acts
-
-            var articleSynchronized = new ArticleImported(
-                Guid.NewGuid(),
-                default,
-                default,
-                default,
-                default,
-                default,
-                new[] { "coronavirus", "france", "pandemic" },
-                Guid.NewGuid()
-            );
+            var articleSynchronized = SomeArticleSynchronized(new[] { "coronavirus", "france", "pandemic" });
 
             await _inMemoryBus.Push(1, articleSynchronized);
 
             // Asserts
+            var keywords = await _dbConnection.Keywords.ToArrayAsync();
 
-            await _articleRepository.Received(3).AddKeywords(Arg.Any<KeywordTable>());
+            keywords
+                .Should()
+                .BeEquivalentTo(new[] {
+                    new { FK_Article = articleSynchronized.Id, Value = "coronavirus" },
+                    new { FK_Article = articleSynchronized.Id, Value = "france" },
+                    new { FK_Article = articleSynchronized.Id, Value = "pandemic" },
+                });
+        }
 
-            foreach (var keyword in articleSynchronized.Keywords) {
-                await _articleRepository
-                    .Received(1)
-                    .AddKeywords(Arg.Is<KeywordTable>(x =>
-                        x.Value == keyword &&
-                        x.FK_Article == articleSynchronized.Id
-                    ));
-            }
+        [Fact]
+        public async Task Create_media_when_receiving_media_events()
+        {
+            await _synchronizer.StartSynchronization();
+
+            // Acts
+            var mediaId = Guid.NewGuid();
+
+            await _inMemoryBus.Push(1, new MediaAdded(mediaId, "Liberation", "test", PoliticalOrientation.Center));
+            await _inMemoryBus.Push(2, new MediaEdited(mediaId, "Libération", "test", PoliticalOrientation.Left));
+
+            // Asserts
+
+            (await _dbConnection.Medias.ToArrayAsync())
+                .Should()
+                .BeEquivalentTo(new[] {
+                    new MediaTable {
+                        Id = mediaId,
+                        Name = "Libération",
+                        ImageUrl = "test",
+                        PoliticalOrientation = (int) PoliticalOrientation.Left
+                    },
+                });
+        }
+
+        [Fact]
+        public async Task Create_media_feed_when_receiving_media_feed_events()
+        {
+            await _synchronizer.StartSynchronization();
+
+            // Acts
+            var mediaId = Guid.NewGuid();
+
+            await _inMemoryBus.Push(1, new MediaAdded(mediaId, "Liberation", "test", PoliticalOrientation.Center));
+            await _inMemoryBus.Push(2, new MediaFeedAdded(mediaId, "https://test/myfeed.xml"));
+            await _inMemoryBus.Push(3, new MediaFeedAdded(mediaId, "https://test/myfeed2.xml"));
+            await _inMemoryBus.Push(4, new MediaFeedRemoved(mediaId, "https://test/myfeed2.xml"));
+            await _inMemoryBus.Push(5, new MediaFeedSynchronized(mediaId, "https://test/myfeed.xml", DateTime.Today));
+
+            // Asserts
+
+            (await _dbConnection.MediaFeeds.ToArrayAsync())
+                .Should()
+                .BeEquivalentTo(new[] {
+                    new MediaFeedTable {
+                        MediaId = mediaId,
+                        FeedUrl = "https://test/myfeed.xml",
+                        SynchronizationDate = DateTime.Today
+                    },
+                });
         }
 
         [Fact]
         public async Task Update_last_position_in_stream_for_each_events()
         {
-            var synchronizer = _container.GetInstance<DomainEventSynchronizer>();
-
-            await synchronizer.StartSynchronization();
+            await _synchronizer.StartSynchronization();
 
             await _inMemoryBus.Push(1, SomeArticleSynchronized());
             await _inMemoryBus.Push(2, SomeArticleSynchronized());
             await _inMemoryBus.Push(3, SomeArticleSynchronized());
 
-            await _streamPositionRepository.Received(3).Save(Arg.Any<long>());
-            await _streamPositionRepository.Received(1).Save(1);
-            await _streamPositionRepository.Received(1).Save(2);
-            await _streamPositionRepository.Received(1).Save(3);
+            this._dbConnection.SynchronizationInformation
+                .Single()
+                .LastPosition
+                .Should()
+                .Be(3);
+
+            this._dbConnection.SynchronizationInformation
+                .Single()
+                .LastUpdateDate
+                .GetValueOrDefault()
+                .Date
+                .Should()
+                .Be(DateTime.UtcNow.Date);
         }
 
         [Fact]
         public async Task Restart_connection_on_connection_lost()
         {
-            var synchronizer = _container.GetInstance<DomainEventSynchronizer>();
-
-            await synchronizer.StartSynchronization();
+            await _synchronizer.StartSynchronization();
 
             await _inMemoryBus.SimulateConnectionLost();
 
@@ -155,18 +199,102 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
 
         // ----- Internal logic
 
-        private static ArticleImported SomeArticleSynchronized()
+        private static ArticleImported SomeArticleSynchronized(string[] keywords = null)
         {
             return new ArticleImported(
                 Guid.NewGuid(),
-                default,
-                default,
-                default,
-                default,
-                default,
-                new string[0],
+                "My title",
+                "This is a simple summary",
+                new DateTimeOffset(2020, 05, 06, 10, 0, 0, TimeSpan.FromHours(2)),
+                "https://test.com",
+                "https://test/image/jpg",
+                keywords ?? new string[0],
                 Guid.NewGuid()
             );
+        }
+    }
+
+    public class AcceptanceTests : IDisposable
+    {
+        protected readonly IContainer Container;
+        private readonly string _databaseName = "database-" + Guid.NewGuid() + ".sqlite";
+        private string FullPath => Path.Combine(Directory.GetCurrentDirectory(), _databaseName);
+
+        public AcceptanceTests()
+        {
+            File.Copy("./database.db", FullPath);
+
+            Container = ContainerBuilder.Build(new Configuration {
+                SqlDatabase = new SqlDatabaseConfiguration {
+                    ProviderName = "SQLite",
+                    ConnectionString = "Data Source=" + FullPath
+                }
+            });
+
+            DataConnection.DefaultSettings = Container.GetInstance<DbSettings>();
+
+            InitDatabase();
+        }
+
+        public void Dispose()
+        {
+            Container?.Dispose();
+            File.Delete(FullPath);
+        }
+
+        private void InitDatabase()
+        {
+            var db = Container.GetInstance<DbConnectionReadModel>();
+
+            var tableTypes = db.GetType()
+                .Properties()
+                .Where(x => x.PropertyType.GetGenericTypeDefinition() == typeof(ITable<>))
+                .Select(x => x.PropertyType.GenericTypeArguments[0])
+                .ToArray();
+
+            foreach (var tableType in tableTypes) {
+                db.CreateTableIfDoesNotExists(tableType);
+                db.DeleteAllFromTable(tableType);
+            }
+        }
+    }
+
+    public static class DataConnectionExtensions
+    {
+        public static void CreateTableIfDoesNotExists(this DataConnection dbConnection, Type tableType)
+        {
+            typeof(DataConnectionExtensions)
+                .GetMethod(nameof(CreateTableIfDoesNotExists), BindingFlags.Static | BindingFlags.NonPublic)
+                .MakeGenericMethod(tableType)
+                .Invoke(null, new[] { dbConnection });
+        }
+
+        public static void DeleteAllFromTable(this DataConnection dbConnection, Type tableType)
+        {
+            typeof(DataConnectionExtensions)
+                .GetMethod(nameof(DeleteAllFromTable), BindingFlags.Static | BindingFlags.NonPublic)
+                .MakeGenericMethod(tableType)
+                .Invoke(null, new[] { dbConnection });
+        }
+
+        private static void CreateTableIfDoesNotExists<T>(DataConnection dbConnection) where T : class
+        {
+            try {
+                dbConnection.GetTable<T>().Count();
+            }
+            catch (SqliteException e) {
+                if (e.SqliteErrorCode == 1) {
+                    dbConnection.CreateTable<T>();
+                }
+            }
+        }
+
+        private static void DeleteAllFromTable<T>(DataConnection dbConnection) where T : class
+        {
+            dbConnection
+                .GetTable<T>()
+                .Where(x => true)
+                .Delete();
         }
     }
 }

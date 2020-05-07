@@ -6,7 +6,6 @@ using EventStore.ClientAPI;
 using EventStore.ClientAPI.Exceptions;
 using Newtonsoft.Json;
 using Sociomedia.DomainEvents;
-using Sociomedia.DomainEvents.Article;
 using Sociomedia.ProjectionSynchronizer.Application;
 
 namespace Sociomedia.ProjectionSynchronizer.Infrastructure
@@ -19,7 +18,7 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
         private readonly ILogger _logger;
         private readonly IDomainEventTypeLocator _typeLocator;
         private DomainEventReceived _onEventReceived;
-        private EventStoreStreamCatchUpSubscription _subscription;
+        private EventStoreAllCatchUpSubscription _subscription;
         private Func<Task> _disconnected;
 
         public EventStoreOrg(EventStoreConfiguration configuration, ILogger logger, IDomainEventTypeLocator typeLocator)
@@ -53,7 +52,13 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
             _onEventReceived = onEventReceived;
             _disconnected = disconnected;
 
-            _subscription = _connection.SubscribeToStreamFrom("$et-" + typeof(ArticleImported).Name, lastPosition, CatchUpSubscriptionSettings.Default, EventAppeared, LiveProcessingStarted, SubscriptionDropped);
+            _subscription = _connection.SubscribeToAllFrom(
+                lastPosition.HasValue ? new Position(lastPosition.Value, lastPosition.Value) : (Position?)null, 
+                CatchUpSubscriptionSettings.Default, 
+                EventAppeared, 
+                LiveProcessingStarted, 
+                SubscriptionDropped
+            );
 
             _logger.Debug($"Subscribed from position {lastPosition}. Replaying missing events.");
         }
@@ -77,11 +82,12 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
 
             if (ex is ConnectionClosedException) {
                 _logger.Error(ex.Message);
-                _disconnected.Invoke().Wait();
             }
             else {
                 _logger.Error(ex, string.Empty);
             }
+
+            _disconnected.Invoke().Wait();
         }
 
         private void LiveProcessingStarted(EventStoreCatchUpSubscription obj)
@@ -89,12 +95,20 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
             _logger.Debug("Switched to live mode");
         }
 
-        private async Task EventAppeared(EventStoreCatchUpSubscription arg1, ResolvedEvent evt)
+        private async Task EventAppeared(EventStoreCatchUpSubscription subscription, ResolvedEvent resolvedEvent)
         {
+            if (resolvedEvent.OriginalStreamId.StartsWith("$")) {
+                return;
+            }
+
             try {
-                _logger.Debug($"New event received. Stream : {evt.Event.EventStreamId}, position: {evt.OriginalEventNumber}");
-                if (TryConvertToDomainEvent(evt, out var @event)) {
-                    await _onEventReceived(evt.OriginalEventNumber, @event);
+                long position = resolvedEvent.OriginalPosition.GetValueOrDefault().CommitPosition;
+                if (TryConvertToDomainEvent(resolvedEvent, out var @event)) {
+                    _logger.Debug($"{resolvedEvent.Event.EventType} received. Stream: {resolvedEvent.Event.EventStreamId}, position: {position}");
+                    await _onEventReceived(position, @event);
+                }
+                else {
+                    _logger.Debug($"[UNKNOWN EVENT] {resolvedEvent.Event.EventType} received. Stream: {resolvedEvent.Event.EventStreamId}, position: {position}");
                 }
             }
             catch (Exception ex) {
@@ -109,8 +123,7 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
                 result = ConvertToDomainEvent(@event);
                 return true;
             }
-            catch (UnknownEvent ex) {
-                _logger.Error(ex.Message);
+            catch (UnknownEvent) {
                 result = null;
                 return false;
             }

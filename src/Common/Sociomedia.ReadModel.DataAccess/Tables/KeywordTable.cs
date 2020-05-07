@@ -1,7 +1,8 @@
 ﻿using System;
 using LinqToDB.Mapping;
 
-namespace Sociomedia.ReadModel.DataAccess.Tables {
+namespace Sociomedia.ReadModel.DataAccess.Tables
+{
     [Table(Name = "Keywords")]
     public class KeywordTable
     {

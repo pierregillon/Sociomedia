@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using LinqToDB;
 using Sociomedia.ProjectionSynchronizer.Application;
@@ -36,9 +35,7 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
 
         public async Task<long?> GetLastPosition()
         {
-            return await _dbConnection.SynchronizationInformation
-                .Select(x => x.LastPosition)
-                .SingleOrDefaultAsync();
+            return (await _dbConnection.SynchronizationInformation.SingleOrDefaultAsync())?.LastPosition;
         }
     }
 }

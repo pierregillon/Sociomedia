@@ -13,7 +13,7 @@ namespace Sociomedia.Front.Models
 
         [Required] public PoliticalOrientation PoliticalOrientation { get; set; }
 
-        public List<FeedItem> Feeds { get; } = new List<FeedItem>();
+        public List<FeedItem> Feeds { get; set; } = new List<FeedItem>();
         public Guid Id { get; set; }
 
         public ArticleViewModel()
