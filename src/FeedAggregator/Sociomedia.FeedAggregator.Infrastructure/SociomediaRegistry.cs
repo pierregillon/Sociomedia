@@ -1,5 +1,6 @@
 ﻿using CQRSlite.Domain;
 using CQRSlite.Events;
+using Sociomedia.DomainEvents;
 using Sociomedia.FeedAggregator.Application;
 using Sociomedia.FeedAggregator.Application.Queries;
 using Sociomedia.FeedAggregator.Domain.Articles;
@@ -37,7 +38,7 @@ namespace Sociomedia.FeedAggregator.Infrastructure
             For<ICommandDispatcher>().DecorateAllWith<CommandDispatchedLogger>();
 
             For<ILogger>().Use<ConsoleLogger>();
-            For<ITypeLocator>().Use<ReflectionTypeLocator>();
+            For<ITypeLocator>().Use<ReflectionDomainTypeLocator>();
 
             For<IMediaFeedFinder>().Use<MediaFeedFinder>();
             For<IRepository>().Use(context => new Repository(context.GetInstance<IEventStore>()));
