@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Sociomedia.Application.Commands.AddMedia;
-using Sociomedia.DomainEvents;
-using Sociomedia.DomainEvents.Media;
+using Sociomedia.Domain;
+using Sociomedia.Domain.Medias;
 using Xunit;
 
 namespace Sociomedia.Tests.Features

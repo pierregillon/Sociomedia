@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sociomedia.DomainEvents;
 
 namespace Sociomedia.Domain.Themes
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sociomedia.DomainEvents.Media;
+using Sociomedia.Domain.Medias;
 
 namespace Sociomedia.Application.Commands.EditMedia {
     public class EditMediaCommand : ICommand

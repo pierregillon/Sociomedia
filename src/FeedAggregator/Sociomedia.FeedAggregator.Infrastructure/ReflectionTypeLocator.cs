@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Sociomedia.DomainEvents;
+using Sociomedia.Domain;
 
 namespace Sociomedia.Infrastructure
 {

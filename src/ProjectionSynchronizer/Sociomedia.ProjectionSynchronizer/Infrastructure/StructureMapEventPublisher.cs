@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Sociomedia.DomainEvents;
+using Sociomedia.Domain;
 using Sociomedia.ProjectionSynchronizer.Application;
 using StructureMap;
 

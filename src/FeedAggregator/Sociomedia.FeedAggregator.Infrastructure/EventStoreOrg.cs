@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
 using Newtonsoft.Json;
-using Sociomedia.DomainEvents;
 
 namespace Sociomedia.Infrastructure
 {
@@ -29,7 +28,7 @@ namespace Sociomedia.Infrastructure
             _typeLocator = typeLocator;
 
             var jsonResolver = new PropertyCleanerSerializerContractResolver();
-            jsonResolver.IgnoreProperty(typeof(IEvent), "Version", "TimeStamp");
+            jsonResolver.IgnoreProperty(typeof(IEvent), "Version");
             jsonResolver.RenameProperty(typeof(IEvent), "Id", "AggregateId");
 
             _serializerSettings = new JsonSerializerSettings {
@@ -42,7 +41,7 @@ namespace Sociomedia.Infrastructure
 
         public async Task Connect(string server, int port = 1113, string login = "admin", string password = "changeit")
         {
-            _connection = EventStoreConnection.Create(new Uri($"tcp://{login}:{password}@{server}:{port}"), "Aggregator");
+            _connection = EventStoreConnection.Create(new Uri($"tcp://{login}:{password}@{server}:{port}"), AppDomain.CurrentDomain.FriendlyName);
             await _connection.ConnectAsync();
         }
 

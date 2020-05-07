@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using LinqToDB;
-using Sociomedia.DomainEvents.Media;
+using Sociomedia.Domain.Medias;
 using Sociomedia.ReadModel.DataAccess;
 
 namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners

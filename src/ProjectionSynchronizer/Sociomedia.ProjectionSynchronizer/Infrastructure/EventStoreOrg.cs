@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using EventStore.ClientAPI.Exceptions;
 using Newtonsoft.Json;
-using Sociomedia.DomainEvents;
+using Sociomedia.Domain;
 using Sociomedia.ProjectionSynchronizer.Application;
 
 namespace Sociomedia.ProjectionSynchronizer.Infrastructure

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Sociomedia.DomainEvents;
+using Sociomedia.Domain;
 
 namespace Sociomedia.ProjectionSynchronizer.Application {
     public interface IEventPublisher

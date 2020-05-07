@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Sociomedia.Application.Commands.AddMedia;
 using Sociomedia.Application.Commands.EditMedia;
-using Sociomedia.DomainEvents;
-using Sociomedia.DomainEvents.Media;
+using Sociomedia.Domain;
+using Sociomedia.Domain.Medias;
 using Xunit;
 
 namespace Sociomedia.Tests.Features

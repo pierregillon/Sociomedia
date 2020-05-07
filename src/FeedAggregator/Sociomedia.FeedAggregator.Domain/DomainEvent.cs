@@ -1,8 +1,9 @@
 ﻿using System;
+using CQRSlite.Events;
 
-namespace Sociomedia.DomainEvents
+namespace Sociomedia.Domain
 {
-    public abstract class DomainEvent
+    public abstract class DomainEvent : IEvent
     {
         protected DomainEvent(Guid id, string category)
         {

@@ -1,6 +1,6 @@
 ﻿using System;
 using FluentAssertions;
-using Sociomedia.DomainEvents.Article;
+using Sociomedia.Domain.Articles;
 using Xunit;
 
 namespace Sociomedia.Tests

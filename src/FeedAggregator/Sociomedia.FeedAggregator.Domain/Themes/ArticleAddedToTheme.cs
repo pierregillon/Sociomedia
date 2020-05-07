@@ -1,5 +1,4 @@
 ﻿using System;
-using Sociomedia.DomainEvents;
 
 namespace Sociomedia.Domain.Themes
 {

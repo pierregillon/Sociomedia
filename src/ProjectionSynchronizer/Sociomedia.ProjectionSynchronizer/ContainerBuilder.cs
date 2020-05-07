@@ -1,6 +1,6 @@
 ﻿using EventStore.ClientAPI;
 using EventStore.ClientAPI.Common.Log;
-using Sociomedia.DomainEvents;
+using Sociomedia.Domain;
 using Sociomedia.ProjectionSynchronizer.Application;
 using Sociomedia.ProjectionSynchronizer.Infrastructure;
 using Sociomedia.ReadModel.DataAccess;

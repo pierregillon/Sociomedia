@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Sociomedia.DomainEvents
+namespace Sociomedia.Domain
 {
     public class ReflectionDomainEventTypeLocator : IDomainEventTypeLocator
     {

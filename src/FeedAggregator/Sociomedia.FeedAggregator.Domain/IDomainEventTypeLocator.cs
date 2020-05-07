@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sociomedia.DomainEvents
+namespace Sociomedia.Domain
 {
     public interface IDomainEventTypeLocator
     {

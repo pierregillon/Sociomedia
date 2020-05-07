@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using CQRSlite.Domain;
-using Sociomedia.DomainEvents.Media;
 
 namespace Sociomedia.Domain.Medias
 {

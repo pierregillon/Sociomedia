@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sociomedia.DomainEvents.Media
+namespace Sociomedia.Domain.Medias
 {
     public abstract class MediaEvent : DomainEvent
     {

@@ -1,10 +1,16 @@
 ﻿using System;
-using CQRSlite.Events;
 
 namespace Sociomedia.Domain.Medias
 {
-    public class MediaFeedSynchronized : DomainEvents.Media.MediaFeedSynchronized, IEvent
+    public class MediaFeedSynchronized : MediaEvent
     {
-        public MediaFeedSynchronized(Guid mediaId, string feedUrl, DateTime synchronizationDate) : base(mediaId, feedUrl, synchronizationDate) { }
+        public string FeedUrl { get; }
+        public DateTime SynchronizationDate { get; }
+
+        public MediaFeedSynchronized(Guid mediaId, string feedUrl, DateTime synchronizationDate) : base(mediaId)
+        {
+            FeedUrl = feedUrl;
+            SynchronizationDate = synchronizationDate;
+        }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using CQRSlite.Domain;
-using Sociomedia.Domain.Medias;
 
 namespace Sociomedia.Domain.Articles
 {
@@ -16,8 +15,8 @@ namespace Sociomedia.Domain.Articles
                 externalArticle.Title, 
                 externalArticle.Summary,
                 externalArticle.PublishDate,
-                externalArticle.Url,
-                externalArticle.ImageUrl,
+                externalArticle.Url.AbsoluteUri,
+                externalArticle.ImageUrl?.AbsoluteUri,
                 keywords, 
                 mediaId));
         }

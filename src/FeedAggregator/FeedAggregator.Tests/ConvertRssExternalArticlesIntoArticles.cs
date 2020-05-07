@@ -6,7 +6,6 @@ using FluentAssertions;
 using NSubstitute;
 using Sociomedia.Domain.Articles;
 using Sociomedia.Domain.Medias;
-using Sociomedia.DomainEvents.Media;
 using Sociomedia.FeedAggregator.Application.SynchronizeAllMediaFeeds;
 using Xunit;
 using MediaAdded = Sociomedia.Domain.Medias.MediaAdded;

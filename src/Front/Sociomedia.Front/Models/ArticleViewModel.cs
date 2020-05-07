@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Sociomedia.DomainEvents.Media;
+using Sociomedia.Domain.Medias;
 
 namespace Sociomedia.Front.Models
 {

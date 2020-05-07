@@ -1,10 +1,18 @@
 ﻿using System;
 using CQRSlite.Events;
-using Sociomedia.DomainEvents.Media;
 
 namespace Sociomedia.Domain.Medias {
-    public class MediaEdited : DomainEvents.Media.MediaEdited, IEvent
+    public class MediaEdited : MediaEvent
     {
-        public MediaEdited(Guid id, string name, string imageUrl, PoliticalOrientation politicalOrientation) : base(id, name, imageUrl, politicalOrientation) { }
+        public string Name { get; }
+        public string ImageUrl { get; }
+        public PoliticalOrientation PoliticalOrientation { get; }
+
+        public MediaEdited(Guid id, string name, string imageUrl, PoliticalOrientation politicalOrientation) : base(id)
+        {
+            Name = name;
+            ImageUrl = imageUrl;
+            PoliticalOrientation = politicalOrientation;
+        }
     }
 }
