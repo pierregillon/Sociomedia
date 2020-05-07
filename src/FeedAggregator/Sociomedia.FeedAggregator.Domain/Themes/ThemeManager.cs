@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sociomedia.DomainEvents;
 
 namespace Sociomedia.FeedAggregator.Domain.Themes
 {
@@ -8,9 +9,9 @@ namespace Sociomedia.FeedAggregator.Domain.Themes
     {
         private readonly List<ThemeArticle> _articles = new List<ThemeArticle>();
         private readonly List<Theme> _themes = new List<Theme>();
-        private readonly List<IDomainEvent> _uncommittedEvents = new List<IDomainEvent>();
+        private readonly List<DomainEvent> _uncommittedEvents = new List<DomainEvent>();
 
-        public IReadOnlyCollection<IDomainEvent> UncommittedEvents => _uncommittedEvents;
+        public IReadOnlyCollection<DomainEvent> UncommittedEvents => _uncommittedEvents;
 
         public void Add(ThemeArticle article)
         {
@@ -57,7 +58,7 @@ namespace Sociomedia.FeedAggregator.Domain.Themes
             Apply(new NewThemeCreated(Guid.NewGuid(), keywordIntersection, matchingArticles));
         }
 
-        private void Apply<T>(T domainEvent) where T : IDomainEvent
+        private void Apply<T>(T domainEvent) where T : DomainEvent
         {
             ((dynamic) this).On(domainEvent);
             _uncommittedEvents.Add(domainEvent);

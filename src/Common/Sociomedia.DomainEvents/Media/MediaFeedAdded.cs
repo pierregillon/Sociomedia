@@ -2,7 +2,7 @@
 
 namespace Sociomedia.DomainEvents.Media
 {
-    public class MediaFeedAdded : DomainEvent
+    public class MediaFeedAdded : MediaEvent
     {
         public MediaFeedAdded(Guid id, string feedUrl) : base(id)
         {

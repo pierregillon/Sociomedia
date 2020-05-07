@@ -1,9 +1,10 @@
 ﻿using System;
+using CQRSlite.Events;
 using Sociomedia.DomainEvents.Media;
 
 namespace Sociomedia.FeedAggregator.Domain.Medias
 {
-    public class MediaAdded : DomainEvents.Media.MediaAdded, IDomainEvent
+    public class MediaAdded : DomainEvents.Media.MediaAdded, IEvent
     {
         public MediaAdded(Guid id, string name, string imageUrl, PoliticalOrientation politicalOrientation) : base(id, name, imageUrl, politicalOrientation) { }
     }

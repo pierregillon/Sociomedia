@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using CQRSlite.Events;
 using FluentAssertions;
 using NSubstitute;
 using Sociomedia.DomainEvents.Media;
 using Sociomedia.FeedAggregator.Application.Commands.SynchronizeAllMediaFeeds;
-using Sociomedia.FeedAggregator.Domain;
 using Sociomedia.FeedAggregator.Domain.Articles;
 using Sociomedia.FeedAggregator.Domain.Medias;
 using Xunit;
@@ -41,7 +41,7 @@ namespace Sociomedia.FeedAggregator.Tests.Features
         [Fact]
         public async Task Do_not_create_any_articles_when_no_new_rss_external_articles()
         {
-            await EventStore.Save(new IDomainEvent[] {
+            await EventStore.Save(new IEvent[] {
                 new MediaAdded(Guid.Empty, "test", null, PoliticalOrientation.Left),
                 new MediaFeedAdded(Guid.Empty, "https://www.test.com/rss.xml")
             });
@@ -58,7 +58,7 @@ namespace Sociomedia.FeedAggregator.Tests.Features
         {
             var mediaId = Guid.NewGuid();
 
-            await EventStore.Save(new IDomainEvent[] {
+            await EventStore.Save(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left),
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml")
             });
@@ -75,7 +75,7 @@ namespace Sociomedia.FeedAggregator.Tests.Features
         {
             var mediaId = Guid.NewGuid();
 
-            await EventStore.Save(new IDomainEvent[] {
+            await EventStore.Save(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left),
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml"),
                 new MediaFeedSynchronized(mediaId, "https://www.test.com/rss.xml", new DateTime(2020, 05, 01))
@@ -94,7 +94,7 @@ namespace Sociomedia.FeedAggregator.Tests.Features
             // Arrange
             var mediaId = Guid.NewGuid();
 
-            await EventStore.Save(new IDomainEvent[] {
+            await EventStore.Save(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 },
                 new MediaFeedSynchronized(mediaId, "https://www.test.com/rss.xml", new DateTime(2020, 05, 01)) { Version = 3 }

@@ -2,7 +2,7 @@
 
 namespace Sociomedia.DomainEvents.Media
 {
-    public class MediaFeedRemoved : DomainEvent
+    public class MediaFeedRemoved : MediaEvent
     {
         public MediaFeedRemoved(Guid mediaId, string feedUrl) : base(mediaId)
         {

@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Sociomedia.FeedAggregator.Domain;
+using Sociomedia.DomainEvents;
 
 namespace Sociomedia.FeedAggregator.Application
 {
-    public interface IEventListener<in T> where T : IDomainEvent
+    public interface IEventListener<in T> where T : DomainEvent
     {
         Task On(T @event);
     }

@@ -2,7 +2,7 @@
 
 namespace Sociomedia.DomainEvents.Media
 {
-    public class MediaAdded : DomainEvent
+    public class MediaAdded : MediaEvent
     {
         public string Name { get; }
         public string ImageUrl { get; }

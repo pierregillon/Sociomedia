@@ -1,7 +1,8 @@
 ﻿using System;
 
-namespace Sociomedia.DomainEvents.Media {
-    public class MediaEdited : DomainEvent
+namespace Sociomedia.DomainEvents.Media
+{
+    public class MediaEdited : MediaEvent
     {
         public string Name { get; }
         public string ImageUrl { get; }

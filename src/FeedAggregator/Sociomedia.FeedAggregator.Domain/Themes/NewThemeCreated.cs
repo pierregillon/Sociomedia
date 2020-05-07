@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using Sociomedia.DomainEvents;
 
 namespace Sociomedia.FeedAggregator.Domain.Themes
 {
     public class NewThemeCreated : DomainEvent
     {
-        public NewThemeCreated(Guid id, IReadOnlyCollection<string> keywords, IReadOnlyCollection<ThemeArticle> articles)
+        public NewThemeCreated(Guid id, IReadOnlyCollection<string> keywords, IReadOnlyCollection<ThemeArticle> articles) : base(id, "theme")
         {
             Keywords = keywords;
             Articles = articles;
-            Id = id;
         }
 
         public IReadOnlyCollection<string> Keywords { get; }

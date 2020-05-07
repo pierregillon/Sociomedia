@@ -11,7 +11,8 @@ namespace Sociomedia.FeedAggregator.Tests.Features
                 .IncludingAllRuntimeProperties()
                 .Excluding(a => a.Id)
                 .Excluding(a => a.Version)
-                .Excluding(a => a.TimeStamp);
+                .Excluding(a => a.TimeStamp)
+                .Excluding(a => a.EventStream);
         }
     }
 }

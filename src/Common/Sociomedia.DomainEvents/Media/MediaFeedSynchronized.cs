@@ -2,7 +2,7 @@
 
 namespace Sociomedia.DomainEvents.Media
 {
-    public class MediaFeedSynchronized : DomainEvent
+    public class MediaFeedSynchronized : MediaEvent
     {
         public string FeedUrl { get; }
         public DateTime SynchronizationDate { get; }

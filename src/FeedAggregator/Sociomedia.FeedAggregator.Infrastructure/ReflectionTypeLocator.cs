@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
-using Sociomedia.FeedAggregator.Domain;
+using Sociomedia.DomainEvents;
 
 namespace Sociomedia.FeedAggregator.Infrastructure
 {
     public class ReflectionTypeLocator : ITypeLocator
     {
-        private static readonly Type[] Types = typeof(IDomainEvent).Assembly.GetTypes();
+        private static readonly Type[] Types = typeof(DomainEvent).Assembly.GetTypes();
 
         public Type FindEventType(string typeName)
         {

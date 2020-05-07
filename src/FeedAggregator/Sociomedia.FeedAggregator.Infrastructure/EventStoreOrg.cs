@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
 using Newtonsoft.Json;
+using Sociomedia.DomainEvents;
 using ILogger = Sociomedia.FeedAggregator.Infrastructure.Logging.ILogger;
 
 namespace Sociomedia.FeedAggregator.Infrastructure
@@ -77,7 +78,7 @@ namespace Sociomedia.FeedAggregator.Infrastructure
                     null
                 );
                 var version = @event.Version - 2; // CQRSLite start event version at 1. EventStore at -1.
-                await _connection.AppendToStreamAsync(@event.Id.ToString(), version, eventData);
+                await _connection.AppendToStreamAsync(((DomainEvent)@event).EventStream, version, eventData);
                 await _eventPublisher.Publish(@event, cancellationToken);
 
             }

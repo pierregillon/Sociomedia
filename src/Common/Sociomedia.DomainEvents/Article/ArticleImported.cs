@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Sociomedia.DomainEvents.Article
 {
-    public class ArticleImported : DomainEvent
+    public class ArticleImported : ArticleEvent
     {
         public ArticleImported(Guid id, string title, string summary, DateTimeOffset publishDate, string url, string imageUrl, IReadOnlyCollection<string> keywords, Guid mediaId) : base(id)
         {
