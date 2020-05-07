@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Sociomedia.FeedAggregator.Domain.Articles
 {
-    public class ArticleSynchronized : DomainEvents.Article.ArticleSynchronized, IDomainEvent
+    public class ArticleImported : DomainEvents.Article.ArticleImported, IDomainEvent
     {
-        public ArticleSynchronized(
+        public ArticleImported(
             Guid id, 
             string title, 
             string summary, 

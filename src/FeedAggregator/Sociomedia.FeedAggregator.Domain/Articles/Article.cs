@@ -11,7 +11,7 @@ namespace Sociomedia.FeedAggregator.Domain.Articles
 
         public Article(Guid mediaId, ExternalArticle externalArticle, IReadOnlyCollection<string> keywords) : this()
         {
-            ApplyChange(new ArticleSynchronized(
+            ApplyChange(new ArticleImported(
                 Guid.NewGuid(), 
                 externalArticle.Title, 
                 externalArticle.Summary,
@@ -22,7 +22,7 @@ namespace Sociomedia.FeedAggregator.Domain.Articles
                 mediaId));
         }
 
-        private void Apply(ArticleSynchronized @event)
+        private void Apply(ArticleImported @event)
         {
             Id = @event.Id;
         }

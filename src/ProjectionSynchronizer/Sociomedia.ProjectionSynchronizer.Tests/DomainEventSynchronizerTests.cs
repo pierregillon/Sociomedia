@@ -58,7 +58,7 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
 
             // Acts
 
-            var articleSynchronized = new ArticleSynchronized(
+            var articleSynchronized = new ArticleImported(
                 Guid.NewGuid(),
                 "My title",
                 "This is a simple summary",
@@ -95,7 +95,7 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
 
             // Acts
 
-            var articleSynchronized = new ArticleSynchronized(
+            var articleSynchronized = new ArticleImported(
                 Guid.NewGuid(),
                 default,
                 default,
@@ -155,9 +155,9 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
 
         // ----- Internal logic
 
-        private static ArticleSynchronized SomeArticleSynchronized()
+        private static ArticleImported SomeArticleSynchronized()
         {
-            return new ArticleSynchronized(
+            return new ArticleImported(
                 Guid.NewGuid(),
                 default,
                 default,

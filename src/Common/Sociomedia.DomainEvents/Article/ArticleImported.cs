@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Sociomedia.DomainEvents.Article
 {
-    public class ArticleSynchronized : DomainEvent
+    public class ArticleImported : DomainEvent
     {
-        public ArticleSynchronized(Guid id, string title, string summary, DateTimeOffset publishDate, string url, string imageUrl, IReadOnlyCollection<string> keywords, Guid mediaId) : base(id)
+        public ArticleImported(Guid id, string title, string summary, DateTimeOffset publishDate, string url, string imageUrl, IReadOnlyCollection<string> keywords, Guid mediaId) : base(id)
         {
             Title = title;
             Summary = summary;

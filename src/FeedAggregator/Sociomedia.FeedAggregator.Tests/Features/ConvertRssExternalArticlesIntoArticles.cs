@@ -118,7 +118,7 @@ namespace Sociomedia.FeedAggregator.Tests.Features
             var events = (await EventStore.GetNewEvents()).ToArray();
 
             events
-                .OfType<ArticleSynchronized>()
+                .OfType<ArticleImported>()
                 .Should()
                 .BeEquivalentTo(new {
                     Url = "https://www.test.com/newpage.html",

@@ -53,7 +53,7 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
             _onEventReceived = onEventReceived;
             _disconnected = disconnected;
 
-            _subscription = _connection.SubscribeToStreamFrom("$et-" + typeof(ArticleSynchronized).Name, lastPosition, CatchUpSubscriptionSettings.Default, EventAppeared, LiveProcessingStarted, SubscriptionDropped);
+            _subscription = _connection.SubscribeToStreamFrom("$et-" + typeof(ArticleImported).Name, lastPosition, CatchUpSubscriptionSettings.Default, EventAppeared, LiveProcessingStarted, SubscriptionDropped);
 
             _logger.Debug($"Subscribed from position {lastPosition}. Replaying missing events.");
         }

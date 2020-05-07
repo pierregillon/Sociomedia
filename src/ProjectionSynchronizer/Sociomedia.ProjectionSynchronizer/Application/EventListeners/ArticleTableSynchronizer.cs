@@ -5,7 +5,7 @@ using Sociomedia.ReadModel.DataAccess.Tables;
 
 namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
 {
-    public class ArticleTableSynchronizer : IEventListener<ArticleSynchronized>
+    public class ArticleTableSynchronizer : IEventListener<ArticleImported>
     {
         private readonly IArticleRepository _articleRepository;
 
@@ -14,7 +14,7 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
             _articleRepository = articleRepository;
         }
 
-        public async Task On(ArticleSynchronized @event)
+        public async Task On(ArticleImported @event)
         {
             await _articleRepository.AddArticle(new ArticleTable {
                 Id = @event.Id,
