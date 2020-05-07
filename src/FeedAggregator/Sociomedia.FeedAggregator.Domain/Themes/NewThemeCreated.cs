@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Sociomedia.DomainEvents;
 
-namespace Sociomedia.FeedAggregator.Domain.Themes
+namespace Sociomedia.Domain.Themes
 {
     public class NewThemeCreated : DomainEvent
     {

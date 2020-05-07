@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Sociomedia.DomainEvents;
 
-namespace Sociomedia.FeedAggregator.Domain.Themes
+namespace Sociomedia.Domain.Themes
 {
     public class ThemeManager
     {

@@ -1,28 +1,21 @@
 ﻿using CQRSlite.Domain;
 using CQRSlite.Events;
-using Sociomedia.DomainEvents;
-using Sociomedia.FeedAggregator.Application;
-using Sociomedia.FeedAggregator.Application.Queries;
-using Sociomedia.FeedAggregator.Domain.Articles;
-using Sociomedia.FeedAggregator.Domain.Medias;
-using Sociomedia.FeedAggregator.Infrastructure.CQRS;
-using Sociomedia.FeedAggregator.Infrastructure.Logging;
-using Sociomedia.FeedAggregator.Infrastructure.RSS;
+using EventStore.ClientAPI;
+using EventStore.ClientAPI.Common.Log;
+using Sociomedia.Application;
+using Sociomedia.Domain.Articles;
+using Sociomedia.Infrastructure.CQRS;
+using Sociomedia.Infrastructure.Logging;
 using StructureMap;
 using StructureMap.Graph;
 using StructureMap.Graph.Scanning;
 
-namespace Sociomedia.FeedAggregator.Infrastructure
+namespace Sociomedia.Infrastructure
 {
     public class SociomediaRegistry : Registry
     {
         public SociomediaRegistry()
         {
-            For<IHtmlParser>().Use<HtmlParser>();
-            For<IHtmlPageDownloader>().Use<HtmlPageDownloader>();
-            For<IFeedReader>().Use<FeedReader>();
-            For<IRssParser>().Use<RssParser>();
-
             For<ICommandDispatcher>().Use<StructureMapCommandDispatcher>();
             For<IEventPublisher>().Use<StructureMapEventPublisher>();
 
@@ -40,10 +33,11 @@ namespace Sociomedia.FeedAggregator.Infrastructure
             For<ILogger>().Use<ConsoleLogger>();
             For<ITypeLocator>().Use<ReflectionDomainTypeLocator>();
 
-            For<IMediaFeedFinder>().Use<MediaFeedFinder>();
             For<IRepository>().Use(context => new Repository(context.GetInstance<IEventStore>()));
-            For<InMemoryDatabase>().Use<InMemoryDatabase>().Singleton();
             For<IEventStore>().Use<EventStoreOrg>().Singleton();
+
+            For<IHtmlParser>().Use<HtmlParser>();
+            For<IHtmlPageDownloader>().Use<HtmlPageDownloader>();
         }
 
         private class AllInterfacesConvention : IRegistrationConvention

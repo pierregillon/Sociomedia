@@ -12,9 +12,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Sociomedia.ReadModel.DataAccess\Sociomedia.ReadModel.DataAccess.csproj" />
-    <ProjectReference Include="..\..\FeedAggregator\Sociomedia.FeedAggregator.Application\FeedAggregator.Application.csproj" />
-    <ProjectReference Include="..\..\FeedAggregator\Sociomedia.FeedAggregator.Domain\FeedAggregator.Domain.csproj" />
-    <ProjectReference Include="..\..\FeedAggregator\Sociomedia.FeedAggregator.Infrastructure\FeedAggregator.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\FeedAggregator\Sociomedia.FeedAggregator.Application\Sociomedia.Application.csproj" />
+    <ProjectReference Include="..\..\FeedAggregator\Sociomedia.FeedAggregator.Domain\Sociomedia.Domain.csproj" />
+    <ProjectReference Include="..\..\FeedAggregator\Sociomedia.FeedAggregator.Infrastructure\Sociomedia.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

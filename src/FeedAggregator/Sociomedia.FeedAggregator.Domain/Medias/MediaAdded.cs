@@ -2,7 +2,7 @@
 using CQRSlite.Events;
 using Sociomedia.DomainEvents.Media;
 
-namespace Sociomedia.FeedAggregator.Domain.Medias
+namespace Sociomedia.Domain.Medias
 {
     public class MediaAdded : DomainEvents.Media.MediaAdded, IEvent
     {

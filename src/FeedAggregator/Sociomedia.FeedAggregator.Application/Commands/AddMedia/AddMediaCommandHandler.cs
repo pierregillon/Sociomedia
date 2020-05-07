@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CQRSlite.Domain;
-using Sociomedia.FeedAggregator.Domain.Medias;
+using Sociomedia.Domain.Medias;
 
-namespace Sociomedia.FeedAggregator.Application.Commands.AddMedia
+namespace Sociomedia.Application.Commands.AddMedia
 {
     public class AddMediaCommandHandler : ICommandHandler<AddMediaCommand, Guid>
     {

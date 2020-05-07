@@ -19,13 +19,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeedAggregator", "FeedAggregator\Sociomedia.FeedAggregator\FeedAggregator.csproj", "{CEDEB8E1-1685-48F3-B3C3-184C60A8FFC5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeedAggregator.Application", "FeedAggregator\Sociomedia.FeedAggregator.Application\FeedAggregator.Application.csproj", "{7850A73B-C374-4EDB-9AED-44D8759F307B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.Application", "FeedAggregator\Sociomedia.FeedAggregator.Application\Sociomedia.Application.csproj", "{7850A73B-C374-4EDB-9AED-44D8759F307B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeedAggregator.Domain", "FeedAggregator\Sociomedia.FeedAggregator.Domain\FeedAggregator.Domain.csproj", "{48DA0F1D-3E4C-430C-9458-4DE42BA488C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.Domain", "FeedAggregator\Sociomedia.FeedAggregator.Domain\Sociomedia.Domain.csproj", "{48DA0F1D-3E4C-430C-9458-4DE42BA488C6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeedAggregator.Infrastructure", "FeedAggregator\Sociomedia.FeedAggregator.Infrastructure\FeedAggregator.Infrastructure.csproj", "{68191EF3-D15B-46C8-BA35-4298BE5509AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.Infrastructure", "FeedAggregator\Sociomedia.FeedAggregator.Infrastructure\Sociomedia.Infrastructure.csproj", "{68191EF3-D15B-46C8-BA35-4298BE5509AC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeedAggregator.Tests", "FeedAggregator\Sociomedia.FeedAggregator.Tests\FeedAggregator.Tests.csproj", "{695FE373-CF58-4DDA-B82D-2085B7FED116}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.Tests", "FeedAggregator\Sociomedia.FeedAggregator.Tests\Sociomedia.Tests.csproj", "{695FE373-CF58-4DDA-B82D-2085B7FED116}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.Front", "Front\Sociomedia.Front\Sociomedia.Front.csproj", "{D9E31DA9-C51B-451F-8F73-8C3C04C63BCD}"
 EndProject
@@ -33,11 +33,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.ProjectionSynchr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{67FCA056-07A3-46C0-AC9B-093426B8CC7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sociomedia.ReadModel.DataAccess", "Common\Sociomedia.ReadModel.DataAccess\Sociomedia.ReadModel.DataAccess.csproj", "{6B9CCCCA-4EAC-407B-97C3-2F3C3E5F741B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.ReadModel.DataAccess", "Common\Sociomedia.ReadModel.DataAccess\Sociomedia.ReadModel.DataAccess.csproj", "{6B9CCCCA-4EAC-407B-97C3-2F3C3E5F741B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sociomedia.DomainEvents", "Common\Sociomedia.DomainEvents\Sociomedia.DomainEvents.csproj", "{2957B312-DA5A-480D-B47E-0AC0847925D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.DomainEvents", "Common\Sociomedia.DomainEvents\Sociomedia.DomainEvents.csproj", "{2957B312-DA5A-480D-B47E-0AC0847925D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sociomedia.ProjectionSynchronizer.Tests", "ProjectionSynchronizer\Sociomedia.ProjectionSynchronizer.Tests\Sociomedia.ProjectionSynchronizer.Tests.csproj", "{AB27BC1C-3A19-47EA-9DDA-5F83E541A272}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.ProjectionSynchronizer.Tests", "ProjectionSynchronizer\Sociomedia.ProjectionSynchronizer.Tests\Sociomedia.ProjectionSynchronizer.Tests.csproj", "{AB27BC1C-3A19-47EA-9DDA-5F83E541A272}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedAggregator.Tests", "FeedAggregator\FeedAggregator.Tests\FeedAggregator.Tests.csproj", "{32268190-B228-43AA-91FF-14EE68BC4B2B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,21 +87,26 @@ Global
 		{AB27BC1C-3A19-47EA-9DDA-5F83E541A272}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB27BC1C-3A19-47EA-9DDA-5F83E541A272}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB27BC1C-3A19-47EA-9DDA-5F83E541A272}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32268190-B228-43AA-91FF-14EE68BC4B2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32268190-B228-43AA-91FF-14EE68BC4B2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32268190-B228-43AA-91FF-14EE68BC4B2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32268190-B228-43AA-91FF-14EE68BC4B2B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CEDEB8E1-1685-48F3-B3C3-184C60A8FFC5} = {768CBA79-C202-4BF7-A515-0D2E08C5A051}
-		{7850A73B-C374-4EDB-9AED-44D8759F307B} = {768CBA79-C202-4BF7-A515-0D2E08C5A051}
-		{48DA0F1D-3E4C-430C-9458-4DE42BA488C6} = {768CBA79-C202-4BF7-A515-0D2E08C5A051}
-		{68191EF3-D15B-46C8-BA35-4298BE5509AC} = {768CBA79-C202-4BF7-A515-0D2E08C5A051}
-		{695FE373-CF58-4DDA-B82D-2085B7FED116} = {768CBA79-C202-4BF7-A515-0D2E08C5A051}
+		{7850A73B-C374-4EDB-9AED-44D8759F307B} = {67FCA056-07A3-46C0-AC9B-093426B8CC7B}
+		{48DA0F1D-3E4C-430C-9458-4DE42BA488C6} = {67FCA056-07A3-46C0-AC9B-093426B8CC7B}
+		{68191EF3-D15B-46C8-BA35-4298BE5509AC} = {67FCA056-07A3-46C0-AC9B-093426B8CC7B}
+		{695FE373-CF58-4DDA-B82D-2085B7FED116} = {67FCA056-07A3-46C0-AC9B-093426B8CC7B}
 		{D9E31DA9-C51B-451F-8F73-8C3C04C63BCD} = {13F5545E-7271-441C-8769-39B2ECD9589C}
 		{2012451A-344C-493F-9323-14A6BF47D87A} = {5364BF41-CA1F-4D5C-B87B-58E45316736C}
 		{6B9CCCCA-4EAC-407B-97C3-2F3C3E5F741B} = {67FCA056-07A3-46C0-AC9B-093426B8CC7B}
 		{2957B312-DA5A-480D-B47E-0AC0847925D4} = {67FCA056-07A3-46C0-AC9B-093426B8CC7B}
 		{AB27BC1C-3A19-47EA-9DDA-5F83E541A272} = {5364BF41-CA1F-4D5C-B87B-58E45316736C}
+		{32268190-B228-43AA-91FF-14EE68BC4B2B} = {768CBA79-C202-4BF7-A515-0D2E08C5A051}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B56ACA9-E22E-44E6-9319-99F16930E4F7}

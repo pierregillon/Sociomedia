@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Sociomedia.FeedAggregator.Domain.Articles;
+using Sociomedia.Domain.Articles;
 
-namespace Sociomedia.FeedAggregator.Infrastructure {
+namespace Sociomedia.Infrastructure {
     public class HtmlPageDownloader : IHtmlPageDownloader
     {
         public async Task<string> Download(Uri url)

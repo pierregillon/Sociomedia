@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sociomedia.FeedAggregator.Infrastructure
+namespace Sociomedia.Infrastructure
 {
     public interface ITypeLocator
     {

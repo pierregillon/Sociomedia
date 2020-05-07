@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using CQRSlite.Events;
 
-namespace Sociomedia.FeedAggregator.Domain.Articles
+namespace Sociomedia.Domain.Articles
 {
     public class ArticleImported : DomainEvents.Article.ArticleImported, IEvent
     {

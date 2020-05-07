@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using CQRSlite.Domain;
-using Sociomedia.FeedAggregator.Domain.Medias;
+using Sociomedia.Domain.Medias;
 
-namespace Sociomedia.FeedAggregator.Domain.Articles
+namespace Sociomedia.Domain.Articles
 {
     public class Article : AggregateRoot
     {

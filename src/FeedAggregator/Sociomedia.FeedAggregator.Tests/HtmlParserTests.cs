@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using FluentAssertions;
-using Sociomedia.FeedAggregator.Infrastructure;
+using Sociomedia.Infrastructure;
 using Xunit;
 
 namespace Sociomedia.FeedAggregator.Tests

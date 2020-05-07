@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Sociomedia.FeedAggregator.Domain
+namespace Sociomedia.Domain
 {
     public static class EnumerableExtensions
     {

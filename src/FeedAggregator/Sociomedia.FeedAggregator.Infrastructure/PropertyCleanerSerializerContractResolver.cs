@@ -5,7 +5,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Sociomedia.FeedAggregator.Infrastructure
+namespace Sociomedia.Infrastructure
 {
     public class PropertyCleanerSerializerContractResolver : DefaultContractResolver
     {

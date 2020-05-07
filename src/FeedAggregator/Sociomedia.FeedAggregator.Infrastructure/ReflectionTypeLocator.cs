@@ -2,7 +2,7 @@
 using System.Linq;
 using Sociomedia.DomainEvents;
 
-namespace Sociomedia.FeedAggregator.Infrastructure
+namespace Sociomedia.Infrastructure
 {
     public class ReflectionTypeLocator : ITypeLocator
     {

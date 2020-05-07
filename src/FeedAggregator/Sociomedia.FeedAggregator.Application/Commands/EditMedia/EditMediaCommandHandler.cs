@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using CQRSlite.Domain;
-using Sociomedia.FeedAggregator.Domain.Medias;
+using Sociomedia.Domain.Medias;
 
-namespace Sociomedia.FeedAggregator.Application.Commands.EditMedia
+namespace Sociomedia.Application.Commands.EditMedia
 {
     public class EditMediaCommandHandler : ICommandHandler<EditMediaCommand>
     {

@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Sociomedia.FeedAggregator.Domain;
+using Sociomedia.Domain;
 using Xunit;
 
 namespace Sociomedia.FeedAggregator.Tests

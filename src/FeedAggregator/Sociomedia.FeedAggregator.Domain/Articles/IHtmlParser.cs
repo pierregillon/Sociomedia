@@ -1,4 +1,4 @@
-﻿namespace Sociomedia.FeedAggregator.Domain.Articles
+﻿namespace Sociomedia.Domain.Articles
 {
     public interface IHtmlParser
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using CQRSlite.Domain;
 using Sociomedia.DomainEvents.Media;
 
-namespace Sociomedia.FeedAggregator.Domain.Medias
+namespace Sociomedia.Domain.Medias
 {
     public class Media : AggregateRoot
     {

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Sociomedia.FeedAggregator.Application;
+using Sociomedia.Application;
 
-namespace Sociomedia.FeedAggregator.Infrastructure.CQRS
+namespace Sociomedia.Infrastructure.CQRS
 {
     public interface ICommandDispatcher
     {

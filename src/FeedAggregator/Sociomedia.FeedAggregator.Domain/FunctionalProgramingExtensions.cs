@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Sociomedia.FeedAggregator.Domain
+namespace Sociomedia.Domain
 {
     public static class FunctionalProgramingExtensions
     {

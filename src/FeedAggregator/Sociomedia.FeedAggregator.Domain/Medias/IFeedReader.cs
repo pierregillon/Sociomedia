@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Sociomedia.Domain.Articles;
 
-namespace Sociomedia.FeedAggregator.Domain.Medias
+namespace Sociomedia.Domain.Medias
 {
     public interface IFeedReader
     {

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CQRSlite.Domain;
+using Sociomedia.Application;
+using Sociomedia.Domain.Articles;
+using Sociomedia.Domain.Medias;
 using Sociomedia.FeedAggregator.Application.Queries;
-using Sociomedia.FeedAggregator.Domain.Articles;
-using Sociomedia.FeedAggregator.Domain.Medias;
 
-namespace Sociomedia.FeedAggregator.Application.Commands.SynchronizeAllMediaFeeds
+namespace Sociomedia.FeedAggregator.Application.SynchronizeAllMediaFeeds
 {
     public class SynchronizeAllMediaFeedsCommandHandler : ICommandHandler<SynchronizeAllMediaFeedsCommand>
     {

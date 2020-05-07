@@ -1,11 +1,11 @@
 ﻿@page "/medias/new"
 @page "/medias/{MediaId:guid}"
+@using Sociomedia.Application.Commands.AddMedia
+@using Sociomedia.Application.Commands.EditMedia
 @using Sociomedia.DomainEvents.Media
-@using Sociomedia.FeedAggregator.Application.Commands.AddMedia
-@using Sociomedia.FeedAggregator.Application.Commands.EditMedia
-@using Sociomedia.FeedAggregator.Infrastructure.CQRS
 @using Sociomedia.Front.Data
 @using Sociomedia.Front.Models
+@using Sociomedia.Infrastructure.CQRS
 
 
 <h1>Ajout d'un nouveau média :</h1>

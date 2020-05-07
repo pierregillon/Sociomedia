@@ -1,9 +1,9 @@
-﻿using System.Diagnostics;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
+using EventStore.ClientAPI;
 
-namespace Sociomedia.FeedAggregator.Infrastructure.Logging
+namespace Sociomedia.Infrastructure.Logging
 {
     public class EventPublishedLogger : IEventPublisher
     {
@@ -18,13 +18,8 @@ namespace Sociomedia.FeedAggregator.Infrastructure.Logging
 
         public async Task Publish<T>(T @event, CancellationToken cancellationToken = new CancellationToken()) where T : class, IEvent
         {
-            var watch = Stopwatch.StartNew();
-            try {
-                await _eventPublisher.Publish(@event, cancellationToken);
-            }
-            finally {
-                await _logger.LogInformation(@event.GetType().Name, watch.ElapsedMilliseconds);
-            }
+            _logger.Debug(@event.GetType().Name);
+            await _eventPublisher.Publish(@event, cancellationToken);
         }
     }
 }

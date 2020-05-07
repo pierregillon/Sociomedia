@@ -2,10 +2,10 @@
 using System.Net;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
-using Sociomedia.FeedAggregator.Domain;
-using Sociomedia.FeedAggregator.Domain.Articles;
+using Sociomedia.Domain;
+using Sociomedia.Domain.Articles;
 
-namespace Sociomedia.FeedAggregator.Infrastructure
+namespace Sociomedia.Infrastructure
 {
     public class HtmlParser : IHtmlParser
     {

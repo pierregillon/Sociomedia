@@ -4,24 +4,25 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using CodeHollow.FeedReader;
 using CodeHollow.FeedReader.Feeds;
+using Sociomedia.FeedAggregator.Domain;
+using FeedItem = Sociomedia.FeedAggregator.Domain.FeedItem;
 
-namespace Sociomedia.FeedAggregator.Infrastructure.RSS
+namespace Sociomedia.FeedAggregator.Infrastructure
 {
-    public class RssParser : IRssParser
+    public class FeedParser : IFeedParser
     {
-        public RssContent Parse(Stream rssStream)
+        public FeedContent Parse(Stream rssStream)
         {
             using var ms = new MemoryStream();
             rssStream.CopyTo(ms);
             var feed = CodeHollow.FeedReader.FeedReader.ReadFromByteArray(ms.ToArray());
-            return new RssContent(feed.Items.Select(ConvertToRssItem).ToArray());
+            return new FeedContent(feed.Items.Select(ConvertToRssItem).ToArray());
         }
 
-        private static RssItem ConvertToRssItem(FeedItem syndicationItem)
+        private static FeedItem ConvertToRssItem(CodeHollow.FeedReader.FeedItem syndicationItem)
         {
-            return new RssItem {
+            return new FeedItem {
                 Id = syndicationItem.Id,
                 Title = WebUtility.HtmlDecode(syndicationItem.Title),
                 Link = syndicationItem.Link,
@@ -31,7 +32,7 @@ namespace Sociomedia.FeedAggregator.Infrastructure.RSS
             };
         }
 
-        private static string GetSummary(FeedItem syndicationItem)
+        private static string GetSummary(CodeHollow.FeedReader.FeedItem syndicationItem)
         {
             if (!string.IsNullOrEmpty(syndicationItem.Description)) {
                 return syndicationItem.Description;
@@ -39,7 +40,7 @@ namespace Sociomedia.FeedAggregator.Infrastructure.RSS
             return null;
         }
 
-        private static DateTimeOffset GetDate(FeedItem item)
+        private static DateTimeOffset GetDate(CodeHollow.FeedReader.FeedItem item)
         {
             if (!string.IsNullOrEmpty(item.PublishingDateString)) {
                 return ParseDate(item.PublishingDateString);
@@ -50,7 +51,7 @@ namespace Sociomedia.FeedAggregator.Infrastructure.RSS
             return default;
         }
 
-        private static string GetImageUrl(FeedItem item)
+        private static string GetImageUrl(CodeHollow.FeedReader.FeedItem item)
         {
             if (item.SpecificItem is MediaRssFeedItem feedItem) {
                 return feedItem.Media.FirstOrDefault()?.Url;

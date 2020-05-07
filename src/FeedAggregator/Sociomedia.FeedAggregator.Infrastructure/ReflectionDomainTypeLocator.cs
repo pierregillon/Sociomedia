@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using Sociomedia.FeedAggregator.Domain.Medias;
+using Sociomedia.Domain.Medias;
 
-namespace Sociomedia.FeedAggregator.Infrastructure
+namespace Sociomedia.Infrastructure
 {
     public class ReflectionDomainTypeLocator : ITypeLocator
     {

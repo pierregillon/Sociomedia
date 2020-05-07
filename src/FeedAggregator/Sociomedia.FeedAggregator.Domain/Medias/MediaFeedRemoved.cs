@@ -1,7 +1,7 @@
 ﻿using System;
 using CQRSlite.Events;
 
-namespace Sociomedia.FeedAggregator.Domain.Medias
+namespace Sociomedia.Domain.Medias
 {
     public class MediaFeedRemoved : DomainEvents.Media.MediaFeedRemoved, IEvent
     {

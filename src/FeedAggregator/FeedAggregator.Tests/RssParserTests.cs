@@ -2,26 +2,27 @@
 using System.IO;
 using System.Linq;
 using FluentAssertions;
-using Sociomedia.FeedAggregator.Infrastructure.RSS;
+using Sociomedia.FeedAggregator.Domain;
+using Sociomedia.FeedAggregator.Infrastructure;
 using Xunit;
 
-namespace Sociomedia.FeedAggregator.Tests
+namespace FeedAggregator.Tests
 {
     public class RssParserTests
     {
         [Fact]
         public void Parse_lemonde_rss()
         {
-            var parser = new RssParser();
+            var parser = new FeedParser();
 
-            var rssContent = parser.Parse(File.OpenRead("./rss_lemonde.xml"));
+            var rssContent = parser.Parse(File.OpenRead("./Resources/rss_lemonde.xml"));
 
             rssContent.Items.Should().HaveCount(20);
 
             rssContent.Items
                 .First()
                 .Should()
-                .BeEquivalentTo(new RssItem {
+                .BeEquivalentTo(new FeedItem {
                     Id = "https://www.lemonde.fr/idees/article/2020/05/03/coronavirus-il-a-suffi-qu-un-hote-s-invite-et-brise-l-equilibre-d-un-systeme-qui-se-croyait-infaillible_6038499_3232.html",
                     Link = "https://www.lemonde.fr/idees/article/2020/05/03/coronavirus-il-a-suffi-qu-un-hote-s-invite-et-brise-l-equilibre-d-un-systeme-qui-se-croyait-infaillible_6038499_3232.html",
                     Title = "Coronavirus : « Il a suffi qu’un hôte s’invite et brise l’équilibre d’un système qui se croyait infaillible »",
@@ -34,16 +35,16 @@ namespace Sociomedia.FeedAggregator.Tests
         [Fact]
         public void Parse_marianne_rss()
         {
-            var parser = new RssParser();
+            var parser = new FeedParser();
 
-            var rssContent = parser.Parse(File.OpenRead("./rss_marianne.xml"));
+            var rssContent = parser.Parse(File.OpenRead("./Resources/rss_marianne.xml"));
 
             rssContent.Items.Should().HaveCount(20);
 
             rssContent.Items
                 .First()
                 .Should()
-                .BeEquivalentTo(new RssItem {
+                .BeEquivalentTo(new FeedItem {
                     Id = "https://www.marianne.net/politique/semiologie-de-didier-raoult-le-look-emmerdeur",
                     Link = "https://www.marianne.net/politique/semiologie-de-didier-raoult-le-look-emmerdeur",
                     Title = "Sémiologie de Didier Raoult : le look emmerdeur",
@@ -56,16 +57,16 @@ namespace Sociomedia.FeedAggregator.Tests
         [Fact]
         public void Parse_liberation_rss()
         {
-            var parser = new RssParser();
+            var parser = new FeedParser();
 
-            var rssContent = parser.Parse(File.OpenRead("./rss_liberation.xml"));
+            var rssContent = parser.Parse(File.OpenRead("./Resources/rss_liberation.xml"));
 
             rssContent.Items.Should().HaveCount(50);
 
             rssContent.Items
                 .First()
                 .Should()
-                .BeEquivalentTo(new RssItem {
+                .BeEquivalentTo(new FeedItem {
                     Id = "tag:www.liberation.fr,2020-03-04:/1787260",
                     Link = "https://www.liberation.fr/planete/2020/05/04/direct-suivez-les-dernieres-informations-sur-la-pandemie-de-covid-19-en-france-et-dans-le-monde_1787260?xtor=rss-450",
                     Title = "Direct - Education, aide aux jeunes, entreprises... Edouard Philippe précise la stratégie de déconfinement",
@@ -78,16 +79,16 @@ namespace Sociomedia.FeedAggregator.Tests
         [Fact]
         public void Parse_franceTVInfo_rss()
         {
-            var parser = new RssParser();
+            var parser = new FeedParser();
 
-            var rssContent = parser.Parse(File.OpenRead("./rss_francetvinfo.xml"));
+            var rssContent = parser.Parse(File.OpenRead("./Resources/rss_francetvinfo.xml"));
 
             rssContent.Items.Should().HaveCount(20);
 
             rssContent.Items
                 .First()
                 .Should()
-                .BeEquivalentTo(new RssItem {
+                .BeEquivalentTo(new FeedItem {
                     Id = "https://www.francetvinfo.fr/sante/maladie/coronavirus/les-detenus-sont-inquiets-surtout-pour-leur-famille-a-mulhouse-les-surveillants-de-prison-doivent-proteger-et-rassurer-face-au-coronavirus_3948277.html#xtor=RSS-3-[france]",
                     Link = "https://www.francetvinfo.fr/sante/maladie/coronavirus/les-detenus-sont-inquiets-surtout-pour-leur-famille-a-mulhouse-les-surveillants-de-prison-doivent-proteger-et-rassurer-face-au-coronavirus_3948277.html#xtor=RSS-3-[france]",
                     Title = "\"Les détenus sont inquiets, surtout pour leur famille\" : à Mulhouse, les surveillants de prison doivent protéger et rassurer face au coronavirus",

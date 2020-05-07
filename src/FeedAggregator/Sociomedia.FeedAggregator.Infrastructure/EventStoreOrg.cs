@@ -6,11 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
+using EventStore.ClientAPI.Exceptions;
 using Newtonsoft.Json;
 using Sociomedia.DomainEvents;
-using ILogger = Sociomedia.FeedAggregator.Infrastructure.Logging.ILogger;
 
-namespace Sociomedia.FeedAggregator.Infrastructure
+namespace Sociomedia.Infrastructure
 {
     public class EventStoreOrg : IEventStore
     {
@@ -21,6 +21,8 @@ namespace Sociomedia.FeedAggregator.Infrastructure
         private readonly ILogger _logger;
         private readonly ITypeLocator _typeLocator;
         private readonly IEventPublisher _eventPublisher;
+        private Func<Task> _disconnected;
+        private EventStoreAllCatchUpSubscription _subscription;
 
         public EventStoreOrg(ILogger logger, ITypeLocator typeLocator, IEventPublisher eventPublisher)
         {
@@ -55,17 +57,6 @@ namespace Sociomedia.FeedAggregator.Infrastructure
                 .ToArray();
         }
 
-        public async Task<IReadOnlyCollection<IEvent>> ReadAllEventsFromBeginning()
-        {
-            var streamEvents = await ReadAllEvents();
-
-            return streamEvents
-                .Where(x => x.OriginalStreamId.StartsWith("$") == false)
-                .Select(TryConvertToDomainEvent)
-                .Where(x => x != null)
-                .ToArray();
-        }
-
         public async Task Save(IEnumerable<IEvent> events, CancellationToken cancellationToken = default(CancellationToken))
         {
             foreach (var @event in events) {
@@ -80,11 +71,91 @@ namespace Sociomedia.FeedAggregator.Infrastructure
                 var version = @event.Version - 2; // CQRSLite start event version at 1. EventStore at -1.
                 await _connection.AppendToStreamAsync(@event.Id.ToString(), version, eventData);
                 await _eventPublisher.Publish(@event, cancellationToken);
-
             }
         }
 
+        public async Task StartRepublishingEvents(Func<Task> disconnected)
+        {
+            _disconnected = disconnected;
+
+            _subscription = _connection.SubscribeToAllFrom(
+                null,
+                CatchUpSubscriptionSettings.Default,
+                EventAppeared,
+                LiveProcessingStarted,
+                SubscriptionDropped
+            );
+
+            _logger.Debug($"Subscribed from beginning. Replaying missing events.");
+        }
+
+        private void SubscriptionDropped(EventStoreCatchUpSubscription subscription, SubscriptionDropReason reason, Exception ex)
+        {
+            _logger.Debug($"Subscription dropped : {reason}.");
+
+            if (ex is ConnectionClosedException) {
+                _logger.Error(ex.Message);
+            }
+            else {
+                _logger.Error(ex, string.Empty);
+            }
+
+            _disconnected.Invoke().Wait();
+        }
+
+        private void LiveProcessingStarted(EventStoreCatchUpSubscription obj)
+        {
+            _logger.Debug("Switched to live mode");
+        }
+
+        private async Task EventAppeared(EventStoreCatchUpSubscription subscription, ResolvedEvent resolvedEvent)
+        {
+            if (resolvedEvent.OriginalStreamId.StartsWith("$")) {
+                return;
+            }
+
+            try {
+                var position = resolvedEvent.OriginalPosition.GetValueOrDefault().CommitPosition;
+                if (TryConvertToDomainEvent(resolvedEvent, out var @event)) {
+                    _logger.Debug($"{resolvedEvent.Event.EventType} received. Stream: {resolvedEvent.Event.EventStreamId}, position: {position}");
+                    await _eventPublisher.Publish(@event);
+                }
+                else {
+                    _logger.Debug($"[UNKNOWN EVENT] {resolvedEvent.Event.EventType} received. Stream: {resolvedEvent.Event.EventStreamId}, position: {position}");
+                }
+            }
+            catch (Exception ex) {
+                _logger.Error(ex.Message);
+                throw;
+            }
+        }
+
+        public void StopListeningEvents()
+        {
+            if (_subscription == null) {
+                throw new InvalidOperationException("Subscription not started");
+            }
+            _subscription.Stop();
+            _subscription = null;
+            _connection.Close();
+            _connection = null;
+        }
+
         // ----- Internal logic
+
+
+        private bool TryConvertToDomainEvent(ResolvedEvent @event, out IEvent result)
+        {
+            try {
+                result = ConvertToDomainEvent(@event);
+                return true;
+            }
+            catch (UnknownEvent) {
+                result = null;
+                return false;
+            }
+        }
+
 
         private IEvent ConvertToDomainEvent(ResolvedEvent @event)
         {
@@ -98,17 +169,6 @@ namespace Sociomedia.FeedAggregator.Infrastructure
             return domainEvent;
         }
 
-        private IEvent TryConvertToDomainEvent(ResolvedEvent @event)
-        {
-            try {
-                return ConvertToDomainEvent(@event);
-            }
-            catch (UnknownEvent ex) {
-                _logger.LogError(ex);
-                return null;
-            }
-        }
-
         private async Task<IEnumerable<ResolvedEvent>> ReadAllEventsInStream(string streamId, int fromVersion)
         {
             if (_connection == null) {
@@ -116,7 +176,7 @@ namespace Sociomedia.FeedAggregator.Infrastructure
             }
             var streamEvents = new List<ResolvedEvent>();
             StreamEventsSlice currentSlice;
-            var nextSliceStart = fromVersion == -1 ? StreamPosition.Start : (long)fromVersion;
+            var nextSliceStart = fromVersion == -1 ? StreamPosition.Start : (long) fromVersion;
 
             do {
                 currentSlice = await _connection.ReadStreamEventsForwardAsync(streamId, nextSliceStart, EVENT_COUNT, false);
@@ -142,4 +202,6 @@ namespace Sociomedia.FeedAggregator.Infrastructure
             return streamEvents;
         }
     }
+
+    public delegate Task DomainEventReceived(long position, DomainEvent @event);
 }

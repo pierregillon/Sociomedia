@@ -1,4 +1,4 @@
-﻿namespace Sociomedia.FeedAggregator.Application {
+﻿namespace Sociomedia.Application {
     public interface ICommand
     {
     }

@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
 
-namespace Sociomedia.FeedAggregator.Infrastructure
+namespace Sociomedia.Infrastructure
 {
     public class InMemoryEventStore : IEventStore
     {

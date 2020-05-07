@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Sociomedia.Application.Commands.AddMedia;
+using Sociomedia.Application.Commands.EditMedia;
 using Sociomedia.DomainEvents;
 using Sociomedia.DomainEvents.Media;
-using Sociomedia.FeedAggregator.Application.Commands.AddMedia;
-using Sociomedia.FeedAggregator.Application.Commands.EditMedia;
 using Xunit;
 
 namespace Sociomedia.FeedAggregator.Tests.Features

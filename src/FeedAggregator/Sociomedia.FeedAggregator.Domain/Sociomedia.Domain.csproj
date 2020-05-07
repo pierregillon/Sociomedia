@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>Sociomedia.FeedAggregator.Domain</RootNamespace>
-    <AssemblyName>Sociomedia.FeedAggregator.Domain</AssemblyName>
+    <RootNamespace>Sociomedia.Domain</RootNamespace>
+    <AssemblyName>Sociomedia.Domain</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

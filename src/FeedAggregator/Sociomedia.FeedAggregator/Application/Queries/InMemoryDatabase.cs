@@ -27,5 +27,14 @@ namespace Sociomedia.FeedAggregator.Application.Queries
                 return Array.Empty<T>();
             }
         }
+
+        public void Remove<T>(T element)
+        {
+            if (_store.TryGetValue(typeof(T), out var results)) {
+                results.Remove(element);
+                return;
+            }
+            throw new InvalidOperationException($"No list in memory found of the type {typeof(T).Name}");
+        }
     }
 }

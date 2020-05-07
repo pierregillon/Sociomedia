@@ -14,9 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sociomedia.FeedAggregator.Application\FeedAggregator.Application.csproj" />
-    <ProjectReference Include="..\Sociomedia.FeedAggregator.Domain\FeedAggregator.Domain.csproj" />
-    <ProjectReference Include="..\Sociomedia.FeedAggregator.Infrastructure\FeedAggregator.Infrastructure.csproj" />
+    <ProjectReference Include="..\Sociomedia.FeedAggregator.Application\Sociomedia.Application.csproj" />
+    <ProjectReference Include="..\Sociomedia.FeedAggregator.Domain\Sociomedia.Domain.csproj" />
+    <ProjectReference Include="..\Sociomedia.FeedAggregator.Infrastructure\Sociomedia.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

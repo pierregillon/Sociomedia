@@ -4,16 +4,17 @@ using System.Threading.Tasks;
 using CQRSlite.Events;
 using FluentAssertions;
 using NSubstitute;
+using Sociomedia.Domain.Articles;
+using Sociomedia.Domain.Medias;
 using Sociomedia.DomainEvents.Media;
-using Sociomedia.FeedAggregator.Application.Commands.SynchronizeAllMediaFeeds;
-using Sociomedia.FeedAggregator.Domain.Articles;
-using Sociomedia.FeedAggregator.Domain.Medias;
+using Sociomedia.FeedAggregator.Application.SynchronizeAllMediaFeeds;
 using Xunit;
-using MediaAdded = Sociomedia.FeedAggregator.Domain.Medias.MediaAdded;
-using MediaFeedAdded = Sociomedia.FeedAggregator.Domain.Medias.MediaFeedAdded;
-using MediaFeedSynchronized = Sociomedia.FeedAggregator.Domain.Medias.MediaFeedSynchronized;
+using MediaAdded = Sociomedia.Domain.Medias.MediaAdded;
+using MediaFeedAdded = Sociomedia.Domain.Medias.MediaFeedAdded;
+using MediaFeedSynchronized = Sociomedia.Domain.Medias.MediaFeedSynchronized;
+using MediaFeedRemoved = Sociomedia.Domain.Medias.MediaFeedRemoved;
 
-namespace Sociomedia.FeedAggregator.Tests.Features
+namespace FeedAggregator.Tests
 {
     public class ConvertRssExternalArticlesIntoArticles : AcceptanceTests
     {
@@ -51,6 +52,26 @@ namespace Sociomedia.FeedAggregator.Tests.Features
             (await EventStore.GetNewEvents())
                 .Should()
                 .BeEmpty();
+        }
+
+        [Fact]
+        public async Task Do_not_read_media_feed_if_removed()
+        {
+            var mediaId = Guid.NewGuid();
+
+            await EventStore.Save(new IEvent[] {
+                new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
+                new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 },
+                new MediaFeedRemoved(mediaId, "https://www.test.com/rss.xml") { Version = 3 },
+            });
+
+            EventStore.CommitEvents();
+
+            await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
+
+            await _feedReader
+                .Received(0)
+                .ReadNewArticles("https://www.test.com/rss.xml", null);
         }
 
         [Fact]

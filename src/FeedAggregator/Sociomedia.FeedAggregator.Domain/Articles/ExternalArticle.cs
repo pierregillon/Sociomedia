@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sociomedia.FeedAggregator.Domain.Medias
+namespace Sociomedia.Domain.Articles
 {
     public class ExternalArticle
     {

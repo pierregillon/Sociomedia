@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Sociomedia.FeedAggregator.Domain;
-using Sociomedia.FeedAggregator.Domain.Medias;
+using Sociomedia.Domain;
+using Sociomedia.Domain.Articles;
+using Sociomedia.Domain.Medias;
 
-namespace Sociomedia.FeedAggregator.Infrastructure.RSS
+namespace Sociomedia.FeedAggregator.Domain
 {
     public class FeedReader : IFeedReader
     {
-        private readonly IRssParser _rssParser;
+        private readonly IFeedParser _feedParser;
 
-        public FeedReader(IRssParser rssParser)
+        public FeedReader(IFeedParser feedParser)
         {
-            _rssParser = rssParser;
+            _feedParser = feedParser;
         }
 
         public async Task<IReadOnlyCollection<ExternalArticle>> ReadNewArticles(string url, DateTimeOffset? from)
@@ -22,7 +23,7 @@ namespace Sociomedia.FeedAggregator.Infrastructure.RSS
             return await url
                 .Pipe(Download)
                 .Pipe(async x => await x.Content.ReadAsStreamAsync())
-                .Pipe(x => _rssParser.Parse(x))
+                .Pipe(x => _feedParser.Parse(x))
                 .Pipe(x => x.ToExternalArticles(from).ToArray());
         }
 

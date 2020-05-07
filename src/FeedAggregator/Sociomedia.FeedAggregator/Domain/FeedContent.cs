@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sociomedia.FeedAggregator.Domain.Medias;
+using Sociomedia.Domain.Articles;
 
-namespace Sociomedia.FeedAggregator.Infrastructure.RSS
+namespace Sociomedia.FeedAggregator.Domain
 {
-    public class RssContent
+    public class FeedContent
     {
-        public RssContent(IReadOnlyCollection<RssItem> items)
+        public FeedContent(IReadOnlyCollection<FeedItem> items)
         {
             Items = items;
         }
 
-        public IReadOnlyCollection<RssItem> Items { get; }
+        public IReadOnlyCollection<FeedItem> Items { get; }
 
         public IEnumerable<ExternalArticle> ToExternalArticles(DateTimeOffset? @from)
         {
-            IEnumerable<RssItem> articles = Items;
+            IEnumerable<FeedItem> articles = Items;
             if (from.HasValue) {
                 articles = articles.Where(x => x.PublishDate > @from.Value);
             }

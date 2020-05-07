@@ -2,10 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using Sociomedia.FeedAggregator.Application;
+using Sociomedia.Application;
 using StructureMap;
 
-namespace Sociomedia.FeedAggregator.Infrastructure.CQRS
+namespace Sociomedia.Infrastructure.CQRS
 {
     public class StructureMapEventPublisher : IEventPublisher
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Sociomedia.DomainEvents.Media;
 
-namespace Sociomedia.FeedAggregator.Application.Commands.AddMedia
+namespace Sociomedia.Application.Commands.AddMedia
 {
     public class AddMediaCommand : ICommand<Guid>
     {

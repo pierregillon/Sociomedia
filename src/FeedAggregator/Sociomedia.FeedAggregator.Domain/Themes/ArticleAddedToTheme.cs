@@ -1,7 +1,7 @@
 ﻿using System;
 using Sociomedia.DomainEvents;
 
-namespace Sociomedia.FeedAggregator.Domain.Themes
+namespace Sociomedia.Domain.Themes
 {
     public class ArticleAddedToTheme : DomainEvent
     {

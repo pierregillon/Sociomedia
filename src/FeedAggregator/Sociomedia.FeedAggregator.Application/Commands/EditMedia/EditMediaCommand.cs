@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Sociomedia.DomainEvents.Media;
 
-namespace Sociomedia.FeedAggregator.Application.Commands.EditMedia {
+namespace Sociomedia.Application.Commands.EditMedia {
     public class EditMediaCommand : ICommand
     {
         public Guid MediaId { get; }

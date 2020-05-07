@@ -3,12 +3,13 @@ using CQRSlite.Events;
 using EventStore.ClientAPI;
 using NSubstitute;
 using Sociomedia.Domain.Articles;
+using Sociomedia.FeedAggregator;
 using Sociomedia.FeedAggregator.Application.Queries;
 using Sociomedia.Infrastructure;
 using Sociomedia.Infrastructure.CQRS;
 using StructureMap;
 
-namespace Sociomedia.FeedAggregator.Tests.Features
+namespace FeedAggregator.Tests
 {
     public abstract class AcceptanceTests
     {

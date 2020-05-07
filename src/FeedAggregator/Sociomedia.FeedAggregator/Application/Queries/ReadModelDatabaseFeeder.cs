@@ -1,10 +1,14 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Sociomedia.FeedAggregator.Domain.Medias;
+using Sociomedia.Application;
+using Sociomedia.Domain.Medias;
 
 namespace Sociomedia.FeedAggregator.Application.Queries
 {
-    public class ReadModelDatabaseFeeder : IEventListener<MediaFeedAdded>, IEventListener<MediaFeedSynchronized>
+    public class ReadModelDatabaseFeeder :
+        IEventListener<MediaFeedAdded>,
+        IEventListener<MediaFeedSynchronized>,
+        IEventListener<MediaFeedRemoved>
     {
         private readonly InMemoryDatabase _database;
 
@@ -26,10 +30,25 @@ namespace Sociomedia.FeedAggregator.Application.Queries
 
         public Task On(MediaFeedSynchronized @event)
         {
-            var source = _database.List<MediaFeedReadModel>().SingleOrDefault(x => x.MediaId == @event.Id);
+            var source = _database
+                .List<MediaFeedReadModel>()
+                .SingleOrDefault(x => x.MediaId == @event.Id && x.FeedUrl == @event.FeedUrl);
+
             if (source != null) {
                 source.LastSynchronizationDate = @event.SynchronizationDate;
             }
+
+            return Task.CompletedTask;
+        }
+
+        public Task On(MediaFeedRemoved @event)
+        {
+            var source = _database
+                .List<MediaFeedReadModel>()
+                .SingleOrDefault(x => x.MediaId == @event.Id && x.FeedUrl == @event.FeedUrl);
+
+            _database.Remove(source);
+
             return Task.CompletedTask;
         }
     }

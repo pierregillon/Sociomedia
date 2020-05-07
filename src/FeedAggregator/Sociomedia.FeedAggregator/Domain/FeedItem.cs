@@ -1,7 +1,7 @@
 ﻿using System;
 
-namespace Sociomedia.FeedAggregator.Infrastructure.RSS {
-    public class RssItem
+namespace Sociomedia.FeedAggregator.Domain {
+    public class FeedItem
     {
         public string Id { get; set; }
         public string Title { get; set; }

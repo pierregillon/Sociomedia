@@ -1,9 +1,10 @@
-﻿using System.Diagnostics;
-using System.Threading.Tasks;
-using Sociomedia.FeedAggregator.Application;
-using Sociomedia.FeedAggregator.Infrastructure.CQRS;
+﻿using System.Threading.Tasks;
+using EventStore.ClientAPI;
+using Sociomedia.Application;
+using Sociomedia.Infrastructure.CQRS;
 
-namespace Sociomedia.FeedAggregator.Infrastructure.Logging {
+namespace Sociomedia.Infrastructure.Logging
+{
     public class CommandDispatchedLogger : ICommandDispatcher
     {
         private readonly ILogger _logger;
@@ -17,28 +18,23 @@ namespace Sociomedia.FeedAggregator.Infrastructure.Logging {
 
         public async Task Dispatch<T>(T command) where T : ICommand
         {
-            var watch = Stopwatch.StartNew();
-            await _logger.LogInformation("START " + command.GetType().Name);
-            try
-            {
+            try {
+                _logger.Debug("STARTING " + command.GetType().Name);
                 await _commandDispatcher.Dispatch(command);
             }
             finally {
-                await _logger.LogInformation("END " + command.GetType().Name, watch.ElapsedMilliseconds);
+                _logger.Debug("END " + command.GetType().Name);
             }
         }
 
         public async Task<TResult> Dispatch<T, TResult>(T command) where T : ICommand<TResult>
         {
-            var watch = Stopwatch.StartNew();
-            await _logger.LogInformation("START " + command.GetType().Name);
-            try
-            {
+            try {
+                _logger.Debug("STARTING " + command.GetType().Name);
                 return await _commandDispatcher.Dispatch<T, TResult>(command);
             }
-            finally
-            {
-                await _logger.LogInformation("END " + command.GetType().Name, watch.ElapsedMilliseconds);
+            finally {
+                _logger.Debug("END " + command.GetType().Name);
             }
         }
     }
