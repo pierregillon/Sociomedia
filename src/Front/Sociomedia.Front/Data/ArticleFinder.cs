@@ -16,10 +16,8 @@ namespace Sociomedia.Front.Data
             _dbConnection = dbConnection;
         }
 
-        public async Task<IReadOnlyCollection<ArticleListItem>> List(Guid? mediaId = null)
+        public async Task<IReadOnlyCollection<ArticleListItem>> List(int page, int pageSize, Guid? mediaId = null)
         {
-            await Task.Delay(5000);
-
             var query = from article in _dbConnection.Articles
                 join media in _dbConnection.Medias on article.MediaId equals media.Id
                 orderby article.PublishDate descending
@@ -37,6 +35,12 @@ namespace Sociomedia.Front.Data
             if (mediaId.HasValue) {
                 query = query.Where(x => x.MediaId == mediaId.Value);
             }
+
+            if (page > 0) {
+                query = query.Skip(page * pageSize);
+            }
+
+            query = query.Take(pageSize);
 
             return await query.ToArrayAsync();
         }
