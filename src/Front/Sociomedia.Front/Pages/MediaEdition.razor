@@ -53,7 +53,7 @@ else
             <ValidationMessage For="@(() => feed.Url)" />
         </div>
     }
-    <button class="btn btn-secondary" @onclick="@_article.AddFeed">Ajouter un flux</button>
+    <button class="btn btn-secondary" type="button" @onclick="@_article.AddFeed">Ajouter un flux</button>
 
     <button type="submit" class="btn btn-primary" disabled="@isLoading">
         @if (isLoading)

@@ -20,7 +20,7 @@
             <a href="@("/medias/" + Value.MediaId)">
                 <img class="logo" src="@Value.MediaImageUrl"/>
             </a>
-            <small class="text-muted" data-toggle="tooltip" data-placement="right" title="@Value.PublishDate.ToString("G")">
+            <small class="text-muted" data-toggle="tooltip" data-placement="right" title="@Value.PublishDate.ToString("F")">
                 @GetEllapsedTimeFromDate(Value.PublishDate)
             </small>
         </div>
@@ -41,9 +41,7 @@
         display: block;
         text-align: center;
         margin: 5px;
-        max-width: 120px;
-        max-height: 40px;
-        min-height: 20px;
+        height: 25px;
     }
 
     .article .image {
