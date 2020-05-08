@@ -4,6 +4,7 @@ namespace Sociomedia.Domain.Articles
 {
     public class ExternalArticle
     {
+        public string Id { get; set; }
         public Uri Url { get; set; }
         public string Title { get; set; }
         public DateTimeOffset PublishDate { get; set; }

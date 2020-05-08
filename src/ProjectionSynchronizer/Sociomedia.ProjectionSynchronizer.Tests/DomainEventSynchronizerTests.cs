@@ -62,6 +62,7 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
                 new DateTimeOffset(2020, 05, 06, 10, 0, 0, TimeSpan.FromHours(2)),
                 "https://test.com",
                 "https://test/image/jpg",
+                "externalId",
                 Array.Empty<string>(),
                 Guid.NewGuid()
             );
@@ -208,6 +209,7 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
                 new DateTimeOffset(2020, 05, 06, 10, 0, 0, TimeSpan.FromHours(2)),
                 "https://test.com",
                 "https://test/image/jpg",
+                "externalId",
                 keywords ?? new string[0],
                 Guid.NewGuid()
             );

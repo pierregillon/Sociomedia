@@ -11,14 +11,27 @@ namespace Sociomedia.Domain.Articles
         public Article(Guid mediaId, ExternalArticle externalArticle, IReadOnlyCollection<string> keywords) : this()
         {
             ApplyChange(new ArticleImported(
-                Guid.NewGuid(), 
-                externalArticle.Title, 
+                Guid.NewGuid(),
+                externalArticle.Title,
                 externalArticle.Summary,
                 externalArticle.PublishDate,
                 externalArticle.Url.AbsoluteUri,
                 externalArticle.ImageUrl?.AbsoluteUri,
-                keywords, 
+                externalArticle.Id,
+                keywords,
                 mediaId));
+        }
+
+        public void Update(ExternalArticle externalArticle)
+        {
+            ApplyChange(new ArticleUpdated(
+                Id,
+                externalArticle.Title,
+                externalArticle.Summary,
+                externalArticle.PublishDate,
+                externalArticle.Url.AbsoluteUri,
+                externalArticle.ImageUrl?.AbsoluteUri
+            ));
         }
 
         private void Apply(ArticleImported @event)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,7 +7,7 @@ namespace Sociomedia.FeedAggregator.Application.Queries
 {
     public class InMemoryDatabase
     {
-        private readonly IDictionary<Type, List<object>> _store = new Dictionary<Type, List<object>>();
+        private readonly IDictionary<Type, List<object>> _store = new ConcurrentDictionary<Type, List<object>>();
 
         public void Add<T>(T item)
         {

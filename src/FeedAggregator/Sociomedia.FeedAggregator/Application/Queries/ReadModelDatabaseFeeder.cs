@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Sociomedia.Application;
+using Sociomedia.Domain.Articles;
 using Sociomedia.Domain.Medias;
 
 namespace Sociomedia.FeedAggregator.Application.Queries
@@ -8,7 +9,8 @@ namespace Sociomedia.FeedAggregator.Application.Queries
     public class ReadModelDatabaseFeeder :
         IEventListener<MediaFeedAdded>,
         IEventListener<MediaFeedSynchronized>,
-        IEventListener<MediaFeedRemoved>
+        IEventListener<MediaFeedRemoved>,
+        IEventListener<ArticleImported>
     {
         private readonly InMemoryDatabase _database;
 
@@ -48,6 +50,17 @@ namespace Sociomedia.FeedAggregator.Application.Queries
                 .SingleOrDefault(x => x.MediaId == @event.Id && x.FeedUrl == @event.FeedUrl);
 
             _database.Remove(source);
+
+            return Task.CompletedTask;
+        }
+
+        public Task On(ArticleImported @event)
+        {
+            _database.Add(new ArticleReadModel {
+                MediaId = @event.MediaId,
+                ExternalArticleId = @event.ExternalArticleId,
+                ArticleId = @event.Id
+            });
 
             return Task.CompletedTask;
         }

@@ -14,13 +14,10 @@ namespace Sociomedia.FeedAggregator.Domain
 
         public IReadOnlyCollection<FeedItem> Items { get; }
 
-        public IEnumerable<ExternalArticle> ToExternalArticles(DateTimeOffset? @from)
+        public IEnumerable<ExternalArticle> ToExternalArticles()
         {
-            IEnumerable<FeedItem> articles = Items;
-            if (from.HasValue) {
-                articles = articles.Where(x => x.PublishDate > @from.Value);
-            }
-            return articles.Select(item => new ExternalArticle {
+            return Items.Select(item => new ExternalArticle {
+                Id = item.Id,
                 Title = item.Title,
                 Summary = item.Summary,
                 PublishDate = item.PublishDate,

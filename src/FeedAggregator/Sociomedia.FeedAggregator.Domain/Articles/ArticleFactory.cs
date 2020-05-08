@@ -7,20 +7,17 @@ namespace Sociomedia.Domain.Articles
     public class ArticleFactory
     {
         private readonly IHtmlParser _htmlParser;
-        private readonly IHtmlPageDownloader _htmlPageDownloader;
+        private readonly IWebPageDownloader _webPageDownloader;
 
-        public ArticleFactory(IHtmlParser htmlParser, IHtmlPageDownloader htmlPageDownloader)
+        public ArticleFactory(IHtmlParser htmlParser, IWebPageDownloader webPageDownloader)
         {
             _htmlParser = htmlParser;
-            _htmlPageDownloader = htmlPageDownloader;
+            _webPageDownloader = webPageDownloader;
         }
 
         public async Task<Article> Build(Guid mediaId, ExternalArticle externalArticle)
         {
-            var html = await _htmlPageDownloader.Download(externalArticle.Url);
-            if (string.IsNullOrEmpty(html)) {
-                throw new ArticleNotFound($"The article with url '{externalArticle.Url}' was not found.");
-            }
+            var html = await _webPageDownloader.Download(externalArticle.Url);
 
             var articleContent = _htmlParser.ExtractPlainTextArticleContent(html);
 
@@ -28,10 +25,5 @@ namespace Sociomedia.Domain.Articles
 
             return new Article(mediaId, externalArticle, keywords.Select(x => x.ToString()).ToArray());
         }
-    }
-
-    public class ArticleNotFound : Exception
-    {
-        public ArticleNotFound(string message) : base(message) { }
     }
 }

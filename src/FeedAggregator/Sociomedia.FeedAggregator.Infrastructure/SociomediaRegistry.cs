@@ -37,7 +37,7 @@ namespace Sociomedia.Infrastructure
             For<IEventStore>().Use<EventStoreOrg>().Singleton();
 
             For<IHtmlParser>().Use<HtmlParser>();
-            For<IHtmlPageDownloader>().Use<HtmlPageDownloader>();
+            For<IWebPageDownloader>().Use<WebPageDownloader>();
         }
 
         private class AllInterfacesConvention : IRegistrationConvention

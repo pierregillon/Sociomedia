@@ -20,7 +20,7 @@ namespace Sociomedia.Tests.Features
             Container = new Container(x => x.AddRegistry<SociomediaRegistry>());
 
             Container.Inject<ILogger>(new EmptyLogger());
-            Container.Inject(Substitute.For<IHtmlPageDownloader>());
+            Container.Inject(Substitute.For<IWebPageDownloader>());
             Container.Inject<IEventStore>(Container.GetInstance<InMemoryEventStore>());
 
             CommandDispatcher = Container.GetInstance<ICommandDispatcher>();

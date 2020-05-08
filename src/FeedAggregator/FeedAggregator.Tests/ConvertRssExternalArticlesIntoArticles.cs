@@ -4,14 +4,11 @@ using System.Threading.Tasks;
 using CQRSlite.Events;
 using FluentAssertions;
 using NSubstitute;
+using Sociomedia.Domain;
 using Sociomedia.Domain.Articles;
 using Sociomedia.Domain.Medias;
 using Sociomedia.FeedAggregator.Application.SynchronizeAllMediaFeeds;
 using Xunit;
-using MediaAdded = Sociomedia.Domain.Medias.MediaAdded;
-using MediaFeedAdded = Sociomedia.Domain.Medias.MediaFeedAdded;
-using MediaFeedSynchronized = Sociomedia.Domain.Medias.MediaFeedSynchronized;
-using MediaFeedRemoved = Sociomedia.Domain.Medias.MediaFeedRemoved;
 
 namespace FeedAggregator.Tests
 {
@@ -24,7 +21,7 @@ namespace FeedAggregator.Tests
             Container.Inject(_feedReader);
 
             _feedReader
-                .ReadNewArticles(Arg.Any<string>(), Arg.Any<DateTimeOffset?>())
+                .ReadArticles(Arg.Any<string>())
                 .Returns(x => Array.Empty<ExternalArticle>());
         }
 
@@ -66,46 +63,41 @@ namespace FeedAggregator.Tests
 
             EventStore.CommitEvents();
 
+            _feedReader
+                .ReadArticles("https://www.test.com/rss.xml")
+                .Returns(x => new[] {
+                    new ExternalArticle {
+                        Url = new Uri("https://www.test.com/newpage.html"),
+                        PublishDate = new DateTime(2020, 04, 01)
+                    }
+                });
+
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
 
             await _feedReader
                 .Received(0)
-                .ReadNewArticles("https://www.test.com/rss.xml", null);
+                .ReadArticles("https://www.test.com/rss.xml");
         }
 
         [Fact]
-        public async Task Get_all_external_articles_when_source_never_synchronized()
-        {
-            var mediaId = Guid.NewGuid();
-
-            await EventStore.Save(new IEvent[] {
-                new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left),
-                new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml")
-            });
-
-            await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
-
-            await _feedReader
-                .Received(1)
-                .ReadNewArticles("https://www.test.com/rss.xml", null);
-        }
-
-        [Fact]
-        public async Task Get_new_external_articles_from_last_synchronization_date_when_source_has_been_synchronized()
+        public async Task Read_all_feeds_of_a_media()
         {
             var mediaId = Guid.NewGuid();
 
             await EventStore.Save(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left),
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml"),
-                new MediaFeedSynchronized(mediaId, "https://www.test.com/rss.xml", new DateTime(2020, 05, 01))
+                new MediaFeedAdded(mediaId, "https://www.test.com/rss2.xml"),
             });
 
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
 
             await _feedReader
                 .Received(1)
-                .ReadNewArticles("https://www.test.com/rss.xml", new DateTime(2020, 05, 01));
+                .ReadArticles("https://www.test.com/rss.xml");
+            await _feedReader
+                .Received(1)
+                .ReadArticles("https://www.test.com/rss2.xml");
         }
 
         [Fact]
@@ -116,14 +108,13 @@ namespace FeedAggregator.Tests
 
             await EventStore.Save(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
-                new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 },
-                new MediaFeedSynchronized(mediaId, "https://www.test.com/rss.xml", new DateTime(2020, 05, 01)) { Version = 3 }
+                new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 }
             });
 
             EventStore.CommitEvents();
 
             _feedReader
-                .ReadNewArticles("https://www.test.com/rss.xml", new DateTime(2020, 05, 01))
+                .ReadArticles("https://www.test.com/rss.xml")
                 .Returns(x => new[] {
                     new ExternalArticle {
                         Url = new Uri("https://www.test.com/newpage.html"),
@@ -150,6 +141,52 @@ namespace FeedAggregator.Tests
             var mediaFeedSynchronized = events.OfType<MediaFeedSynchronized>().Single();
             mediaFeedSynchronized.Id.Should().Be(mediaId);
             mediaFeedSynchronized.SynchronizationDate.Date.Should().Be(DateTime.UtcNow.Date);
+        }
+
+        [Fact]
+        public async Task Ignore_articles_already_imported()
+        {
+            // Arrange
+            var mediaId = Guid.NewGuid();
+
+            await EventStore.Save(new IEvent[] {
+                new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
+                new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 },
+                new ArticleImported(Guid.NewGuid(), "test", "test", DateTimeOffset.Now, "https://test/article", "", "articleExternalId", new string[0], mediaId) { Version = 1},
+            });
+
+            EventStore.CommitEvents();
+
+            _feedReader
+                .ReadArticles("https://www.test.com/rss.xml")
+                .Returns(x => new[] {
+                    new ExternalArticle {
+                        Id = "articleExternalId",
+                        Title = "my title",
+                        Summary = "summary",
+                        ImageUrl = null,
+                        Url = new Uri("https://www.test.com/newpage.html"),
+                        PublishDate = new DateTime(2020, 04, 01)
+                    }
+                });
+
+            // Act
+            await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
+
+            // Assert
+            (await EventStore.GetNewEvents())
+                .OfType<ArticleUpdated>()
+                .Should()
+                .BeEquivalentTo(new DomainEvent[] {
+                    new ArticleUpdated(
+                        default,
+                        "my title",
+                        "summary",
+                        new DateTime(2020, 04, 01),
+                        "https://www.test.com/newpage.html",
+                        null
+                    )
+                }, x => x.ExcludeDomainEventTechnicalFields());
         }
     }
 }

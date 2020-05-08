@@ -5,7 +5,7 @@ namespace Sociomedia.Domain.Articles
 {
     public class ArticleImported : ArticleEvent
     {
-        public ArticleImported(Guid id, string title, string summary, DateTimeOffset publishDate, string url, string imageUrl, IReadOnlyCollection<string> keywords, Guid mediaId) : base(id)
+        public ArticleImported(Guid id, string title, string summary, DateTimeOffset publishDate, string url, string imageUrl, string externalArticleId, IReadOnlyCollection<string> keywords, Guid mediaId) : base(id)
         {
             Title = title;
             Summary = summary;
@@ -14,6 +14,7 @@ namespace Sociomedia.Domain.Articles
             ImageUrl = imageUrl;
             Keywords = keywords;
             MediaId = mediaId;
+            ExternalArticleId = externalArticleId;
         }
 
         public string Title { get; }
@@ -23,5 +24,6 @@ namespace Sociomedia.Domain.Articles
         public string Url { get; set; }
         public string ImageUrl { get; }
         public Guid MediaId { get; }
+        public string ExternalArticleId { get; }
     }
 }

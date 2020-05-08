@@ -7,6 +7,6 @@ namespace Sociomedia.Domain.Medias
 {
     public interface IFeedReader
     {
-        Task<IReadOnlyCollection<ExternalArticle>> ReadNewArticles(string url, DateTimeOffset? from);
+        Task<IReadOnlyCollection<ExternalArticle>> ReadArticles(string url);
     }
 }

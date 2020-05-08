@@ -12,7 +12,7 @@ namespace Sociomedia.Tests
         {
             var id = Guid.NewGuid();
 
-            var @event = new ArticleImported(id, null, null, default, null, null, null, default);
+            var @event = new ArticleImported(id, null, null, default, null, null, null, null, default);
 
             @event.EventStream.Should().Be("article-" + id);
         }

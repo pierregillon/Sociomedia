@@ -1,47 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
-using EventStore.ClientAPI;
 using Sociomedia.Domain;
 using Sociomedia.Domain.Articles;
 using Sociomedia.Domain.Medias;
+using Sociomedia.Infrastructure;
 
 namespace Sociomedia.FeedAggregator.Domain
 {
     public class FeedReader : IFeedReader
     {
         private readonly IFeedParser _feedParser;
-        private readonly ILogger _logger;
+        private readonly IWebPageDownloader _webPageDownloader;
 
-        public FeedReader(IFeedParser feedParser, ILogger logger)
+        public FeedReader(IFeedParser feedParser, IWebPageDownloader webPageDownloader)
         {
             _feedParser = feedParser;
-            _logger = logger;
+            _webPageDownloader = webPageDownloader;
         }
 
-        public async Task<IReadOnlyCollection<ExternalArticle>> ReadNewArticles(string url, DateTimeOffset? from)
-        {
-            var response = await Download(url);
-            if (response == null) {
-                return Array.Empty<ExternalArticle>();
-            }
-            return await response
-                .Pipe(async x => await x.Content.ReadAsStreamAsync())
-                .Pipe(x => _feedParser.Parse(x))
-                .Pipe(x => x.ToExternalArticles(from).ToArray());
-        }
-
-        private async Task<HttpResponseMessage> Download(string url)
+        public async Task<IReadOnlyCollection<ExternalArticle>> ReadArticles(string url)
         {
             try {
-                using var client = new HttpClient();
-                return await client.GetAsync(url);
+                return await url
+                    .Pipe(x => new Uri(x))
+                    .Pipe(async x => await _webPageDownloader.DownloadStream(x))
+                    .Pipe(x => _feedParser.Parse(x))
+                    .Pipe(x => x.ToExternalArticles().ToArray());
             }
-            catch (Exception ex) {
-                _logger.Error($"[HTTP_DOWNLOADER] Unable to read feed '{url}' : {ex.Message}");
-                return null;
+            catch (UnreachableWebDocumentException) {
+                return Array.Empty<ExternalArticle>();
             }
         }
     }
