@@ -46,7 +46,7 @@ else
             <label for="@("FeedUrl" + feed.Id)">Url du flux RSS / ATOM (@feed.Id)</label>
             <div class="row">
                 <InputText @bind-Value=@feed.Url class="form-control col-md-11" id="@("FeedUrl" + feed.Id)" />
-                <button class="btn btn-secondary col-md-1" @onclick="@(x => _article.Feeds.Remove(feed))">
+                <button type="button" class="btn btn-secondary col-md-1" @onclick="@(x => _article.Feeds.Remove(feed))">
                     <span class="oi oi-trash" aria-hidden="true"></span>
                 </button>
             </div>

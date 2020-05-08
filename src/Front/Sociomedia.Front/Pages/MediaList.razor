@@ -2,12 +2,9 @@
 @using Sociomedia.Front.Data
 @inject MediaFinder MediaFinder
 
-<h1>
-    Medias list
-    <a class="btn btn-outline-primary" href="/medias/new">
-        <span class="oi oi-plus" aria-hidden="true"></span>
-    </a>
-</h1>
+<a class="btn btn-outline-primary" href="/medias/new">
+    <span class="oi oi-plus" aria-hidden="true"></span>
+</a>
 
 @if (_medias == null) {
     <i class="oi oi-reload"></i>
