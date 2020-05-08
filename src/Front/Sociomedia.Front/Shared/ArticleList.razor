@@ -4,7 +4,7 @@
 <div class="row articles justify-content-center">
     @foreach (var article in _articles)
     {
-        <div class="col-sm-6 col-md-12 col-lg-6 col-xl-4">
+        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
             <Article @key="@article.Id" Value="@article"></Article>
         </div>
     }

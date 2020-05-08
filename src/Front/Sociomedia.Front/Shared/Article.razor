@@ -1,18 +1,35 @@
 ﻿@using Sociomedia.Front.Data
 
-<div class="article">
-    <a href="@("/medias/" + Value.MediaId)">
-        <img class="logo" src="@Value.MediaImageUrl" />
-    </a>
-    <img class="image" src="@Value.ImageUrl"/>
-    <a class="title" href="@Value.Url" target="_blank">@Value.Title</a>
-    <p class="date">@Value.PublishDate.ToString("G")</p>
-    <p class="description">@Value.Summary</p>
+<div class="card article">
+    <img class="card-img-top image" src="@Value.ImageUrl">
+    <div class="card-body">
+        <a href="@Value.Url" target="_blank">
+            <h5 class="card-title title" data-toggle="tooltip" data-placement="right" title="@Value.Title">
+                @Value.Title
+            </h5>
+        </a>
+        <p class="card-text description">
+            @Value.Summary
+        </p>
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="btn-group">
+                <a class="btn btn-sm btn-outline-secondary" href="@Value.Url" target="_blank">
+                    Lire
+                </a>
+            </div>
+            <a href="@("/medias/" + Value.MediaId)">
+                <img class="logo" src="@Value.MediaImageUrl"/>
+            </a>
+            <small class="text-muted" data-toggle="tooltip" data-placement="right" title="@Value.PublishDate.ToString("G")">
+                @GetEllapsedTimeFromDate(Value.PublishDate)
+            </small>
+        </div>
+    </div>
 </div>
 
 <Styled>
     .article {
-        display: block;
+        margin-bottom: 20px;
     }
 
     .article .date {
@@ -21,10 +38,12 @@
     }
 
     .article .logo {
-        height: 20px;
         display: block;
         text-align: center;
         margin: 5px;
+        max-width: 120px;
+        max-height: 40px;
+        min-height: 20px;
     }
 
     .article .image {
@@ -42,7 +61,7 @@
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -moz-box-orient: vertical;
-        max-height: 50px;
+        height: 50px;
     }
 
     .article .description {
@@ -51,7 +70,7 @@
         display: -webkit-box;
         -webkit-line-clamp: 5;
         -webkit-box-orient: vertical;
-        max-height: 110px;
+        height: 107px;
     }
 </Styled>
 
@@ -59,5 +78,29 @@
 
     [Parameter]
     public ArticleListItem Value { get; set; }
+
+    private string GetEllapsedTimeFromDate(DateTimeOffset value)
+    {
+        var result = DateTimeOffset.Now.Subtract(value);
+        if (result.TotalSeconds < 60) {
+            return $"Il y a {(int)result.TotalSeconds} secondes.";
+        }
+        if (result.TotalSeconds < 120) {
+            return "Il y a 1 minute.";
+        }
+        if (result.TotalMinutes < 60) {
+            return $"Il y a {(int)result.TotalMinutes} minutes.";
+        }
+        if (result.TotalHours < 2) {
+            return "Il y a 1 heure.";
+        }
+        if (result.TotalHours < 24) {
+            return $"Il y a {(int)result.TotalHours} heures.";
+        }
+        if (result.TotalDays < 2) {
+            return "Il y a 1 jour.";
+        }
+        return $"Il y a {(int)result.TotalDays} jours.";
+    }
 
 }
