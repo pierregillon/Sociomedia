@@ -29,11 +29,11 @@ namespace FeedAggregator.Tests
                 .Returns(x => new FeedContent(Array.Empty<FeedItem>()));
 
             WebPageDownloader
-                .Download(Arg.Any<Uri>())
+                .Download(Arg.Any<string>())
                 .Returns("<html>bla</html>");
 
             WebPageDownloader
-                .DownloadStream(Arg.Any<Uri>())
+                .DownloadStream(Arg.Any<string>())
                 .Returns(new MemoryStream(0));
         }
 
@@ -117,6 +117,8 @@ namespace FeedAggregator.Tests
                 .Parse(Arg.Any<Stream>())
                 .Returns(x => new FeedContent(new[] {
                     new FeedItem {
+                        Id = "someExternalId",
+                        Title = "some title",
                         Link = "https://www.test.com/newpage.html",
                         PublishDate = new DateTime(2020, 04, 01)
                     }
@@ -152,7 +154,7 @@ namespace FeedAggregator.Tests
             await EventStore.Save(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 },
-                new ArticleImported(Guid.NewGuid(), "test", "test", new DateTime(2020, 04, 01), "https://test/article", "", "articleExternalId", new string[0], mediaId) { Version = 1 },
+                new ArticleImported(Guid.NewGuid(), "test", "test", new DateTime(2020, 04, 01), "https://test/article", null, "articleExternalId", new string[0], mediaId) { Version = 1 },
             });
 
             EventStore.CommitEvents();
@@ -269,7 +271,7 @@ namespace FeedAggregator.Tests
         public async Task Do_not_import_feed_if_feed_url_unreachable()
         {
             WebPageDownloader
-                .DownloadStream(new Uri("https://www.test.com/rss.xml"))
+                .DownloadStream("https://www.test.com/rss.xml")
                 .Throws(new UnreachableWebDocumentException());
 
             // Arrange

@@ -31,7 +31,7 @@ namespace FeedAggregator.Tests
             CommandDispatcher = Container.GetInstance<ICommandDispatcher>();
             EventStore = (InMemoryEventStore) Container.GetInstance<IEventStore>();
 
-            WebPageDownloader.Download(Arg.Any<Uri>()).Returns("<html>bla</html>");
+            WebPageDownloader.Download(Arg.Any<string>()).Returns("<html>bla</html>");
         }
 
         private class EmptyLogger : ILogger

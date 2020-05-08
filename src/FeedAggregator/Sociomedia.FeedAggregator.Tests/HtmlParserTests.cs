@@ -66,28 +66,54 @@ namespace Sociomedia.Tests
         }
 
         [Fact]
-        public void Extract_first_image_from_article_content_if_no_figure_tag_found()
+        public void Extract_first_image_within_specific_classname_from_article_content_if_no_figure_tag_found()
         {
             var html = File.ReadAllText("./Resources/marianne_article_example.html");
 
-            var htmlArticle = _htmlParser.ExtractArticleImage(html);
+            var htmlArticle = _htmlParser.ExtractArticleImageUrl(html);
 
             htmlArticle
                 .Should()
-                .Be("https://media.marianne.net/sites/default/files/styles/mrn_article_large/public/tele-travail-obliges-travailler.jpg");
+                .Be("https://media.marianne.net/sites/default/files/styles/mrn_article_large/public/sport-amateur-marianne-menace.jpg");
 
         }
 
         [Fact]
-        public void Extract_figure_image_from_article_content()
+        public void Extract_first__within_specific_classname2_from_article_content_if_no_figure_tag_found()
+        {
+            var html = File.ReadAllText("./Resources/marianne_article_example2.html");
+
+            var htmlArticle = _htmlParser.ExtractArticleImageUrl(html);
+
+            htmlArticle
+                .Should()
+                .Be("https://media.marianne.net/sites/default/files/phil-hogan-mondialisation-heureuse.jpg");
+
+        }
+
+        [Fact]
+        public void Extract_figure_tag_image_from_article_content()
         {
             var html = File.ReadAllText("./Resources/figaro_article_example.html");
 
-            var htmlArticle = _htmlParser.ExtractArticleImage(html);
+            var htmlArticle = _htmlParser.ExtractArticleImageUrl(html);
 
             htmlArticle
                 .Should()
                 .Be("https://i.f1g.fr/media/cms/414x233_crop/2020/05/08/ff75d0a74b840437f69c45fc5cd52f8b1d990c291557dd0f07aa258c422653c4.jpeg");
+
+        }
+
+        [Fact]
+        public void Extract_picture_tag_image_from_article_content()
+        {
+            var html = File.ReadAllText("./Resources/figaro_article_example2.html");
+
+            var htmlArticle = _htmlParser.ExtractArticleImageUrl(html);
+
+            htmlArticle
+                .Should()
+                .Be("https://i.f1g.fr/media/ext/960x600_crop/sport24.lefigaro.fr/var/plain_site/storage/images/football/ligue-1/actualites/arret-de-la-ligue-1-lyon-lance-deux-actions-en-justice-1001343/27097922-1-fre-FR/Arret-de-la-Ligue-1-Lyon-lance-deux-actions-en-justice.jpg");
 
         }
     }

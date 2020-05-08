@@ -26,9 +26,8 @@ namespace Sociomedia.FeedAggregator.Domain
 
             try {
                 return await url
-                    .Pipe(x => new Uri(x))
-                    .Pipe(async x => await _webPageDownloader.DownloadStream(x))
-                    .Pipe(x => _feedParser.Parse(x))
+                    .Pipe(_webPageDownloader.DownloadStream)
+                    .Pipe(_feedParser.Parse)
                     .Pipe(x => x.ToExternalArticles().ToArray());
             }
             catch (UnreachableWebDocumentException) {

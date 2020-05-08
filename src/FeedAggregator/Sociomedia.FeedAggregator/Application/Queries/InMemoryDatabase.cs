@@ -11,29 +11,35 @@ namespace Sociomedia.FeedAggregator.Application.Queries
 
         public void Add<T>(T item)
         {
-            if (_store.TryGetValue(typeof(T), out var results)) {
-                results.Add(item);
-            }
-            else {
-                _store.Add(typeof(T), new List<object> { item });
+            lock (_store) {
+                if (_store.TryGetValue(typeof(T), out var results)) {
+                    results.Add(item);
+                }
+                else {
+                    _store.Add(typeof(T), new List<object> { item });
+                }
             }
         }
 
         public IReadOnlyCollection<T> List<T>()
         {
-            if (_store.TryGetValue(typeof(T), out var results)) {
-                return results.Cast<T>().ToList();
-            }
-            else {
-                return Array.Empty<T>();
+            lock (_store) {
+                if (_store.TryGetValue(typeof(T), out var results)) {
+                    return results.Cast<T>().ToArray();
+                }
+                else {
+                    return Array.Empty<T>();
+                }
             }
         }
 
         public void Remove<T>(T element)
         {
-            if (_store.TryGetValue(typeof(T), out var results)) {
-                results.Remove(element);
-                return;
+            lock (_store) {
+                if (_store.TryGetValue(typeof(T), out var results)) {
+                    results.Remove(element);
+                    return;
+                }
             }
             throw new InvalidOperationException($"No list in memory found of the type {typeof(T).Name}");
         }

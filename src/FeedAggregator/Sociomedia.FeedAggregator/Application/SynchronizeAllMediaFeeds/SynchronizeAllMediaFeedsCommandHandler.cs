@@ -46,10 +46,15 @@ namespace Sociomedia.FeedAggregator.Application.SynchronizeAllMediaFeeds
         {
             _logger.Debug("[SYNCHRONIZE_MEDIA_FEED] " + feed.FeedUrl);
 
-            var externalArticles = await _feedReader.ReadArticles(feed.FeedUrl);
-            if (externalArticles.Any()) {
-                await SynchronizeArticles(feed.MediaId, externalArticles);
-                await UpdateLastSynchronizationDate(feed);
+            try {
+                var externalArticles = await _feedReader.ReadArticles(feed.FeedUrl);
+                if (externalArticles.Any()) {
+                    await SynchronizeArticles(feed.MediaId, externalArticles);
+                    await UpdateLastSynchronizationDate(feed);
+                }
+            }
+            catch (Exception ex) {
+                _logger.Error(ex, "[SYNCHRONIZE_MEDIA_FEED] An error occurs during synchronization of " + feed.FeedUrl);
             }
         }
 

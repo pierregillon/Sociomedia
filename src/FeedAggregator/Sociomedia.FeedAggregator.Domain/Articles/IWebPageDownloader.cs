@@ -6,7 +6,7 @@ namespace Sociomedia.Domain.Articles
 {
     public interface IWebPageDownloader
     {
-        Task<string> Download(Uri url);
-        Task<Stream> DownloadStream(Uri url);
+        Task<string> Download(string url);
+        Task<Stream> DownloadStream(string url);
     }
 }

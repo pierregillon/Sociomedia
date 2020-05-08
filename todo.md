@@ -32,3 +32,4 @@
 * manual reset event to block aggregation if eventstore unreachable.
 * PublishDate vs UpdateDate
 * add author
+* change image url only if not null

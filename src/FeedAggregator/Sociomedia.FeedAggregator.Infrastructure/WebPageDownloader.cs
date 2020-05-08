@@ -16,7 +16,7 @@ namespace Sociomedia.Infrastructure
             _logger = logger;
         }
 
-        public async Task<string> Download(Uri url)
+        public async Task<string> Download(string url)
         {
             try {
                 using var client = new HttpClient();
@@ -29,7 +29,7 @@ namespace Sociomedia.Infrastructure
             }
         }
 
-        public async Task<Stream> DownloadStream(Uri url)
+        public async Task<Stream> DownloadStream(string url)
         {
             try {
                 using var client = new HttpClient();
@@ -42,7 +42,7 @@ namespace Sociomedia.Infrastructure
             }
         }
 
-        private void Error(Exception exception, Uri url)
+        private void Error(Exception exception, string url)
         {
             _logger.Error($"[HTTP_DOWNLOADER] Unable to download web document '{url}' : {exception.Message}");
         }

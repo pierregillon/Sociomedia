@@ -6,6 +6,7 @@ namespace Sociomedia.Domain.Articles
 {
     public class Article : AggregateRoot
     {
+        private string _imageUrl;
         private Article() { }
 
         public Article(Guid mediaId, ExternalArticle externalArticle, IReadOnlyCollection<string> keywords) : this()
@@ -15,8 +16,8 @@ namespace Sociomedia.Domain.Articles
                 externalArticle.Title,
                 externalArticle.Summary,
                 externalArticle.PublishDate,
-                externalArticle.Url.AbsoluteUri,
-                externalArticle.ImageUrl?.AbsoluteUri,
+                externalArticle.Url,
+                externalArticle.ImageUrl,
                 externalArticle.Id,
                 keywords,
                 mediaId));
@@ -29,14 +30,15 @@ namespace Sociomedia.Domain.Articles
                 externalArticle.Title,
                 externalArticle.Summary,
                 externalArticle.PublishDate,
-                externalArticle.Url.AbsoluteUri,
-                externalArticle.ImageUrl?.AbsoluteUri
+                externalArticle.Url,
+                externalArticle.ImageUrl ?? _imageUrl
             ));
         }
 
         private void Apply(ArticleImported @event)
         {
             Id = @event.Id;
+            _imageUrl = @event.ImageUrl;
         }
     }
 }

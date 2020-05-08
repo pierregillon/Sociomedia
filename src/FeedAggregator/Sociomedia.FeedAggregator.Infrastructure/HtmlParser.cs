@@ -11,6 +11,8 @@ namespace Sociomedia.Infrastructure
     public class HtmlParser : IHtmlParser
     {
         private static readonly Regex RemoveDuplicatedSpacesRegex = new Regex(@"\s+", RegexOptions.Compiled);
+        private static readonly string[] _figureClasses = { "article-full__cover", "article-full__content" };
+        private static readonly string[] _figureTags = { "figure", "picture" };
 
         public string ExtractPlainTextArticleContent(string html)
         {
@@ -23,7 +25,7 @@ namespace Sociomedia.Infrastructure
                 .Trim();
         }
 
-        public string ExtractArticleImage(string html)
+        public string ExtractArticleImageUrl(string html)
         {
             var htmlDocument = new HtmlDocument();
             htmlDocument.LoadHtml(html);
@@ -31,8 +33,11 @@ namespace Sociomedia.Infrastructure
             if (article == null) {
                 return null;
             }
-            var figure = FindNode(article, "figure");
-            return FindFirstImgNode(figure ?? article);
+            var figure = FindFigureNode(article);
+            if (figure != null) {
+                return FindFirstImgNode(figure);
+            }
+            return null;
         }
 
         private static string FindFirstImgNode(HtmlNode node)
@@ -41,7 +46,9 @@ namespace Sociomedia.Infrastructure
             if (firstImgTag == null) {
                 return null;
             }
-            return firstImgTag.Attributes["src"]?.Value ?? firstImgTag.Attributes["srcset"]?.Value.Split(' ').First();
+            return firstImgTag.Attributes["data-src"]?.Value
+                   ?? firstImgTag.Attributes["src"]?.Value
+                   ?? firstImgTag.Attributes["srcset"]?.Value.Split(' ').First();
         }
 
         private static string ClearConsecutiveSpaces(string text)
@@ -57,12 +64,49 @@ namespace Sociomedia.Infrastructure
                    ?? htmlDocument.DocumentNode.InnerText;
         }
 
+        private static HtmlNode FindFigureNode(HtmlNode node)
+        {
+            return FindFigureNodeByTag(node) ?? FindFigureNodeByClassName(node);
+        }
+
+        private static HtmlNode FindFigureNodeByTag(HtmlNode node)
+        {
+            foreach (var figureTag in _figureTags) {
+                var figure = FindNode(node, figureTag);
+                if (figure != null) {
+                    return figure;
+                }
+            }
+            return null;
+        }
+
+        private static HtmlNode FindFigureNodeByClassName(HtmlNode node)
+        {
+            foreach (var figureClass in _figureClasses) {
+                var figure = FindNodeByClassName(node, figureClass);
+                if (figure != null) {
+                    return figure;
+                }
+            }
+            return null;
+        }
+
         private static HtmlNode FindNode(HtmlNode node, string name)
         {
             if (node.Name == name) return node;
 
             return node.ChildNodes
                 .Select(childNode => FindNode(childNode, name))
+                .FirstOrDefault(result => result != null);
+        }
+
+        private static HtmlNode FindNodeByClassName(HtmlNode node, string className)
+        {
+            if (node.Attributes.Contains("class") && node.Attributes["class"].Value.Split(' ').Contains(className))
+                return node;
+
+            return node.ChildNodes
+                .Select(childNode => FindNodeByClassName(childNode, className))
                 .FirstOrDefault(result => result != null);
         }
     }

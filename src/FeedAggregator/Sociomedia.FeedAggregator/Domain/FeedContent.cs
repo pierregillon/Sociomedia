@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Sociomedia.Domain.Articles;
 
@@ -16,14 +15,14 @@ namespace Sociomedia.FeedAggregator.Domain
 
         public IEnumerable<ExternalArticle> ToExternalArticles()
         {
-            return Items.Select(item => new ExternalArticle {
-                Id = item.Id,
-                Title = item.Title,
-                Summary = item.Summary,
-                PublishDate = item.PublishDate,
-                Url = new Uri(item.Link),
-                ImageUrl = string.IsNullOrEmpty(item.ImageUrl) ? null : new Uri(item.ImageUrl)
-            });
+            return Items.Select(item => new ExternalArticle(
+                item.Id,
+                item.Link,
+                item.Title,
+                item.PublishDate,
+                item.Summary,
+                item.ImageUrl
+            ));
         }
     }
 }

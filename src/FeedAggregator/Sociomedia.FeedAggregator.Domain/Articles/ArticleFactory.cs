@@ -21,6 +21,8 @@ namespace Sociomedia.Domain.Articles
 
             var articleContent = _htmlParser.ExtractPlainTextArticleContent(html);
 
+            externalArticle.ImageUrl ??= html.Pipe(_htmlParser.ExtractArticleImageUrl);
+
             var keywords = new KeywordsParser().Parse(articleContent).Take(50).ToArray();
 
             return new Article(mediaId, externalArticle, keywords.Select(x => x.ToString()).ToArray());
