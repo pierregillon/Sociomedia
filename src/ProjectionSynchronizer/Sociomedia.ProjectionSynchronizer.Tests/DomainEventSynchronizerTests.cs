@@ -49,7 +49,7 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
         }
 
         [Fact]
-        public async Task Create_article_when_receiving_article_synchronized_event()
+        public async Task Create_article_when_receiving_article_imported_event()
         {
             await _synchronizer.StartSynchronization();
 
@@ -83,6 +83,56 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
                         Url = articleSynchronized.Url,
                         Summary = articleSynchronized.Summary,
                         PublishDate = articleSynchronized.PublishDate,
+                        MediaId = articleSynchronized.MediaId
+                    }
+                });
+        }
+
+        [Fact]
+        public async Task Update_article_when_receiving_article_updated_event()
+        {
+            await _synchronizer.StartSynchronization();
+
+            // Acts
+
+            var articleSynchronized = new ArticleImported(
+                Guid.NewGuid(),
+                "My title",
+                "This is a simple summary",
+                new DateTimeOffset(2020, 05, 06, 10, 0, 0, TimeSpan.FromHours(2)),
+                "https://test.com",
+                "https://test/image/jpg",
+                "externalId",
+                Array.Empty<string>(),
+                Guid.NewGuid()
+            );
+
+            var articleUpdated = new ArticleUpdated(
+                articleSynchronized.Id,
+                "My title 2",
+                "This is a simple summary 2",
+                new DateTimeOffset(2020, 05, 07, 10, 0, 0, TimeSpan.FromHours(2)),
+                "https://test2.com",
+                "https://test/image2/jpg"
+            );
+
+            await _inMemoryBus.Push(1, articleSynchronized);
+            await _inMemoryBus.Push(2, articleUpdated);
+
+            // Asserts
+
+            var articles = await _dbConnection.Articles.ToArrayAsync();
+
+            articles
+                .Should()
+                .BeEquivalentTo(new[] {
+                    new ArticleTable {
+                        Id = articleSynchronized.Id,
+                        Title = articleUpdated.Title,
+                        ImageUrl = articleUpdated.ImageUrl,
+                        Url = articleUpdated.Url,
+                        Summary = articleUpdated.Summary,
+                        PublishDate = articleUpdated.PublishDate,
                         MediaId = articleSynchronized.MediaId
                     }
                 });

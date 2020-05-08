@@ -33,7 +33,9 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
 
             _serializerSettings = new JsonSerializerSettings {
                 ContractResolver = jsonResolver,
-                Formatting = Formatting.Indented
+                Formatting = Formatting.Indented,
+                DateParseHandling = DateParseHandling.DateTimeOffset,
+                DateTimeZoneHandling = DateTimeZoneHandling.Utc
             };
         }
 
@@ -53,10 +55,10 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
             _disconnected = disconnected;
 
             _subscription = _connection.SubscribeToAllFrom(
-                lastPosition.HasValue ? new Position(lastPosition.Value, lastPosition.Value) : (Position?)null, 
-                CatchUpSubscriptionSettings.Default, 
-                EventAppeared, 
-                LiveProcessingStarted, 
+                lastPosition.HasValue ? new Position(lastPosition.Value, lastPosition.Value) : (Position?) null,
+                CatchUpSubscriptionSettings.Default,
+                EventAppeared,
+                LiveProcessingStarted,
                 SubscriptionDropped
             );
 
@@ -102,7 +104,7 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
             }
 
             try {
-                long position = resolvedEvent.OriginalPosition.GetValueOrDefault().CommitPosition;
+                var position = resolvedEvent.OriginalPosition.GetValueOrDefault().CommitPosition;
                 if (TryConvertToDomainEvent(resolvedEvent, out var @event)) {
                     _logger.Debug($"{resolvedEvent.Event.EventType} received. Stream: {resolvedEvent.Event.EventStreamId}, position: {position}");
                     await _onEventReceived(position, @event);
@@ -131,12 +133,17 @@ namespace Sociomedia.ProjectionSynchronizer.Infrastructure
 
         private DomainEvent ConvertToDomainEvent(ResolvedEvent @event)
         {
-            var json = Encoding.UTF8.GetString(@event.Event.Data);
-            var type = _typeLocator.FindEventType(@event.Event.EventType);
-            if (type == null) {
-                throw new UnknownEvent(@event.Event.EventType);
+            try {
+                var json = Encoding.UTF8.GetString(@event.Event.Data);
+                var type = _typeLocator.FindEventType(@event.Event.EventType);
+                if (type == null) {
+                    throw new UnknownEvent(@event.Event.EventType);
+                }
+                return (DomainEvent) JsonConvert.DeserializeObject(json, type, _serializerSettings);
             }
-            return (DomainEvent) JsonConvert.DeserializeObject(json, type, _serializerSettings);
+            catch (JsonException ex) {
+                throw new Exception($"An error occurred while parsing event from event store. Stream: {@event.Event.EventStreamId}, Position: {@event.Event.EventNumber}", ex);
+            }
         }
     }
 }

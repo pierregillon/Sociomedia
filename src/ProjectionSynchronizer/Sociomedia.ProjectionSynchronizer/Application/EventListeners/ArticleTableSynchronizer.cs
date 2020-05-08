@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using LinqToDB;
 using Sociomedia.Domain.Articles;
@@ -6,7 +7,7 @@ using Sociomedia.ReadModel.DataAccess;
 
 namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
 {
-    public class ArticleTableSynchronizer : IEventListener<ArticleImported>
+    public class ArticleTableSynchronizer : IEventListener<ArticleImported>, IEventListener<ArticleUpdated>
     {
         private readonly DbConnectionReadModel _dbConnection;
 
@@ -33,6 +34,18 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
                     .Value(x => x.Value, keyword.Substring(0, Math.Min(keyword.Length, 50)))
                     .InsertAsync();
             }
+        }
+
+        public async Task On(ArticleUpdated @event)
+        {
+            await _dbConnection.Articles
+                .Where(x => x.Id == @event.Id)
+                .Set(x => x.Title, @event.Title)
+                .Set(x => x.Url, @event.Url)
+                .Set(x => x.Summary, @event.Summary)
+                .Set(x => x.ImageUrl, @event.ImageUrl)
+                .Set(x => x.PublishDate, @event.PublishDate)
+                .UpdateAsync();
         }
     }
 }

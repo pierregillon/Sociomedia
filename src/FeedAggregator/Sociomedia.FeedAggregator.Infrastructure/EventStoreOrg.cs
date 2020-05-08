@@ -128,26 +128,25 @@ namespace Sociomedia.Infrastructure
 
         private bool TryConvertToDomainEvent(ResolvedEvent @event, out IEvent result)
         {
-            try {
-                result = ConvertToDomainEvent(@event);
-                return true;
-            }
-            catch (UnknownEvent) {
-                result = null;
-                return false;
-            }
+            result = ConvertToDomainEvent(@event);
+            return result != null;
         }
 
         private IEvent ConvertToDomainEvent(ResolvedEvent @event)
         {
-            var json = Encoding.UTF8.GetString(@event.Event.Data);
-            var type = _typeLocator.FindEventType(@event.Event.EventType);
-            if (type == null) {
-                throw new UnknownEvent(@event.Event.EventType);
+            try {
+                var json = Encoding.UTF8.GetString(@event.Event.Data);
+                var type = _typeLocator.FindEventType(@event.Event.EventType);
+                if (type == null) {
+                    return null;
+                }
+                var domainEvent = (IEvent) JsonConvert.DeserializeObject(json, type, _serializerSettings);
+                domainEvent.Version = (int) @event.OriginalEventNumber + 1;
+                return domainEvent;
             }
-            var domainEvent = (IEvent) JsonConvert.DeserializeObject(json, type, _serializerSettings);
-            domainEvent.Version = (int) @event.OriginalEventNumber + 1;
-            return domainEvent;
+            catch (Exception ex) {
+                throw new Exception($"An error occurred while parsing event from event store. Stream: {@event.Event.EventStreamId}, Position: {@event.Event.EventNumber}", ex);
+            }
         }
 
         private async Task<IEnumerable<ResolvedEvent>> ReadAllEventsInStream(string streamId, int fromVersion)
