@@ -24,7 +24,8 @@ namespace Sociomedia.Front.Data
                 .Select(x => new MediaListItem {
                     Id = x.Id,
                     Name = x.Name,
-                    ImageUrl = x.ImageUrl
+                    ImageUrl = x.ImageUrl,
+                    PoliticalOrientation = ((PoliticalOrientation)x.PoliticalOrientation).ToString()
                 })
                 .ToArrayAsync();
         }

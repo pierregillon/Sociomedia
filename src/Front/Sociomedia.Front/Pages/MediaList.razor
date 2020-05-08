@@ -2,28 +2,68 @@
 @using Sociomedia.Front.Data
 @inject MediaFinder MediaFinder
 
-<a class="btn btn-outline-primary" href="/medias/new">
-    <span class="oi oi-plus" aria-hidden="true"></span>
-</a>
+
+<div class="row justify-content-between">
+    <div class="col-1">
+        <a class="btn btn-outline-primary" href="/medias/new">
+            <span class="oi oi-plus" aria-hidden="true"></span>
+        </a>
+    </div>
+    <div class="col-1">
+        <button @onclick="@ToggleView">
+            <li class="oi oi-grid-three-up"></li>
+        </button>
+    </div>
+</div>
 
 @if (_medias == null) {
-    <i class="oi oi-reload"></i>
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
 }
 else {
-    <div class="row justify-content-center">
-        @foreach (var media in _medias) {
-            <MediaItem @key="@media.Id" Value="@media"></MediaItem>
-        }
-    </div>
+    @if (!_showTable) {
+        <div class="row justify-content-center">
+            @foreach (var media in _medias) {
+                <MediaItem @key="@media.Id" Value="@media"></MediaItem>
+            }
+        </div>
+    }
+    else {
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Nom</th>
+                <th scope="col">Orientation politique</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var media in _medias) {
+                <tr>
+                    <td>@media.Name</td>
+                    <td>@media.PoliticalOrientation</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+
 }
 
 @code {
     private IReadOnlyCollection<MediaListItem> _medias;
+    private bool _showTable;
 
     protected override async Task OnInitializedAsync()
     {
         _medias = await MediaFinder.List();
     }
 
+    private void ToggleView()
+    {
+        this._showTable = !this._showTable;
+    }
 }
 
