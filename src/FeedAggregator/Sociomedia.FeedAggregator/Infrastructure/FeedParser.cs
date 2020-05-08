@@ -48,11 +48,11 @@ namespace Sociomedia.FeedAggregator.Infrastructure
 
         private static DateTimeOffset GetDate(CodeHollow.FeedReader.FeedItem item)
         {
-            if (!string.IsNullOrEmpty(item.PublishingDateString)) {
-                return ParseDate(item.PublishingDateString);
-            }
             if (item.SpecificItem is AtomFeedItem feedItem) {
                 return ParseDate(feedItem.UpdatedDateString);
+            }
+            if (!string.IsNullOrEmpty(item.PublishingDateString)) {
+                return ParseDate(item.PublishingDateString);
             }
             return default;
         }

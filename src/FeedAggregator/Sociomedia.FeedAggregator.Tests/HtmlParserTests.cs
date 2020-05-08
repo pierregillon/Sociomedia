@@ -39,7 +39,7 @@ namespace Sociomedia.Tests
         [Fact]
         public void Extract_real_content_from_html_article()
         {
-            var html = File.ReadAllText("./article_example.html");
+            var html = File.ReadAllText("./Resources/article_example.html");
 
             var htmlArticle = _htmlParser.ExtractPlainTextArticleContent(html);
 
@@ -63,6 +63,32 @@ namespace Sociomedia.Tests
             htmlArticle
                 .Should()
                 .Be("text outside article");
+        }
+
+        [Fact]
+        public void Extract_first_image_from_article_content_if_no_figure_tag_found()
+        {
+            var html = File.ReadAllText("./Resources/marianne_article_example.html");
+
+            var htmlArticle = _htmlParser.ExtractArticleImage(html);
+
+            htmlArticle
+                .Should()
+                .Be("https://media.marianne.net/sites/default/files/styles/mrn_article_large/public/tele-travail-obliges-travailler.jpg");
+
+        }
+
+        [Fact]
+        public void Extract_figure_image_from_article_content()
+        {
+            var html = File.ReadAllText("./Resources/figaro_article_example.html");
+
+            var htmlArticle = _htmlParser.ExtractArticleImage(html);
+
+            htmlArticle
+                .Should()
+                .Be("https://i.f1g.fr/media/cms/414x233_crop/2020/05/08/ff75d0a74b840437f69c45fc5cd52f8b1d990c291557dd0f07aa258c422653c4.jpeg");
+
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
@@ -13,11 +14,34 @@ namespace Sociomedia.Infrastructure
 
         public string ExtractPlainTextArticleContent(string html)
         {
+            if (string.IsNullOrWhiteSpace(html)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(html));
+
             return html
                 .Pipe(WebUtility.HtmlDecode)
                 .Pipe(FindPlainText)
                 .Pipe(ClearConsecutiveSpaces)
                 .Trim();
+        }
+
+        public string ExtractArticleImage(string html)
+        {
+            var htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(html);
+            var article = FindNode(htmlDocument.DocumentNode, "article");
+            if (article == null) {
+                return null;
+            }
+            var figure = FindNode(article, "figure");
+            return FindFirstImgNode(figure ?? article);
+        }
+
+        private static string FindFirstImgNode(HtmlNode node)
+        {
+            var firstImgTag = FindNode(node, "img");
+            if (firstImgTag == null) {
+                return null;
+            }
+            return firstImgTag.Attributes["src"]?.Value ?? firstImgTag.Attributes["srcset"]?.Value.Split(' ').First();
         }
 
         private static string ClearConsecutiveSpaces(string text)
