@@ -1,15 +1,24 @@
 ﻿@using Sociomedia.Front.Data
 @inject ArticleFinder ArticleFinder
 
-<div class="row articles justify-content-center">
-    @foreach (var article in _articles)
-    {
-        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
-            <Article @key="@article.Id" Value="@article"></Article>
-        </div>
-    }
+@if (_articles.Any())
+{
+    <div class="row articles justify-content-center">
+        @foreach (var article in _articles)
+        {
+            <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
+                <Article @key="@article.Id" Value="@article"></Article>
+            </div>
+        }
 
-</div>
+    </div>
+}
+else
+{
+    <div class="d-flex justify-content-center">
+        Aucun résultat
+    </div>
+}
 
 @if (ShowMoreArticlesButton)
 {
@@ -50,16 +59,31 @@
     private int _currentPage = 0;
     private bool _isLoadingMorePages;
     private bool _noMoreArticles;
+    private string _currentKeyword;
 
     [Parameter]
     public Guid? MediaId { get; set; }
+
+    [Parameter]
+    public string Keyword { get; set; }
 
     public bool ShowMoreArticlesButton => !_isLoadingMorePages && _articles.Count > 0 && !_noMoreArticles;
 
     private IReadOnlyCollection<ArticleListItem> _articles = Array.Empty<ArticleListItem>();
 
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_currentKeyword != Keyword)
+        {
+            _currentKeyword = Keyword;
+            _articles = Array.Empty<ArticleListItem>();
+            await LoadPage(0);
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
+        _currentKeyword = Keyword;
         await LoadPage(0);
     }
 
@@ -73,11 +97,13 @@
         try
         {
             _isLoadingMorePages = true;
-            var newArticles = await ArticleFinder.List(page, PAGE_SIZE, MediaId);
-            if (newArticles.Any()) {
+            var newArticles = await ArticleFinder.List(page, PAGE_SIZE, MediaId, _currentKeyword);
+            if (newArticles.Any())
+            {
                 _articles = _articles.Concat(newArticles).ToArray();
             }
-            else {
+            else
+            {
                 _noMoreArticles = true;
             }
         }

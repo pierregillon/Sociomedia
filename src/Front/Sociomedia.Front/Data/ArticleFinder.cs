@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using LinqToDB;
+using LinqToDB.Tools;
 using Sociomedia.ReadModel.DataAccess;
 
 namespace Sociomedia.Front.Data
@@ -16,9 +19,10 @@ namespace Sociomedia.Front.Data
             _dbConnection = dbConnection;
         }
 
-        public async Task<IReadOnlyCollection<ArticleListItem>> List(int page, int pageSize, Guid? mediaId = null)
+        public async Task<IReadOnlyCollection<ArticleListItem>> List(int page, int pageSize, Guid? mediaId = null, string keyword = default)
         {
-            var query = from article in _dbConnection.Articles
+            var query =
+                from article in _dbConnection.Articles
                 join media in _dbConnection.Medias on article.MediaId equals media.Id
                 orderby article.PublishDate descending
                 select new ArticleListItem {
@@ -32,6 +36,23 @@ namespace Sociomedia.Front.Data
                     MediaImageUrl = media.ImageUrl
                 };
 
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                keyword = RemoveDiacritics(keyword);
+
+                var keywords = keyword
+                    .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(x => x.ToLower())
+                    .ToArray();
+
+                var articleContainingKeywords =
+                    from key in _dbConnection.Keywords
+                    where key.Value.In(keywords)
+                    select key.FK_Article;
+
+                query = query.Where(x => x.Id.In(articleContainingKeywords));
+            }
+
             if (mediaId.HasValue) {
                 query = query.Where(x => x.MediaId == mediaId.Value);
             }
@@ -43,6 +64,23 @@ namespace Sociomedia.Front.Data
             query = query.Take(pageSize);
 
             return await query.ToArrayAsync();
+        }
+
+        static string RemoveDiacritics(string text)
+        {
+            var normalizedString = text.Normalize(NormalizationForm.FormD);
+            var stringBuilder = new StringBuilder();
+
+            foreach (var c in normalizedString)
+            {
+                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
     }
 }
