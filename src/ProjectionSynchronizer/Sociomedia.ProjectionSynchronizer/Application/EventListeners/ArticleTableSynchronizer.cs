@@ -2,8 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using LinqToDB;
+using LinqToDB.Data;
 using Sociomedia.Domain.Articles;
 using Sociomedia.ReadModel.DataAccess;
+using Sociomedia.ReadModel.DataAccess.Tables;
 
 namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
 {
@@ -28,11 +30,19 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
                 .Value(x => x.MediaId, @event.MediaId)
                 .InsertAsync();
 
-            foreach (var keyword in @event.Keywords) {
-                await _dbConnection.Keywords
-                    .Value(x => x.FK_Article, @event.Id)
-                    .Value(x => x.Value, keyword.Substring(0, Math.Min(keyword.Length, 50)))
-                    .InsertAsync();
+            if (@event.Keywords.Count > 10) {
+                _dbConnection.BulkCopy(@event.Keywords.Select(x => new KeywordTable {
+                    FK_Article = @event.Id,
+                    Value = x
+                }));
+            }
+            else {
+                foreach (var keyword in @event.Keywords) {
+                    await _dbConnection.Keywords
+                        .Value(x => x.FK_Article, @event.Id)
+                        .Value(x => x.Value, keyword.Substring(0, Math.Min(keyword.Length, 50)))
+                        .InsertAsync();
+                }
             }
         }
 
