@@ -1,4 +1,5 @@
 ﻿@using Sociomedia.Front.Data
+
 <div class="article">
     <a href="@("/medias/" + Value.MediaId)">
         <img class="logo" src="@Value.MediaImageUrl" />
@@ -9,6 +10,40 @@
     <p class="description">@Value.Summary</p>
 </div>
 
+<Styled>
+    .article {
+        display: block;
+    }
+
+    .article .date {
+        font-size: 12px;
+        margin-top: 10px;
+    }
+
+    .article .logo {
+        height: 20px;
+        display: block;
+        text-align: center;
+        margin: 5px;
+    }
+
+    .article .image {
+        width: 100%;
+        height: 150px;
+        background-color: lightblue;
+        -webkit-object-fit: cover;
+        object-fit: cover;
+    }
+
+    .article .title {
+        text-align: center;
+        display: block;
+    }
+
+    .article .description {
+        font-size: 14px;
+    }
+</Styled>
 
 @code {
 

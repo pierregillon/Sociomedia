@@ -1,4 +1,5 @@
 using System;
+using BlazorStyled;
 using LinqToDB.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,7 +27,7 @@ namespace Sociomedia.Front
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-
+            services.AddBlazorStyled();
             services.AddToaster(config => {
                 config.PositionClass = Defaults.Classes.Position.TopRight;
                 config.PreventDuplicates = true;
