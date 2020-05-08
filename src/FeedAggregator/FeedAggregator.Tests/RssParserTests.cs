@@ -72,7 +72,7 @@ namespace FeedAggregator.Tests
                     Title = "Direct - Education, aide aux jeunes, entreprises... Edouard Philippe précise la stratégie de déconfinement",
                     Summary = "Pour le philosophe Abdennour Bidar, en voulant sauver la vie, nous l’avons dans le même temps coupée de tous les liens qui la nourrissent, vidée de toutes les significations qui la font grandir.",
                     PublishDate = new DateTimeOffset(2020, 5, 4, 16, 55, 44, TimeSpan.FromHours(2)),
-                    ImageUrl = "https://medias.liberation.fr/photo/1311179-outbreak-of-the-coronavirus-disease-covid-19-in-paris.jpg?modified_at=1588572140&ratio_x=03&ratio_y=02&width=150"
+                    ImageUrl = "https://medias.liberation.fr/photo/1311179-outbreak-of-the-coronavirus-disease-covid-19-in-paris.jpg"
                 });
         }
 

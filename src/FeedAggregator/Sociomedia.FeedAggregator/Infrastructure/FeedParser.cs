@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using CodeHollow.FeedReader.Feeds;
 using HtmlAgilityPack;
 using Sociomedia.Domain;
+using Sociomedia.Domain.Articles;
 using Sociomedia.FeedAggregator.Domain;
 
 namespace Sociomedia.FeedAggregator.Infrastructure
@@ -29,7 +30,8 @@ namespace Sociomedia.FeedAggregator.Infrastructure
                 Id = syndicationItem.Id,
                 Title = WebUtility.HtmlDecode(syndicationItem.Title),
                 Link = syndicationItem.Link,
-                ImageUrl = GetImageUrl(syndicationItem),
+                ImageUrl = GetImageUrl(syndicationItem)
+                    .Pipe(UrlSanitizer.Sanitize),
                 Summary = GetSummary(syndicationItem)
                     .Pipe(WebUtility.HtmlDecode)
                     .Pipe(HtmlToPlainText)
