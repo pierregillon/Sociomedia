@@ -28,3 +28,8 @@
 
 * catch http error on pages
 * global catch
+
+# FeedAggregator 
+* manual reset event to block aggregation if eventstore unreachable.
+rename _mediaFeedFinder
+* feed with empty string

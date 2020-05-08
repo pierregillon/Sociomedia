@@ -15,23 +15,23 @@ namespace FeedAggregator.Tests
     {
         protected readonly ICommandDispatcher CommandDispatcher;
         protected readonly InMemoryEventStore EventStore;
-        protected readonly IMediaFeedFinder MediaFeedFinder;
+        protected readonly ISynchronizationFinder SynchronizationFinder;
         protected readonly Container Container;
-        private readonly IWebPageDownloader _webPageDownloader = Substitute.For<IWebPageDownloader>();
+        protected readonly IWebPageDownloader WebPageDownloader = Substitute.For<IWebPageDownloader>();
 
         protected AcceptanceTests()
         {
             Container = ContainerBuilder.Build(new Configuration());
 
             Container.Inject<ILogger>(new EmptyLogger());
-            Container.Inject(_webPageDownloader);
+            Container.Inject(WebPageDownloader);
             Container.Inject<IEventStore>(Container.GetInstance<InMemoryEventStore>());
 
-            MediaFeedFinder = Container.GetInstance<IMediaFeedFinder>();
+            SynchronizationFinder = Container.GetInstance<ISynchronizationFinder>();
             CommandDispatcher = Container.GetInstance<ICommandDispatcher>();
             EventStore = (InMemoryEventStore) Container.GetInstance<IEventStore>();
 
-            _webPageDownloader.Download(Arg.Any<Uri>()).Returns("<html>bla</html>");
+            WebPageDownloader.Download(Arg.Any<Uri>()).Returns("<html>bla</html>");
         }
 
         private class EmptyLogger : ILogger

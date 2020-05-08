@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CQRSlite.Domain;
+using EventStore.ClientAPI;
 using Sociomedia.Application;
 using Sociomedia.Domain.Articles;
 using Sociomedia.Domain.Medias;
@@ -16,36 +17,46 @@ namespace Sociomedia.FeedAggregator.Application.SynchronizeAllMediaFeeds
         private readonly IRepository _repository;
         private readonly IFeedReader _feedReader;
         private readonly ArticleFactory _articleFactory;
-        private readonly IMediaFeedFinder _mediaFeedFinder;
+        private readonly ISynchronizationFinder _synchronizationFinder;
+        private readonly ILogger _logger;
 
         public SynchronizeAllMediaFeedsCommandHandler(
             IRepository repository,
             IFeedReader feedReader,
             ArticleFactory articleFactory,
-            IMediaFeedFinder mediaFeedFinder)
+            ISynchronizationFinder synchronizationFinder,
+            ILogger logger)
         {
             _repository = repository;
             _feedReader = feedReader;
             _articleFactory = articleFactory;
-            _mediaFeedFinder = mediaFeedFinder;
+            _synchronizationFinder = synchronizationFinder;
+            _logger = logger;
         }
 
         public async Task Handle(SynchronizeAllMediaFeedsCommand command)
         {
-            var mediaFeeds = await _mediaFeedFinder.GetAll();
+            var mediaFeeds = await _synchronizationFinder.GetAllMediaFeeds();
             foreach (var feed in mediaFeeds) {
-                var externalArticles = await _feedReader.ReadArticles(feed.FeedUrl);
-                if (externalArticles.Any()) {
-                    await SynchronizeArticles(feed.MediaId, externalArticles);
-                    await UpdateLastSynchronizationDate(feed);
-                }
+                await SynchronizeFeed(feed);
+            }
+        }
+
+        private async Task SynchronizeFeed(MediaFeedReadModel feed)
+        {
+            _logger.Debug("[SYNCHRONIZE_MEDIA_FEED] " + feed.FeedUrl);
+
+            var externalArticles = await _feedReader.ReadArticles(feed.FeedUrl);
+            if (externalArticles.Any()) {
+                await SynchronizeArticles(feed.MediaId, externalArticles);
+                await UpdateLastSynchronizationDate(feed);
             }
         }
 
         private async Task SynchronizeArticles(Guid mediaId, IEnumerable<ExternalArticle> externalArticles)
         {
             foreach (var externalArticle in externalArticles) {
-                var articleInfo = await _mediaFeedFinder.GetArticle(mediaId, externalArticle.Id);
+                var articleInfo = await _synchronizationFinder.GetArticle(mediaId, externalArticle.Id);
                 if (articleInfo == null) {
                     await AddNewArticle(mediaId, externalArticle);
                 }

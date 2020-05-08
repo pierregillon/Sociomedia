@@ -67,6 +67,7 @@ namespace Sociomedia.Infrastructure
                 );
                 var version = @event.Version - 2; // CQRSLite start event version at 1. EventStore at -1.
                 await _connection.AppendToStreamAsync(@event.Id.ToString(), version, eventData);
+                Debug($"{eventData.Type} stored.");
             }
         }
 

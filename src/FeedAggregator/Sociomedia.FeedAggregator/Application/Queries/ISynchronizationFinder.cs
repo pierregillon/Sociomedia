@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace Sociomedia.FeedAggregator.Application.Queries
 {
-    public interface IMediaFeedFinder
+    public interface ISynchronizationFinder
     {
-        Task<IReadOnlyCollection<MediaFeedReadModel>> GetAll();
+        Task<IReadOnlyCollection<MediaFeedReadModel>> GetAllMediaFeeds();
         Task<ArticleReadModel> GetArticle(Guid mediaId, string externalArticleId);
     }
 }

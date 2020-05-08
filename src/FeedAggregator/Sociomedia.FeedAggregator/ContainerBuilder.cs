@@ -19,7 +19,7 @@ namespace Sociomedia.FeedAggregator
                 registry.IncludeRegistry<SociomediaRegistry>();
                 registry.For<IFeedParser>().Use<FeedParser>();
                 registry.For<IFeedReader>().Use<FeedReader>();
-                registry.For<IMediaFeedFinder>().Use<MediaFeedFinder>();
+                registry.For<ISynchronizationFinder>().Use<SynchronizationFinder>();
                 registry.For<InMemoryDatabase>().Use<InMemoryDatabase>().Singleton();
 
                 registry.Scan(scanner => {

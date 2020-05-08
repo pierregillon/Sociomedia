@@ -22,6 +22,8 @@ namespace Sociomedia.FeedAggregator.Domain
 
         public async Task<IReadOnlyCollection<ExternalArticle>> ReadArticles(string url)
         {
+            if (string.IsNullOrWhiteSpace(url)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(url));
+
             try {
                 return await url
                     .Pipe(x => new Uri(x))

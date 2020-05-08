@@ -5,20 +5,23 @@ using System.Threading.Tasks;
 
 namespace Sociomedia.FeedAggregator.Application.Queries
 {
-    public class MediaFeedFinder : IMediaFeedFinder
+    public class SynchronizationFinder : ISynchronizationFinder
     {
         private readonly InMemoryDatabase _database;
 
-        public MediaFeedFinder(InMemoryDatabase database)
+        public SynchronizationFinder(InMemoryDatabase database)
         {
             _database = database;
         }
 
-        public async Task<IReadOnlyCollection<MediaFeedReadModel>> GetAll()
+        public async Task<IReadOnlyCollection<MediaFeedReadModel>> GetAllMediaFeeds()
         {
             await Task.Delay(0);
 
-            return _database.List<MediaFeedReadModel>().ToArray();
+            return _database
+                .List<MediaFeedReadModel>()
+                .Where(x => !string.IsNullOrWhiteSpace(x.FeedUrl))
+                .ToArray();
         }
 
         public async Task<ArticleReadModel> GetArticle(Guid mediaId, string externalArticleId)

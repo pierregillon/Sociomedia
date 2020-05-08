@@ -27,7 +27,6 @@ namespace Sociomedia.Infrastructure
                 scanner.AddAllTypesOf(typeof(ICommandHandler<>));
             });
 
-            For<IEventPublisher>().DecorateAllWith<EventPublishedLogger>();
             For<ICommandDispatcher>().DecorateAllWith<CommandDispatchedLogger>();
 
             For<ILogger>().Use<ConsoleLogger>();
