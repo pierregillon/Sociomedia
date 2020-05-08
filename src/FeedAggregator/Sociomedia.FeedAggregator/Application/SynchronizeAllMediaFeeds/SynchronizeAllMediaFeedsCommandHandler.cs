@@ -60,7 +60,7 @@ namespace Sociomedia.FeedAggregator.Application.SynchronizeAllMediaFeeds
                 if (articleInfo == null) {
                     await AddNewArticle(mediaId, externalArticle);
                 }
-                else {
+                else if(externalArticle.PublishDate > articleInfo.PublishDate) {
                     await UpdateArticle(externalArticle, articleInfo);
                 }
             }

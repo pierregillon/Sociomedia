@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using EventStore.ClientAPI;
 using Sociomedia.Application;
 using Sociomedia.Domain.Articles;
 using Sociomedia.Domain.Medias;
@@ -10,13 +11,16 @@ namespace Sociomedia.FeedAggregator.Application.Queries
         IEventListener<MediaFeedAdded>,
         IEventListener<MediaFeedSynchronized>,
         IEventListener<MediaFeedRemoved>,
-        IEventListener<ArticleImported>
+        IEventListener<ArticleImported>,
+        IEventListener<ArticleUpdated>
     {
         private readonly InMemoryDatabase _database;
+        private readonly ILogger _logger;
 
-        public ReadModelDatabaseFeeder(InMemoryDatabase database)
+        public ReadModelDatabaseFeeder(InMemoryDatabase database, ILogger logger)
         {
             _database = database;
+            _logger = logger;
         }
 
         public Task On(MediaFeedAdded @event)
@@ -59,8 +63,25 @@ namespace Sociomedia.FeedAggregator.Application.Queries
             _database.Add(new ArticleReadModel {
                 MediaId = @event.MediaId,
                 ExternalArticleId = @event.ExternalArticleId,
-                ArticleId = @event.Id
+                ArticleId = @event.Id,
+                PublishDate = @event.PublishDate
             });
+
+            return Task.CompletedTask;
+        }
+
+        public Task On(ArticleUpdated @event)
+        {
+            var source = _database
+                .List<ArticleReadModel>()
+                .SingleOrDefault(x => x.ArticleId == @event.Id);
+
+            if (source != null) {
+                source.PublishDate = @event.PublishDate;
+            }
+            else {
+                _logger.Error($"[READMODEL_DATABASE_FEEDER] Unable to finder article '{@event.Id}' to update.");
+            }
 
             return Task.CompletedTask;
         }

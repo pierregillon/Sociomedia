@@ -26,10 +26,7 @@
 * Simplify article import : take all articles from feed and compare with ones existing
 * Add query and queryhandler to reduce coupling for ui query
 
-* catch http error on pages
 * global catch
 
 # FeedAggregator 
 * manual reset event to block aggregation if eventstore unreachable.
-rename _mediaFeedFinder
-* feed with empty string

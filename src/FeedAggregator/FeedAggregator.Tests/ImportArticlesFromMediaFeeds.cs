@@ -144,7 +144,7 @@ namespace FeedAggregator.Tests
         }
 
         [Fact]
-        public async Task Update_articles_already_imported()
+        public async Task Update_articles_if_feed_contains_newer_version()
         {
             // Arrange
             var mediaId = Guid.NewGuid();
@@ -152,7 +152,53 @@ namespace FeedAggregator.Tests
             await EventStore.Save(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 },
-                new ArticleImported(Guid.NewGuid(), "test", "test", DateTimeOffset.Now, "https://test/article", "", "articleExternalId", new string[0], mediaId) { Version = 1 },
+                new ArticleImported(Guid.NewGuid(), "test", "test", new DateTime(2020, 04, 01), "https://test/article", "", "articleExternalId", new string[0], mediaId) { Version = 1 },
+            });
+
+            EventStore.CommitEvents();
+
+            _feedParser
+                .Parse(Arg.Any<Stream>())
+                .Returns(x => new FeedContent(new[] {
+                    new FeedItem {
+                        Id = "articleExternalId",
+                        Title = "my title",
+                        Summary = "summary",
+                        ImageUrl = null,
+                        Link = "https://www.test.com/newpage.html",
+                        PublishDate = new DateTime(2020, 04, 02)
+                    }
+                }));
+
+            // Act
+            await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
+
+            // Assert
+            (await EventStore.GetNewEvents())
+                .OfType<ArticleUpdated>()
+                .Should()
+                .BeEquivalentTo(new DomainEvent[] {
+                    new ArticleUpdated(
+                        default,
+                        "my title",
+                        "summary",
+                        new DateTime(2020, 04, 02),
+                        "https://www.test.com/newpage.html",
+                        null
+                    )
+                }, x => x.ExcludeDomainEventTechnicalFields());
+        }
+
+        [Fact]
+        public async Task Do_not_update_articles_if_feed_contains_current_version()
+        {
+            // Arrange
+            var mediaId = Guid.NewGuid();
+
+            await EventStore.Save(new IEvent[] {
+                new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
+                new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 },
+                new ArticleImported(Guid.NewGuid(), "test", "test", new DateTime(2020, 04, 01), "https://test/article", "", "articleExternalId", new string[0], mediaId) { Version = 1 },
             });
 
             EventStore.CommitEvents();
@@ -177,16 +223,46 @@ namespace FeedAggregator.Tests
             (await EventStore.GetNewEvents())
                 .OfType<ArticleUpdated>()
                 .Should()
-                .BeEquivalentTo(new DomainEvent[] {
-                    new ArticleUpdated(
-                        default,
-                        "my title",
-                        "summary",
-                        new DateTime(2020, 04, 01),
-                        "https://www.test.com/newpage.html",
-                        null
-                    )
-                }, x => x.ExcludeDomainEventTechnicalFields());
+                .BeEmpty();
+        }
+
+        [Fact]
+        public async Task Do_not_update_articles_if_feed_contains_already_updated_version()
+        {
+            // Arrange
+            var mediaId = Guid.NewGuid();
+            var articleId = Guid.NewGuid();
+
+            await EventStore.Save(new IEvent[] {
+                new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
+                new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 },
+                new ArticleImported(articleId, "test", "test", new DateTime(2020, 04, 01), "https://test/article", "", "articleExternalId", new string[0], mediaId) { Version = 1 },
+                new ArticleUpdated(articleId, "test", "test", new DateTime(2020, 04, 02), "https://test/article", "") { Version = 2 },
+            });
+
+            EventStore.CommitEvents();
+
+            _feedParser
+                .Parse(Arg.Any<Stream>())
+                .Returns(x => new FeedContent(new[] {
+                    new FeedItem {
+                        Id = "articleExternalId",
+                        Title = "my title",
+                        Summary = "summary",
+                        ImageUrl = null,
+                        Link = "https://www.test.com/newpage.html",
+                        PublishDate = new DateTime(2020, 04, 02)
+                    }
+                }));
+
+            // Act
+            await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
+
+            // Assert
+            (await EventStore.GetNewEvents())
+                .OfType<ArticleUpdated>()
+                .Should()
+                .BeEmpty();
         }
 
         [Fact]
