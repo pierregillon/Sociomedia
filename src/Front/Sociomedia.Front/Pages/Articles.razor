@@ -1,35 +1,3 @@
 ﻿@page "/articles"
-@using Sociomedia.Front.Data
-@inject ArticleFinder ArticleFinder
 
-@if (_articles == null) {
-    <p>
-        <em>Loading...</em>
-    </p>
-}
-else {
-    <div class="row articles justify-content-center">
-        @foreach (var article in _articles) {
-            <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                <Article @key="@article.Id" Value="@article"></Article>
-            </div>
-        }
-    </div>
-}
-
-<Styled>
-    .articles {
-        max-width: 1300px;
-        margin: auto;
-    }
-</Styled>
-
-@code {
-    private IReadOnlyCollection<ArticleListItem> _articles;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _articles = await ArticleFinder.List();
-    }
-
-}
+<ArticleList></ArticleList>

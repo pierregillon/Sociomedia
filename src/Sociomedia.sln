@@ -37,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.ReadModel.DataAc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.ProjectionSynchronizer.Tests", "ProjectionSynchronizer\Sociomedia.ProjectionSynchronizer.Tests\Sociomedia.ProjectionSynchronizer.Tests.csproj", "{AB27BC1C-3A19-47EA-9DDA-5F83E541A272}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedAggregator.Tests", "FeedAggregator\FeedAggregator.Tests\FeedAggregator.Tests.csproj", "{32268190-B228-43AA-91FF-14EE68BC4B2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeedAggregator.Tests", "FeedAggregator\FeedAggregator.Tests\FeedAggregator.Tests.csproj", "{32268190-B228-43AA-91FF-14EE68BC4B2B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -18,6 +18,8 @@ namespace Sociomedia.Front.Data
 
         public async Task<IReadOnlyCollection<ArticleListItem>> List(Guid? mediaId = null)
         {
+            await Task.Delay(5000);
+
             var query = from article in _dbConnection.Articles
                 join media in _dbConnection.Medias on article.MediaId equals media.Id
                 orderby article.PublishDate descending

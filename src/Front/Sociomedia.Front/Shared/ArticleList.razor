@@ -1,0 +1,44 @@
+﻿@using Sociomedia.Front.Data
+@inject ArticleFinder ArticleFinder
+
+@if (_articles == null) {
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+}
+else {
+    <div class="row articles justify-content-center">
+        @foreach (var article in _articles) {
+            <div class="col-sm-6 col-md-12 col-lg-6 col-xl-4">
+                <Article @key="@article.Id" Value="@article"></Article>
+            </div>
+        }
+    </div>
+}
+
+<Styled>
+    .articles {
+        max-width: 1300px;
+        margin: auto;
+    }
+
+    .oi.oi-reload {
+        font-size: 20px;
+    }
+
+</Styled>
+
+@code {
+    [Parameter]
+    public Guid? MediaId { get; set; }
+
+    private IReadOnlyCollection<ArticleListItem> _articles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _articles = await ArticleFinder.List(MediaId);
+    }
+
+}

@@ -46,15 +46,8 @@ else {
         </div>
         <h2 class="articles">Les articles</h2>
 
-        <div class="row articles">
-            @foreach (var article in _mediaDetails.Articles) {
-                <div class="col-sm-6 col-md-6 col-lg-4">
-                    <Article @key="@article.Id" Value="@article"></Article>
-                </div>
-            }
-        </div>
+        <ArticleList MediaId="@MediaId.Value"></ArticleList>
     </div>
-    
 }
 
 <Styled>

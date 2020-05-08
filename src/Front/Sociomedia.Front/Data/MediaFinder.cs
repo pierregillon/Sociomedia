@@ -73,26 +73,10 @@ namespace Sociomedia.Front.Data
                 })
                 .SingleOrDefaultAsync();
 
-            var articles = from article in _dbConnection.Articles
-                join media in _dbConnection.Medias on article.MediaId equals media.Id
-                orderby article.PublishDate descending
-                where media.Id == mediaId
-                select new ArticleListItem {
-                    Id = article.Id,
-                    Title = article.Title,
-                    Url = article.Url,
-                    Summary = article.Summary,
-                    ImageUrl = article.ImageUrl,
-                    PublishDate = article.PublishDate,
-                    MediaId = article.MediaId,
-                    MediaImageUrl = media.ImageUrl
-                };
-
             return new MediaDetailDto {
                 Name = mediaDetail.Name,
                 ImageUrl = mediaDetail.ImageUrl,
-                PoliticalOrientation = mediaDetail.PoliticalOrientation,
-                Articles = await articles.ToArrayAsync()
+                PoliticalOrientation = mediaDetail.PoliticalOrientation
             };
         }
     }
@@ -102,6 +86,5 @@ namespace Sociomedia.Front.Data
         public string Name { get; set; }
         public string ImageUrl { get; set; }
         public PoliticalOrientation PoliticalOrientation { get; set; }
-        public IReadOnlyCollection<ArticleListItem> Articles { get; set; }
     }
 }

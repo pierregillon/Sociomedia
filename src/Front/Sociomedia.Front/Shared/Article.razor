@@ -29,7 +29,7 @@
 
     .article .image {
         width: 100%;
-        height: 150px;
+        height: 200px;
         background-color: lightblue;
         -webkit-object-fit: cover;
         object-fit: cover;
@@ -38,10 +38,20 @@
     .article .title {
         text-align: center;
         display: block;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -moz-box-orient: vertical;
+        max-height: 50px;
     }
 
     .article .description {
         font-size: 14px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 5;
+        -webkit-box-orient: vertical;
+        max-height: 110px;
     }
 </Styled>
 
