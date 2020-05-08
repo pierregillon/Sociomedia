@@ -5,13 +5,16 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using CodeHollow.FeedReader.Feeds;
+using HtmlAgilityPack;
+using Sociomedia.Domain;
 using Sociomedia.FeedAggregator.Domain;
-using FeedItem = Sociomedia.FeedAggregator.Domain.FeedItem;
 
 namespace Sociomedia.FeedAggregator.Infrastructure
 {
     public class FeedParser : IFeedParser
     {
+        private static readonly Regex RemoveDuplicatedSpacesRegex = new Regex(@"\s+", RegexOptions.Compiled);
+
         public FeedContent Parse(Stream rssStream)
         {
             using var ms = new MemoryStream();
@@ -27,7 +30,10 @@ namespace Sociomedia.FeedAggregator.Infrastructure
                 Title = WebUtility.HtmlDecode(syndicationItem.Title),
                 Link = syndicationItem.Link,
                 ImageUrl = GetImageUrl(syndicationItem),
-                Summary = WebUtility.HtmlDecode(GetSummary(syndicationItem)),
+                Summary = GetSummary(syndicationItem)
+                    .Pipe(WebUtility.HtmlDecode)
+                    .Pipe(HtmlToPlainText)
+                    .Pipe(ClearConsecutiveSpaces),
                 PublishDate = GetDate(syndicationItem)
             };
         }
@@ -92,14 +98,34 @@ namespace Sociomedia.FeedAggregator.Infrastructure
 
             if (DateTimeOffset.TryParseExact(dateStr, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out date)) {
                 date = TimeZoneInfo.ConvertTime(
-                    date.DateTime, 
-                    TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time"), 
+                    date.DateTime,
+                    TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time"),
                     TimeZoneInfo.Utc
                 );
                 return true;
             }
 
             return false;
+        }
+
+        private static string HtmlToPlainText(string html)
+        {
+            if (string.IsNullOrWhiteSpace(html)) {
+                return html;
+            }
+            var htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(html);
+            return htmlDocument.DocumentNode.InnerText;
+        }
+
+        private static string ClearConsecutiveSpaces(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) {
+                return text;
+            }
+            return RemoveDuplicatedSpacesRegex
+                .Replace(text, " ")
+                .Trim();
         }
     }
 }
