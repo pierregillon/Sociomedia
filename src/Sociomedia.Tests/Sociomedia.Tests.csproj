@@ -29,6 +29,9 @@
     <None Update="Resources\article_example.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\euronews_article_example.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\figaro_article_example.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

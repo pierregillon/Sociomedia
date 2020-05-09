@@ -92,6 +92,19 @@ namespace Sociomedia.Tests
         }
 
         [Fact]
+        public void Extract_first__within_specific_classname3_from_article_content_if_no_figure_tag_found()
+        {
+            var html = File.ReadAllText("./Resources/euronews_article_example.html");
+
+            var htmlArticle = _htmlParser.ExtractArticleImageUrl(html);
+
+            htmlArticle
+                .Should()
+                .Be("https://static.euronews.com/articles/stories/04/67/43/62/602x338_cmsv2_9f701c01-7038-5b5f-9caf-959cfe0c32f4-4674362.jpg");
+
+        }
+
+        [Fact]
         public void Extract_figure_tag_image_from_article_content()
         {
             var html = File.ReadAllText("./Resources/figaro_article_example.html");

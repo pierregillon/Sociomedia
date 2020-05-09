@@ -11,7 +11,7 @@ namespace Sociomedia.Infrastructure
     public class HtmlParser : IHtmlParser
     {
         private static readonly Regex RemoveDuplicatedSpacesRegex = new Regex(@"\s+", RegexOptions.Compiled);
-        private static readonly string[] _figureClasses = { "article-full__cover", "article-full__content" };
+        private static readonly string[] _figureClasses = { "article-full__cover", "article-full__content", "c-article-media__img" };
         private static readonly string[] _figureTags = { "figure", "picture" };
 
         public string ExtractPlainTextArticleContent(string html)
