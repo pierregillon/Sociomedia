@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sociomedia.FeedAggregator\FeedAggregator.csproj" />
+    <ProjectReference Include="..\Sociomedia.FeedAggregator\Sociomedia.FeedAggregator.csproj" />
   </ItemGroup>
 
   <ItemGroup>

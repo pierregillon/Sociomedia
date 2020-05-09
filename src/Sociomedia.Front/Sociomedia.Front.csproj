@@ -12,10 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Sociomedia.ReadModel.DataAccess\Sociomedia.ReadModel.DataAccess.csproj" />
-    <ProjectReference Include="..\..\FeedAggregator\Sociomedia.FeedAggregator.Application\Sociomedia.Application.csproj" />
-    <ProjectReference Include="..\..\FeedAggregator\Sociomedia.FeedAggregator.Domain\Sociomedia.Domain.csproj" />
-    <ProjectReference Include="..\..\FeedAggregator\Sociomedia.FeedAggregator.Infrastructure\Sociomedia.Infrastructure.csproj" />
+    <ProjectReference Include="..\Sociomedia.ReadModel.DataAccess\Sociomedia.ReadModel.DataAccess.csproj" />
+    <ProjectReference Include="..\Sociomedia.Application\Sociomedia.Application.csproj" />
+    <ProjectReference Include="..\Sociomedia.Domain\Sociomedia.Domain.csproj" />
+    <ProjectReference Include="..\Sociomedia.Infrastructure\Sociomedia.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
