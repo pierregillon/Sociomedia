@@ -15,6 +15,12 @@ namespace Sociomedia.FeedAggregator.Infrastructure
     public class FeedParser : IFeedParser
     {
         private static readonly Regex RemoveDuplicatedSpacesRegex = new Regex(@"\s+", RegexOptions.Compiled);
+        private readonly IHtmlParser htmlParser;
+
+        public FeedParser(IHtmlParser htmlParser)
+        {
+            this.htmlParser = htmlParser;
+        }
 
         public FeedContent Parse(Stream rssStream)
         {
@@ -24,7 +30,7 @@ namespace Sociomedia.FeedAggregator.Infrastructure
             return new FeedContent(feed.Items.Select(ConvertToRssItem).ToArray());
         }
 
-        private static FeedItem ConvertToRssItem(CodeHollow.FeedReader.FeedItem syndicationItem)
+        private FeedItem ConvertToRssItem(CodeHollow.FeedReader.FeedItem syndicationItem)
         {
             return new FeedItem {
                 Id = syndicationItem.Id,
@@ -59,7 +65,7 @@ namespace Sociomedia.FeedAggregator.Infrastructure
             return default;
         }
 
-        private static string GetImageUrl(CodeHollow.FeedReader.FeedItem item)
+        private string GetImageUrl(CodeHollow.FeedReader.FeedItem item)
         {
             if (item.SpecificItem is MediaRssFeedItem feedItem) {
                 return feedItem.Media.FirstOrDefault()?.Url;
@@ -70,6 +76,11 @@ namespace Sociomedia.FeedAggregator.Infrastructure
             if (item.SpecificItem is Rss20FeedItem rss20FeedItem) {
                 if (rss20FeedItem.Enclosure.MediaType?.StartsWith("image") == true) {
                     return rss20FeedItem.Enclosure.Url;
+                }
+                if (rss20FeedItem.Description.Contains("<img")) {
+                    return rss20FeedItem.Description
+                        .Pipe(htmlParser.ExtractFirstImageUrl)
+                        .Pipe(WebUtility.HtmlDecode);
                 }
             }
 

@@ -27,6 +27,9 @@
     <None Update="Resources\rss_francetvinfo.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\rss_lemediapresse.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\rss_lhumanite.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

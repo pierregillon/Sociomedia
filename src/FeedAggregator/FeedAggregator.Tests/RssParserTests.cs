@@ -4,17 +4,23 @@ using System.Linq;
 using FluentAssertions;
 using Sociomedia.FeedAggregator.Domain;
 using Sociomedia.FeedAggregator.Infrastructure;
+using Sociomedia.Infrastructure;
 using Xunit;
 
 namespace FeedAggregator.Tests
 {
     public class RssParserTests
     {
+        private FeedParser parser;
+
+        public RssParserTests()
+        {
+            parser = new FeedParser(new HtmlParser());
+        }
+
         [Fact]
         public void Parse_lemonde_rss()
         {
-            var parser = new FeedParser();
-
             var rssContent = parser.Parse(File.OpenRead("./Resources/rss_lemonde.xml"));
 
             rssContent.Items.Should().HaveCount(20);
@@ -35,8 +41,6 @@ namespace FeedAggregator.Tests
         [Fact]
         public void Parse_marianne_rss()
         {
-            var parser = new FeedParser();
-
             var rssContent = parser.Parse(File.OpenRead("./Resources/rss_marianne.xml"));
 
             rssContent.Items.Should().HaveCount(20);
@@ -57,8 +61,6 @@ namespace FeedAggregator.Tests
         [Fact]
         public void Parse_liberation_rss()
         {
-            var parser = new FeedParser();
-
             var rssContent = parser.Parse(File.OpenRead("./Resources/rss_liberation.xml"));
 
             rssContent.Items.Should().HaveCount(50);
@@ -79,8 +81,6 @@ namespace FeedAggregator.Tests
         [Fact]
         public void Parse_franceTVInfo_rss()
         {
-            var parser = new FeedParser();
-
             var rssContent = parser.Parse(File.OpenRead("./Resources/rss_francetvinfo.xml"));
 
             rssContent.Items.Should().HaveCount(20);
@@ -101,8 +101,6 @@ namespace FeedAggregator.Tests
         [Fact]
         public void Parse_LHumanite_rss()
         {
-            var parser = new FeedParser();
-
             var rssContent = parser.Parse(File.OpenRead("./Resources/rss_lhumanite.xml"));
 
             rssContent.Items.Should().HaveCount(10);
@@ -124,8 +122,6 @@ namespace FeedAggregator.Tests
         [Fact]
         public void Parse_UsineNouvelle_rss()
         {
-            var parser = new FeedParser();
-
             var rssContent = parser.Parse(File.OpenRead("./Resources/rss_usinenouvelle.xml"));
 
             rssContent.Items.Should().HaveCount(50);
@@ -143,12 +139,10 @@ namespace FeedAggregator.Tests
                     ImageUrl = "https://www.usinenouvelle.com/mediatheque/1/5/4/000867451_image_256x170.JPG"
                 });
         }
-        [Fact]
 
+        [Fact]
         public void Parse_Figaro_rss()
         {
-            var parser = new FeedParser();
-
             var rssContent = parser.Parse(File.OpenRead("./Resources/rss_figaro.xml"));
 
             rssContent.Items.Should().HaveCount(20);
@@ -164,6 +158,28 @@ namespace FeedAggregator.Tests
                     Summary = "DÉCRYPTAGE - L’absence quasi-totale de transactions rend difficiles les pronostics sur l’évolution des prix de la pierre, mais les professionnels notent déjà quelques tendances fortes. Qui s’accentueront si le confinement se prolonge.",
                     PublishDate = new DateTimeOffset(2020, 5, 7, 23, 11, 23, TimeSpan.FromHours(2)),
                     ImageUrl = null
+                });
+        }
+
+
+        [Fact]
+
+        public void Parse_lemediapresse_rss()
+        {
+            var rssContent = parser.Parse(File.OpenRead("./Resources/rss_lemediapresse.xml"));
+
+            rssContent.Items.Should().HaveCount(10);
+
+            rssContent.Items
+                .First()
+                .Should()
+                .BeEquivalentTo(new FeedItem {
+                    Id = "https://lemediapresse.fr/?p=10354",
+                    Link = "https://lemediapresse.fr/social/la-reforme-des-retraites-point-dorgue-du-profond-malaise-enseignant/",
+                    Title = "La réforme des retraites, point d’orgue du profond malaise enseignant",
+                    Summary = "Directement concerné par la suppression des régimes spéciaux, le corps enseignant a été l’un des premiers à embrasser le mouvement contre la réforme des retraites. Mais pour les jeunes profs en début de carrière, cette mobilisation cache une colère plus profonde. Entre larmes, colère et combativité, rencontre avec deux jeunes professeures de banlieue parisienne. […]",
+                    PublishDate = new DateTimeOffset(2020, 1, 3, 9, 40, 50, TimeSpan.FromHours(0)),
+                    ImageUrl = "https://i1.wp.com/lemediapresse.fr/wp-content/uploads/2019/12/000_1L10W8.jpg?ssl=1"
                 });
         }
     }

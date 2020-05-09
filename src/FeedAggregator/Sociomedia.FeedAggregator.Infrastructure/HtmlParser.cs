@@ -40,6 +40,13 @@ namespace Sociomedia.Infrastructure
             return null;
         }
 
+        public string ExtractFirstImageUrl(string html)
+        {
+            var htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(html);
+            return FindFirstImgNode(htmlDocument.DocumentNode);
+        }
+
         private static string FindFirstImgNode(HtmlNode node)
         {
             var firstImgTag = FindNode(node, "img");

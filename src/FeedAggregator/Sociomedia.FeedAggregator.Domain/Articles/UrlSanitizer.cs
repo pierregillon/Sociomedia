@@ -4,7 +4,7 @@ namespace Sociomedia.Domain.Articles
 {
     public class UrlSanitizer
     {
-        private static readonly string[] ImageFormatParameters = { "modified_at", "width", "height", "ratio_x", "ratio_y" };
+        private static readonly string[] ImageFormatParameters = { "modified_at", "width", "height", "ratio_x", "ratio_y", "resize" };
 
         private static readonly Regex Regex = new Regex($"([&]?({string.Join('|', ImageFormatParameters)})=[^&]*&?)", RegexOptions.Compiled);
 
