@@ -213,6 +213,76 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
         }
 
         [Fact]
+        public async Task Delete_media_when_receiving_media_deleted()
+        {
+            await _synchronizer.StartSynchronization();
+
+            // Acts
+            var mediaId = Guid.NewGuid();
+
+            await _inMemoryBus.Push(1, new MediaAdded(mediaId, "Liberation", "test", PoliticalOrientation.Center));
+            await _inMemoryBus.Push(2, new MediaDeleted(mediaId));
+
+            // Asserts
+
+            (await _dbConnection.Medias.ToArrayAsync())
+                .Should()
+                .BeEmpty();
+        }
+
+        [Fact]
+        public async Task Delete_media_feeds_when_receiving_media_deleted()
+        {
+            await _synchronizer.StartSynchronization();
+
+            // Acts
+            var mediaId = Guid.NewGuid();
+
+            await _inMemoryBus.Push(1, new MediaAdded(mediaId, "Liberation", "test", PoliticalOrientation.Center));
+            await _inMemoryBus.Push(2, new MediaFeedAdded(mediaId, "https://test/myfeed.xml"));
+            await _inMemoryBus.Push(3, new MediaDeleted(mediaId));
+
+            // Asserts
+
+            (await _dbConnection.MediaFeeds.ToArrayAsync())
+                .Should()
+                .BeEmpty();
+        }
+
+        [Fact]
+        public async Task Delete_articles_and_keywords_when_receiving_media_deleted()
+        {
+            await _synchronizer.StartSynchronization();
+
+            // Acts
+            var mediaId = Guid.NewGuid();
+
+            await _inMemoryBus.Push(1, new MediaAdded(mediaId, "Liberation", "test", PoliticalOrientation.Center));
+            await _inMemoryBus.Push(2, new MediaFeedAdded(mediaId, "https://test/myfeed.xml"));
+            await _inMemoryBus.Push(3, new ArticleImported(
+                Guid.NewGuid(),
+                "My title",
+                "This is a simple summary",
+                new DateTimeOffset(2020, 05, 06, 10, 0, 0, TimeSpan.FromHours(2)),
+                "https://test.com",
+                "https://test/image/jpg",
+                "externalId",
+                Array.Empty<string>(),
+                mediaId
+            ));
+            await _inMemoryBus.Push(3, new MediaDeleted(mediaId));
+
+            // Asserts
+
+            (await _dbConnection.Articles.ToArrayAsync())
+                .Should()
+                .BeEmpty();
+            (await _dbConnection.Keywords.ToArrayAsync())
+                .Should()
+                .BeEmpty();
+        }
+
+        [Fact]
         public async Task Update_last_position_in_stream_for_each_events()
         {
             await _synchronizer.StartSynchronization();
@@ -221,13 +291,13 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
             await _inMemoryBus.Push(2, SomeArticleSynchronized());
             await _inMemoryBus.Push(3, SomeArticleSynchronized());
 
-            this._dbConnection.SynchronizationInformation
+            _dbConnection.SynchronizationInformation
                 .Single()
                 .LastPosition
                 .Should()
                 .Be(3);
 
-            this._dbConnection.SynchronizationInformation
+            _dbConnection.SynchronizationInformation
                 .Single()
                 .LastUpdateDate
                 .GetValueOrDefault()

@@ -33,7 +33,7 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
             if (@event.Keywords.Count > 10) {
                 _dbConnection.BulkCopy(@event.Keywords.Select(x => new KeywordTable {
                     FK_Article = @event.Id,
-                    Value = x
+                    Value = x.Substring(0, Math.Min(x.Length, 50))
                 }));
             }
             else {

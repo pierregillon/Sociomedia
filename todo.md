@@ -1,4 +1,5 @@
-* Removing articles when removing media
+* Removing articles when removing media [DOMAIN event ?]
+* try to reimport "leparisien"
 
 # Front
 * Infinite scroll

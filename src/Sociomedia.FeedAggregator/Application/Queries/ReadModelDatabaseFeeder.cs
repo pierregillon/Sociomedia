@@ -12,7 +12,8 @@ namespace Sociomedia.FeedAggregator.Application.Queries
         IEventListener<MediaFeedSynchronized>,
         IEventListener<MediaFeedRemoved>,
         IEventListener<ArticleImported>,
-        IEventListener<ArticleUpdated>
+        IEventListener<ArticleUpdated>,
+        IEventListener<MediaDeleted>
     {
         private readonly InMemoryDatabase _database;
         private readonly ILogger _logger;
@@ -81,6 +82,27 @@ namespace Sociomedia.FeedAggregator.Application.Queries
             }
             else {
                 _logger.Error($"[READMODEL_DATABASE_FEEDER] Unable to finder article '{@event.Id}' to update.");
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task On(MediaDeleted @event)
+        {
+            var feeds = _database
+                .List<MediaFeedReadModel>()
+                .Where(x => x.MediaId == @event.Id);
+
+            foreach (var feed in feeds) {
+                _database.Remove(feed);
+            }
+
+            var articles = _database
+                .List<ArticleReadModel>()
+                .Where(x => x.MediaId == @event.Id);
+
+            foreach (var article in articles) {
+                _database.Remove(article);
             }
 
             return Task.CompletedTask;

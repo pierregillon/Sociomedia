@@ -42,6 +42,11 @@ namespace Sociomedia.Domain.Medias
             }
         }
 
+        public void Delete()
+        {
+            ApplyChange(new MediaDeleted(Id));
+        }
+
         private void Apply(MediaAdded @event)
         {
             Id = @event.Id;
@@ -51,5 +56,6 @@ namespace Sociomedia.Domain.Medias
         {
             _currentFeeds.Add(@event.FeedUrl);
         }
+
     }
 }

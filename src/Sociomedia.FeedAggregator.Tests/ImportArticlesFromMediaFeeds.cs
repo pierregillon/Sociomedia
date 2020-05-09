@@ -327,5 +327,30 @@ namespace Sociomedia.FeedAggregator.Tests
                 .Should()
                 .BeEmpty();
         }
+
+
+        [Fact]
+        public async Task Do_not_update_articles_if_media_deleted()
+        {
+            // Arrange
+            var mediaId = Guid.NewGuid();
+
+            await EventStore.Save(new IEvent[] {
+                new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
+                new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 },
+                new ArticleImported(Guid.NewGuid(), "test", "test", new DateTime(2020, 04, 01), "https://test/article", "", "articleExternalId", new string[0], mediaId) { Version = 1 },
+                new MediaDeleted(mediaId) {Version = 2}, 
+            });
+
+            EventStore.CommitEvents();
+
+            // Act
+            await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
+
+            // Assert
+            _feedParser
+                .Received(0)
+                .Parse(Arg.Any<Stream>());
+        }
     }
 }
