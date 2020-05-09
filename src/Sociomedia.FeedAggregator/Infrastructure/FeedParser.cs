@@ -77,7 +77,7 @@ namespace Sociomedia.FeedAggregator.Infrastructure
                 if (rss20FeedItem.Enclosure.MediaType?.StartsWith("image") == true) {
                     return rss20FeedItem.Enclosure.Url;
                 }
-                if (rss20FeedItem.Description.Contains("<img")) {
+                if (rss20FeedItem.Description?.Contains("<img") == true) {
                     return rss20FeedItem.Description
                         .Pipe(htmlParser.ExtractFirstImageUrl)
                         .Pipe(WebUtility.HtmlDecode);
