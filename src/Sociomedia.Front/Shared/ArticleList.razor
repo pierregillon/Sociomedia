@@ -3,6 +3,9 @@
 
 @if (_articles.Any())
 {
+    <div class="d-flex justify-content-center mb-4">
+        <h3>@_totalArticleCount articles trouvés</h3>
+    </div>
     <div class="row articles justify-content-center">
         @foreach (var article in _articles)
         {
@@ -60,6 +63,7 @@ else
     private bool _isLoadingMorePages;
     private bool _noMoreArticles;
     private string _currentKeyword;
+    private int _totalArticleCount;
 
     [Parameter]
     public Guid? MediaId { get; set; }
@@ -97,6 +101,7 @@ else
         try
         {
             _isLoadingMorePages = true;
+            _totalArticleCount = await ArticleFinder.Count(MediaId, _currentKeyword);
             var newArticles = await ArticleFinder.List(page, PAGE_SIZE, MediaId, _currentKeyword);
             if (newArticles.Any())
             {

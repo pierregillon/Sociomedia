@@ -21,6 +21,24 @@ namespace Sociomedia.Front.Data
 
         public async Task<IReadOnlyCollection<ArticleListItem>> List(int page, int pageSize, Guid? mediaId = null, string keyword = default)
         {
+            var query = BuildArticlesQuery(mediaId, keyword);
+
+            if (page > 0) {
+                query = query.Skip(page * pageSize);
+            }
+
+            query = query.Take(pageSize);
+
+            return await query.ToArrayAsync();
+        }
+
+        public async Task<int> Count(Guid? mediaId, string keyword)
+        {
+            return await BuildArticlesQuery(mediaId, keyword).CountAsync();
+        }
+
+        private IQueryable<ArticleListItem> BuildArticlesQuery(Guid? mediaId = null, string keyword = default)
+        {
             var query =
                 from article in _dbConnection.Articles
                 join media in _dbConnection.Medias on article.MediaId equals media.Id
@@ -36,8 +54,7 @@ namespace Sociomedia.Front.Data
                     MediaImageUrl = media.ImageUrl
                 };
 
-            if (!string.IsNullOrWhiteSpace(keyword))
-            {
+            if (!string.IsNullOrWhiteSpace(keyword)) {
                 keyword = RemoveDiacritics(keyword);
 
                 var keywords = keyword
@@ -57,25 +74,17 @@ namespace Sociomedia.Front.Data
                 query = query.Where(x => x.MediaId == mediaId.Value);
             }
 
-            if (page > 0) {
-                query = query.Skip(page * pageSize);
-            }
-
-            query = query.Take(pageSize);
-
-            return await query.ToArrayAsync();
+            return query;
         }
 
-        static string RemoveDiacritics(string text)
+        private static string RemoveDiacritics(string text)
         {
             var normalizedString = text.Normalize(NormalizationForm.FormD);
             var stringBuilder = new StringBuilder();
 
-            foreach (var c in normalizedString)
-            {
+            foreach (var c in normalizedString) {
                 var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
-                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
-                {
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark) {
                     stringBuilder.Append(c);
                 }
             }
