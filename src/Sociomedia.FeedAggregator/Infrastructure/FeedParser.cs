@@ -57,17 +57,28 @@ namespace Sociomedia.FeedAggregator.Infrastructure
         private static DateTimeOffset GetDate(CodeHollow.FeedReader.FeedItem item)
         {
             if (item.SpecificItem is AtomFeedItem feedItem) {
-                return ParseDate(feedItem.UpdatedDateString);
+                if (!string.IsNullOrWhiteSpace(feedItem.UpdatedDateString)) {
+                    return ParseDate(feedItem.UpdatedDateString);
+                }
             }
             if (!string.IsNullOrEmpty(item.PublishingDateString)) {
                 return ParseDate(item.PublishingDateString);
             }
-            return default;
+            if (item.SpecificItem is Rss20FeedItem rss20FeedItem) {
+                if (!string.IsNullOrWhiteSpace(rss20FeedItem.DC.DateString)) {
+                    return ParseDate(rss20FeedItem.DC.DateString);
+                }
+            }
+
+            return DateTimeOffset.Now;
         }
 
         private string GetImageUrl(CodeHollow.FeedReader.FeedItem item)
         {
             if (item.SpecificItem is MediaRssFeedItem feedItem) {
+                if (feedItem.Enclosure.MediaType?.StartsWith("image") == true) {
+                    return feedItem.Enclosure.Url;
+                }
                 return feedItem.Media.FirstOrDefault()?.Url;
             }
             if (item.SpecificItem is AtomFeedItem atomFeedItem) {

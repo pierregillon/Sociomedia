@@ -9,19 +9,19 @@ using Xunit;
 
 namespace FeedAggregator.Tests
 {
-    public class RssParserTests
+    public class FeedParserTests
     {
-        private FeedParser parser;
+        private readonly FeedParser _parser;
 
-        public RssParserTests()
+        public FeedParserTests()
         {
-            parser = new FeedParser(new HtmlParser());
+            _parser = new FeedParser(new HtmlParser());
         }
 
         [Fact]
         public void Parse_lemonde_rss()
         {
-            var rssContent = parser.Parse(File.OpenRead("./Resources/rss_lemonde.xml"));
+            var rssContent = _parser.Parse(File.OpenRead("./Resources/rss_lemonde.xml"));
 
             rssContent.Items.Should().HaveCount(20);
 
@@ -41,7 +41,7 @@ namespace FeedAggregator.Tests
         [Fact]
         public void Parse_marianne_rss()
         {
-            var rssContent = parser.Parse(File.OpenRead("./Resources/rss_marianne.xml"));
+            var rssContent = _parser.Parse(File.OpenRead("./Resources/rss_marianne.xml"));
 
             rssContent.Items.Should().HaveCount(20);
 
@@ -61,7 +61,7 @@ namespace FeedAggregator.Tests
         [Fact]
         public void Parse_liberation_rss()
         {
-            var rssContent = parser.Parse(File.OpenRead("./Resources/rss_liberation.xml"));
+            var rssContent = _parser.Parse(File.OpenRead("./Resources/rss_liberation.xml"));
 
             rssContent.Items.Should().HaveCount(50);
 
@@ -81,7 +81,7 @@ namespace FeedAggregator.Tests
         [Fact]
         public void Parse_franceTVInfo_rss()
         {
-            var rssContent = parser.Parse(File.OpenRead("./Resources/rss_francetvinfo.xml"));
+            var rssContent = _parser.Parse(File.OpenRead("./Resources/rss_francetvinfo.xml"));
 
             rssContent.Items.Should().HaveCount(20);
 
@@ -101,15 +101,14 @@ namespace FeedAggregator.Tests
         [Fact]
         public void Parse_LHumanite_rss()
         {
-            var rssContent = parser.Parse(File.OpenRead("./Resources/rss_lhumanite.xml"));
+            var rssContent = _parser.Parse(File.OpenRead("./Resources/rss_lhumanite.xml"));
 
             rssContent.Items.Should().HaveCount(10);
 
             rssContent.Items
                 .First()
                 .Should()
-                .BeEquivalentTo(new FeedItem
-                {
+                .BeEquivalentTo(new FeedItem {
                     Id = "688858",
                     Link = "https://www.humanite.fr/il-y-urgence-le-billet-du-dr-christophe-prudhomme-charite-688858#xtor=RSS-1",
                     Title = "Il y a urgence ! Le billet du Dr Christophe Prudhomme. Charité",
@@ -122,15 +121,14 @@ namespace FeedAggregator.Tests
         [Fact]
         public void Parse_UsineNouvelle_rss()
         {
-            var rssContent = parser.Parse(File.OpenRead("./Resources/rss_usinenouvelle.xml"));
+            var rssContent = _parser.Parse(File.OpenRead("./Resources/rss_usinenouvelle.xml"));
 
             rssContent.Items.Should().HaveCount(50);
 
             rssContent.Items
                 .First()
                 .Should()
-                .BeEquivalentTo(new FeedItem
-                {
+                .BeEquivalentTo(new FeedItem {
                     Id = "https://www.usinenouvelle.com/article/deficit-public-pour-tous-chocs-personnalises.N960076",
                     Link = "https://www.usinenouvelle.com/article/deficit-public-pour-tous-chocs-personnalises.N960076",
                     Title = "Déficit public pour tous, chocs personnalisés",
@@ -143,15 +141,14 @@ namespace FeedAggregator.Tests
         [Fact]
         public void Parse_Figaro_rss()
         {
-            var rssContent = parser.Parse(File.OpenRead("./Resources/rss_figaro.xml"));
+            var rssContent = _parser.Parse(File.OpenRead("./Resources/rss_figaro.xml"));
 
             rssContent.Items.Should().HaveCount(20);
 
             rssContent.Items
                 .First()
                 .Should()
-                .BeEquivalentTo(new FeedItem
-                {
+                .BeEquivalentTo(new FeedItem {
                     Id = "https://www.lefigaro.fr/placement/comment-le-covid-pourrait-redessiner-les-contours-du-marche-immobilier-20200507",
                     Link = "https://www.lefigaro.fr/placement/comment-le-covid-pourrait-redessiner-les-contours-du-marche-immobilier-20200507",
                     Title = "Comment le Covid pourrait redessiner les contours du marché immobilier",
@@ -161,12 +158,10 @@ namespace FeedAggregator.Tests
                 });
         }
 
-
         [Fact]
-
         public void Parse_lemediapresse_rss()
         {
-            var rssContent = parser.Parse(File.OpenRead("./Resources/rss_lemediapresse.xml"));
+            var rssContent = _parser.Parse(File.OpenRead("./Resources/rss_lemediapresse.xml"));
 
             rssContent.Items.Should().HaveCount(10);
 
@@ -181,6 +176,92 @@ namespace FeedAggregator.Tests
                     PublishDate = new DateTimeOffset(2020, 1, 3, 9, 40, 50, TimeSpan.FromHours(0)),
                     ImageUrl = "https://i1.wp.com/lemediapresse.fr/wp-content/uploads/2019/12/000_1L10W8.jpg?ssl=1"
                 });
+        }
+
+        [Fact]
+        public void Parse_euronews_rss()
+        {
+            var rssContent = _parser.Parse(File.OpenRead("./Resources/rss_euronews.xml"));
+
+            rssContent.Items.Should().HaveCount(50);
+
+            rssContent.Items
+                .First()
+                .Should()
+                .BeEquivalentTo(new FeedItem {
+                    Id = "https://fr.euronews.com/2020/05/08/l-ue-doit-gerer-a-la-fois-une-crise-sanitaire-et-la-plus-grave-recession-economique-de-son",
+                    Link = "https://fr.euronews.com/2020/05/08/l-ue-doit-gerer-a-la-fois-une-crise-sanitaire-et-la-plus-grave-recession-economique-de-son",
+                    Title = "L’UE doit gérer à la fois une crise sanitaire et la plus grave récession économique de son histoire",
+                    Summary = "1",
+                    PublishDate = new DateTimeOffset(2020, 5, 8, 23, 49, 13, TimeSpan.FromHours(2)),
+                    ImageUrl = null
+                });
+        }
+
+        [Fact]
+        public void Parse_agoravox_rss()
+        {
+            var rssContent = _parser.Parse(File.OpenRead("./Resources/rss_agoravox.xml"));
+
+            rssContent.Items.Should().HaveCount(16);
+
+            rssContent.Items
+                .First()
+                .Should()
+                .BeEquivalentTo(new FeedItem {
+                    Id = "https://www.agoravox.fr/actualites/economie/article/rattrapage-economique-des-pays-223980",
+                    Link = "https://www.agoravox.fr/actualites/economie/article/rattrapage-economique-des-pays-223980",
+                    Title = "Rattrapage économique des pays émergents : la mondialisation en marche !",
+                    Summary = "Durant les années 2018 et 2019, de nombreux pays émergents ont marqués une baisse de régime. En effet, le Brésil, l'Argentine, comme la Turquie sont tous trois soumis à de fortes défaillances économiques. L'exemple le plus marquant est la dévaluation de leur monnaie. Ceci peut notamment s'expliquer par la fuite de capitaux des marchés des pays émergents, vers les marchés américains. Si cette fuite de capitaux peut se faire aussi rapidement et facilement, c'est (...) - Economie",
+                    PublishDate = new DateTimeOffset(2020, 5, 9, 15, 10, 32, TimeSpan.FromHours(0)),
+                    ImageUrl = null
+                });
+        }
+
+        [Fact]
+        public void Parse_leparisien_rss()
+        {
+            var rssContent = _parser.Parse(File.OpenRead("./Resources/rss_parisien.xml"));
+
+            rssContent.Items.Should().HaveCount(30);
+
+            rssContent.Items
+                .First()
+                .Should()
+                .BeEquivalentTo(new FeedItem {
+                    Id = null,
+                    Link = "http://www.leparisien.fr/politique/coronavirus-dans-une-video-macron-et-les-dirigeants-europeens-appellent-a-l-unite-09-05-2020-8313681.php#xtor=RSS-1481423633",
+                    Title = "Coronavirus : dans une vidéo, Macron et les dirigeants européens appellent à l’unité",
+                    Summary = null,
+                    ImageUrl = null
+                }, x => x.Excluding(a => a.PublishDate));
+
+            rssContent.Items.First()
+                .PublishDate
+                .Date
+                .Should()
+                .Be(DateTimeOffset.Now.Date);
+        }
+
+        [Fact]
+        public void Parse_rt_rss()
+        {
+            var rssContent = _parser.Parse(File.OpenRead("./Resources/rss_rt.xml"));
+
+            rssContent.Items.Should().HaveCount(10);
+
+            rssContent.Items
+                .First()
+                .Should()
+                .BeEquivalentTo(new FeedItem
+                {
+                    Id = "https://francais.rt.com/international/74945-grande-guerre-patriotique-combat-pour-la-vie-et-la-liberte",
+                    Link = "https://francais.rt.com/international/74945-grande-guerre-patriotique-combat-pour-la-vie-et-la-liberte",
+                    Title = "La Grande Guerre Patriotique : un combat pour la vie et la liberté",
+                    Summary = "Le 9 mai, la Russie célèbre sa plus grande fête nationale, le Jour de la Victoire dans la Grande Guerre patriotique de 1941-1945. A l'occasion du 75e anniversaire de la Victoire, retour en images sur quelques épisodes de cette guerre.",
+                    PublishDate = default,
+                    ImageUrl = "https://cdni.rt.com/french/images/2020.05/thumbnail/5eb697466f7ccc7252780094.jpg"
+                }, x => x.Excluding(a => a.PublishDate));
         }
     }
 }

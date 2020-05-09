@@ -74,11 +74,33 @@ namespace Sociomedia.Tests
                 .Be("https://media.marianne.net/sites/default/files/styles/mrn_article_large/public/sport-amateur-marianne-menace.jpg");
         }
 
-        private static ExternalArticle SomeExternalArticle()
+        [Fact]
+        public async Task Make_extracted_image_url_absolute()
+        {
+            var externalArticle = SomeExternalArticle("http://www.leparisien.fr/politique/deconfinement-edouard-philippe-donnera-les-details-jeudi-sur-l-etape-du-11-mai-06-05-2020-8312091.php#xtor=RSS-1481423633");
+
+            externalArticle.ImageUrl = null;
+
+            _webPageDownloader
+                .Download(externalArticle.Url)
+                .Returns(File.ReadAllText("./Resources/leparisien_article_example.html"));
+
+            var article = await _articleFactory.Build(Guid.NewGuid(), externalArticle);
+
+            article
+                .GetUncommittedChanges()
+                .OfType<ArticleImported>()
+                .Single()
+                .ImageUrl
+                .Should()
+                .Be("http://www.leparisien.fr/resizer/V8S9uKi5m2kfPd6k7xcDu_4hdag=/932x582/arc-anglerfish-eu-central-1-prod-leparisien.s3.amazonaws.com/public/RQQRFMFZZRTZJF6D2ZSMVSQTVU.jpg");
+        }
+
+        private static ExternalArticle SomeExternalArticle(string url = default)
         {
             return new ExternalArticle(
                 "someExternalId",
-                "https://someurl",
+                url ?? "https://someurl",
                 "some title",
                 DateTimeOffset.Now,
                 "some summary",

@@ -105,6 +105,18 @@ namespace Sociomedia.Tests
         }
 
         [Fact]
+        public void Extract_figure_tag_image_from_article_content2()
+        {
+            var html = File.ReadAllText("./Resources/leparisien_article_example.html");
+
+            var htmlArticle = _htmlParser.ExtractArticleImageUrl(html);
+
+            htmlArticle
+                .Should()
+                .Be("/resizer/V8S9uKi5m2kfPd6k7xcDu_4hdag=/932x582/arc-anglerfish-eu-central-1-prod-leparisien.s3.amazonaws.com/public/RQQRFMFZZRTZJF6D2ZSMVSQTVU.jpg");
+        }
+
+        [Fact]
         public void Extract_picture_tag_image_from_article_content()
         {
             var html = File.ReadAllText("./Resources/figaro_article_example2.html");
@@ -116,5 +128,7 @@ namespace Sociomedia.Tests
                 .Be("https://i.f1g.fr/media/ext/960x600_crop/sport24.lefigaro.fr/var/plain_site/storage/images/football/ligue-1/actualites/arret-de-la-ligue-1-lyon-lance-deux-actions-en-justice-1001343/27097922-1-fre-FR/Arret-de-la-Ligue-1-Lyon-lance-deux-actions-en-justice.jpg");
 
         }
+
+
     }
 }
