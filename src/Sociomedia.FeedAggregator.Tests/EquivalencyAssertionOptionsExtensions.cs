@@ -1,7 +1,7 @@
 ﻿using FluentAssertions.Equivalency;
 using Sociomedia.Domain;
 
-namespace FeedAggregator.Tests {
+namespace Sociomedia.FeedAggregator.Tests {
     public static class EquivalencyAssertionOptionsExtensions
     {
         public static EquivalencyAssertionOptions<DomainEvent> ExcludeDomainEventTechnicalFields(this EquivalencyAssertionOptions<DomainEvent> options)

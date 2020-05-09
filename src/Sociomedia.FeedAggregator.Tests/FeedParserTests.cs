@@ -7,7 +7,7 @@ using Sociomedia.FeedAggregator.Infrastructure;
 using Sociomedia.Infrastructure;
 using Xunit;
 
-namespace FeedAggregator.Tests
+namespace Sociomedia.FeedAggregator.Tests
 {
     public class FeedParserTests
     {

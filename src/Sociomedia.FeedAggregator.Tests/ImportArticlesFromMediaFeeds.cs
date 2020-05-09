@@ -14,7 +14,7 @@ using Sociomedia.FeedAggregator.Domain;
 using Sociomedia.Infrastructure;
 using Xunit;
 
-namespace FeedAggregator.Tests
+namespace Sociomedia.FeedAggregator.Tests
 {
     public class ImportArticlesFromMediaFeeds : AcceptanceTests
     {
