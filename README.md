@@ -3,15 +3,30 @@
 # What is Sociomedia ?
 Sociomedia is a media aggregator and a community that challenges information by evaluating articles.
 
-# Features
-* Centralize articles from several sources in the same web page
-* Synchronize new articles on the flow
+## Media aggregation example
+![medias example](./medias_aggregation_example.png?raw=true)
 
-## Roadmap
-- [ ] Allow user to rank an article
-- [ ] Order articles with better ranking
-- [ ] Search articles
-- [ ] Display themes that group articles
+# Current features
+- [X] Add, edit and remove medias
+- [X] Define one or more RSS / ATOM feeds per media
+- [X] Centralize articles from several sources in the same web page
+- [X] Import all new articles on the flow
+- [X] Allow a user to filter articles on a specific subject (keywords search)
+
+Show [**current version**](https://github.com/pierregillon/sociomedia/releases)
+
+# Roadmap
+## Features
+- [ ] Display article content insite Sociomedia app
+- [ ] Define more information about a media : founding, creation date, political orientation, ...
+- [ ] Allow users to rank an article
+- [ ] Order articles with highest rank
+- [ ] Show themes or trending that group articles by same subject
+- [ ] Make medias edition for admin only
+
+## Tech
+- [ ] Enable Postgresql support
+- [ ] Docker for deployment
 
 # Architecture
 Sociomedia is composed of 3 packages :
@@ -20,7 +35,7 @@ Sociomedia is composed of 3 packages :
 - **Front** : Website that exposes user features
 
 ## Schema
-![](./architecture.png?raw=true)
+![architecture](./architecture.png?raw=true)
 
 # Development
 Let's talk here about technical details. You might be interested of this section if you want to run the code on your machine.
@@ -56,9 +71,9 @@ dotnet build
 
 3. Run
 ```
-dotnet run --project /src/Front/Sociomedia.Front/Sociomedia.Front.csproj
-dotnet run --project /src/ProjectionSynchronizer/Sociomedia.ProjectionSynchronizer/Sociomedia.ProjectionSynchronizer.csproj
-dotnet run --project /src/FeedAggregator/FeedAggregator.ProjectionSynchronizer/FeedAggregator.ProjectionSynchronizer.csproj
+dotnet run --project /src/Sociomedia.Front/Sociomedia.Front.csproj
+dotnet run --project /src/Sociomedia.ProjectionSynchronizer/Sociomedia.ProjectionSynchronizer.csproj
+dotnet run --project /src/Sociomedia.FeedAggregator/Sociomedia.FeedAggregator.csproj
 ```
 ## Running the tests
 ```
