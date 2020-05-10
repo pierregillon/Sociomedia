@@ -6,6 +6,7 @@
 * Add an article viewer to show article content without living website
 * Add query and queryhandler to reduce coupling for ui query
 * display articles count
+* if no photo, display media photo
 
 # FeedAggregator 
 * manual reset event to block aggregation if eventstore unreachable.
@@ -16,6 +17,9 @@
 * check agoravox rss : no image url
 * check card image for euronews invalid image.
 * remove feed update date
+
+# ProjectionSynchronizer
+* use transaction when multiple insertion in sql db (article + keyword)
 
 # Keywords
 * include document title in the text used for keyword processing
