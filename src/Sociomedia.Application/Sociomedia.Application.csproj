@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Sociomedia.Application</RootNamespace>
+    <AssemblyName>Sociomedia.Application</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sociomedia.Domain\Sociomedia.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

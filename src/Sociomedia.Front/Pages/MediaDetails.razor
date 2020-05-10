@@ -1,0 +1,94 @@
+﻿@page "/medias/{MediaId:guid}"
+@using Sociomedia.Front.Data
+
+@if (_mediaDetails == null) {
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+
+else {
+    <div class="media-details">
+        <img class="logo" src="@_mediaDetails.ImageUrl" alt="@_mediaDetails.Name"/>
+        <div class="information row justify-content-center">
+            <div class="col-9 col-md-8 col-lg-6 col-xl-5 alert alert-primary">
+                <h2>
+                Fiche descriptive :
+                <a class="btn btn-outline-primary" href="@($"/medias/{MediaId.Value}/edit")">
+                    <span class="oi oi-pencil" aria-hidden="true"></span>
+                </a>
+                </h2>
+                <ul>
+                    <li>
+                        <span>Orientation politique : @_mediaDetails.PoliticalOrientation.ToString()</span>
+                    </li>
+                    <li>
+                        <span>Propriétaire du média : xxx</span>
+                    </li>
+                    <li>
+                        <span>Mode de financement : xxx</span>
+                    </li>
+                    <li>
+                        <span>Status juridique : xxx</span>
+                    </li>
+                    <li>
+                        <span>Date de création : xxx</span>
+                    </li>
+                    <li>
+                        <span>Rythme de parution : xxx</span>
+                    </li>
+                    <li>
+                        <span>Contenu : généraliste ou spécialisée</span>
+                    </li>
+                </ul>
+                <span>Pour en savoir plus, consultez <a href="https://fr.wikipedia.org/wiki/Le_Monde" target="_blank">le site web officiel</a> ou <a href="https://fr.wikipedia.org/wiki/Le_Monde" target="_blank">le lien Wikipédia</a></span>
+            </div>
+        </div>
+        <ArticleList MediaId="@MediaId.Value"></ArticleList>
+    </div>
+}
+
+<Styled>
+    .media-details > .logo {
+        display: block;
+        margin: auto;
+        max-height: 200px;
+        max-width: 500px;
+        min-width: 410px;
+    }
+
+    .media-details > .information {
+        margin-top: 20px;
+    }
+
+    .media-details h2.articles {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+</Styled>
+
+
+@code {
+
+    [Inject]
+    protected NavigationManager NavigationManager { get; set; }
+
+    [Inject]
+    protected MediaFinder MediaFinder { get; set; }
+
+    [Parameter]
+    public Guid? MediaId { get; set; }
+
+    private MediaDetailDto _mediaDetails;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!MediaId.HasValue) {
+            NavigationManager.NavigateTo("/articles");
+        }
+        else {
+            _mediaDetails = await MediaFinder.GetDetails(MediaId.Value);
+        }
+    }
+
+}

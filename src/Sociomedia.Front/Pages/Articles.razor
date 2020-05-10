@@ -1,0 +1,47 @@
+﻿@page "/"
+@page "/articles"
+
+<div class="content">
+    <div class="row justify-content-center">
+        <div class="input-group mb-4 col-12 col-md-10">
+            <input @bind-value="@_research" @onkeyup="@KeyPressed" @onblur="@StartResearch"
+                    type="text" maxlength="200" class="form-control search-articles"
+                    placeholder="Rechercher un thème"
+                    aria-label="Username"
+                    aria-describedby="basic-addon1"/>
+
+            <div class="input-group-append">
+                <span class="input-group-text" id="basic-addon1">
+                    <li class="oi oi-magnifying-glass"></li>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ArticleList Keyword="@_keyword"></ArticleList>
+
+<Styled>
+    .search-articles {
+    font-size: 28px;
+    height: 50px;
+    }
+</Styled>
+
+@code {
+
+    private string _research, _keyword;
+
+    private void KeyPressed(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter") {
+            StartResearch();
+        }
+    }
+
+    private void StartResearch()
+    {
+        _keyword = _research;
+    }
+
+}

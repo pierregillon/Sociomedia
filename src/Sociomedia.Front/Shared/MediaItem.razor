@@ -1,0 +1,46 @@
+﻿@using Sociomedia.Front.Data
+<div class="media" @onclick="@View">
+    @if (!string.IsNullOrEmpty(Value.ImageUrl)) {
+        <img class="logo" src="@Value.ImageUrl" alt="@Value.Name"/>
+    }
+    else {
+        <p class="name">@Value.Name</p>
+    }
+</div>
+
+<Styled>
+    .media {
+        display: block;
+        cursor: pointer;
+    }
+
+    .media:hover {
+        background-color: lightgray;
+        opacity: 0.6;
+    }
+
+    .media .logo {
+        height: 70px;
+        margin: 10px;
+    }
+
+    .media .name {
+        font-size: 30px;
+        margin: 10px;
+    }
+</Styled>
+
+@code {
+
+    [Inject]
+    protected NavigationManager NavigationManager { get; set; }
+
+    [Parameter]
+    public MediaListItem Value { get; set; }
+
+    public void View()
+    {
+        NavigationManager.NavigateTo("/medias/" + Value.Id);
+    }
+
+}

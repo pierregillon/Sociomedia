@@ -1,0 +1,180 @@
+﻿@page "/medias/new"
+@page "/medias/{MediaId:guid}/edit"
+@using Sociomedia.Application.Commands.AddMedia
+@using Sociomedia.Application.Commands.DeleteMedia
+@using Sociomedia.Application.Commands.EditMedia
+@using Sociomedia.Domain.Medias
+@using Sociomedia.Front.Data
+@using Sociomedia.Front.Models
+@using Sociomedia.Infrastructure.CQRS
+
+
+@if (MediaId.HasValue)
+{
+    <h1>Edition du média :</h1>
+}
+else
+{
+    <h1>Ajout d'un nouveau média :</h1>
+}
+<EditForm Model="@_article" OnSubmit="@FormSubmitted" class="edit-media">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label for="Name">Nom</label>
+        <InputText @bind-Value="@_article.Name" class="form-control" id="Name" />
+        <ValidationMessage For="@(() => _article.Name)" />
+    </div>
+    <div class="form-group">
+        <label for="PoliticalOrientation">Orientation politique</label>
+        <InputSelect @bind-Value="@_article.PoliticalOrientation" class="form-control" id="PoliticalOrientation">
+            <option value="@PoliticalOrientation.ExtremeLeft">Extrême gauche</option>
+            <option value="@PoliticalOrientation.Left">Gauche</option>
+            <option value="@PoliticalOrientation.Center">Centre</option>
+            <option value="@PoliticalOrientation.Right">Droite</option>
+            <option value="@PoliticalOrientation.ExtremeRight">Extrême droite</option>
+        </InputSelect>
+        <ValidationMessage For="@(() => _article.PoliticalOrientation)" />
+    </div>
+    <div class="form-group">
+        <label for="ImageUrl">Image (url ou svg)</label>
+        <InputTextArea @bind-Value="@_article.ImageUrl" class="form-control" id="ImageUrl" />
+        <ValidationMessage For="@(() => _article.ImageUrl)" />
+    </div>
+    @foreach (var feed in _article.Feeds)
+    {
+        <div class="form-group">
+            <label for="@("FeedUrl" + feed.Id)">Url du flux RSS / ATOM (@feed.Id)</label>
+            <div class="row">
+                <InputText @bind-Value=@feed.Url class="form-control col-md-11" id="@("FeedUrl" + feed.Id)" />
+                <button type="button" class="btn btn-secondary col-md-1" @onclick="@(x => _article.Feeds.Remove(feed))">
+                    <span class="oi oi-trash" aria-hidden="true"></span>
+                </button>
+            </div>
+            <ValidationMessage For="@(() => feed.Url)" />
+        </div>
+    }
+    <button class="btn btn-secondary" type="button" @onclick="@_article.AddFeed">Ajouter un flux</button>
+
+    <button type="submit" class="btn btn-primary" disabled="@isLoading">
+        @if (isLoading)
+        {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        }
+        <span>Save</span>
+    </button>
+
+    @if (MediaId.HasValue)
+    {
+        <button type="button" class="btn btn-danger" disabled="@isLoading" @onclick="@DeleteMedia">
+            @if (isLoading)
+            {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            }
+            <span>Delete</span>
+        </button>
+    }
+</EditForm>
+
+<Styled>
+    .edit-media {
+    max-width: 900px;
+    }
+
+    .edit-media .row {
+    margin-right: 0;
+    margin-left: 0;
+    }
+</Styled>
+
+@code {
+
+    [Inject]
+    protected Sotsera.Blazor.Toaster.IToaster Toaster { get; set; }
+
+    [Inject]
+    protected ICommandDispatcher CommandDispatcher { get; set; }
+
+    [Inject]
+    protected NavigationManager NavigationManager { get; set; }
+
+    [Inject]
+    protected MediaFinder MediaFinder { get; set; }
+
+    [Parameter]
+    public Guid? MediaId { get; set; }
+
+    private ArticleViewModel _article = new ArticleViewModel();
+    private bool isLoading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (MediaId.HasValue)
+        {
+            _article = await MediaFinder.Get(MediaId.Value);
+        }
+        else
+        {
+            _article = new ArticleViewModel();
+        }
+    }
+
+    async Task FormSubmitted(EditContext editContext)
+    {
+        try
+        {
+            isLoading = true;
+            var formIsValid = editContext.Validate();
+            if (formIsValid)
+            {
+                if (MediaId.HasValue)
+                {
+                    await CommandDispatcher.Dispatch(new EditMediaCommand(
+                        _article.Id,
+                        _article.Name,
+                        _article.ImageUrl,
+                        _article.PoliticalOrientation,
+                        _article.Feeds.Select(x => x.Url).ToArray()
+                    ));
+                    Toaster.Success("Les informations du média ont bien été mise à jour.");
+                    NavigationManager.NavigateTo("/medias/" + MediaId.Value);
+                }
+                else
+                {
+                    await CommandDispatcher.Dispatch<AddMediaCommand, Guid>(new AddMediaCommand(
+                        _article.Name,
+                        _article.ImageUrl,
+                        _article.PoliticalOrientation,
+                        _article.Feeds.Select(x => x.Url).ToArray()
+                    ));
+                    Toaster.Success("Ajout du nouveau média réussie.");
+                    NavigationManager.NavigateTo("/medias/");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Toaster.Error("Impossible d'ajouter le média. " + ex.Message);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    async Task DeleteMedia()
+    {
+        try
+        {
+            isLoading = true;
+            await CommandDispatcher.Dispatch(new DeleteMediaCommand(this.MediaId.Value));
+            Toaster.Success($"Le média {this._article.Name} a bien été supprimé.");
+            NavigationManager.NavigateTo("/medias/");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+}

@@ -1,0 +1,121 @@
+﻿@using Sociomedia.Front.Data
+@inject ArticleFinder ArticleFinder
+
+@if (_articles.Any())
+{
+    <div class="d-flex justify-content-center mb-4">
+        <h3>@_totalArticleCount articles trouvés</h3>
+    </div>
+    <div class="row articles justify-content-center">
+        @foreach (var article in _articles)
+        {
+            <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
+                <Article @key="@article.Id" Value="@article"></Article>
+            </div>
+        }
+
+    </div>
+}
+else
+{
+    <div class="d-flex justify-content-center">
+        Aucun résultat
+    </div>
+}
+
+@if (ShowMoreArticlesButton)
+{
+    <div class="d-flex justify-content-center show-more">
+        <button class="btn btn-primary" @onclick="@ShowMoreArticles">
+            Show more articles
+        </button>
+    </div>
+}
+
+@if (_isLoadingMorePages)
+{
+    <div class="d-flex justify-content-center articles-spinner">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+}
+
+<Styled>
+    .articles {
+    max-width: 1300px;
+    margin: auto;
+    }
+
+    .oi.oi-reload {
+    font-size: 20px;
+    }
+
+    .articles-spinner, .show-more {
+    margin: 50px;
+    }
+
+</Styled>
+
+@code {
+    private const int PAGE_SIZE = 3 * 7;
+    private int _currentPage = 0;
+    private bool _isLoadingMorePages;
+    private bool _noMoreArticles;
+    private string _currentKeyword;
+    private int _totalArticleCount;
+
+    [Parameter]
+    public Guid? MediaId { get; set; }
+
+    [Parameter]
+    public string Keyword { get; set; }
+
+    public bool ShowMoreArticlesButton => !_isLoadingMorePages && _articles.Count > 0 && !_noMoreArticles;
+
+    private IReadOnlyCollection<ArticleListItem> _articles = Array.Empty<ArticleListItem>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_currentKeyword != Keyword)
+        {
+            _currentKeyword = Keyword;
+            _articles = Array.Empty<ArticleListItem>();
+            await LoadPage(0);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _currentKeyword = Keyword;
+        await LoadPage(0);
+    }
+
+    private async Task ShowMoreArticles()
+    {
+        await LoadPage(++_currentPage);
+    }
+
+    private async Task LoadPage(int page)
+    {
+        try
+        {
+            _isLoadingMorePages = true;
+            _totalArticleCount = await ArticleFinder.Count(MediaId, _currentKeyword);
+            var newArticles = await ArticleFinder.List(page, PAGE_SIZE, MediaId, _currentKeyword);
+            if (newArticles.Any())
+            {
+                _articles = _articles.Concat(newArticles).ToArray();
+            }
+            else
+            {
+                _noMoreArticles = true;
+            }
+        }
+        finally
+        {
+            _isLoadingMorePages = false;
+        }
+    }
+
+}
