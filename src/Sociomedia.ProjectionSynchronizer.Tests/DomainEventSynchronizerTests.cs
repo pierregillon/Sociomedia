@@ -1,13 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using FluentAssertions;
 using LinqToDB;
 using LinqToDB.Data;
-using Microsoft.Data.Sqlite;
 using Sociomedia.Domain.Articles;
 using Sociomedia.Domain.Medias;
 using Sociomedia.ProjectionSynchronizer.Application;
@@ -368,55 +366,8 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
         {
             var db = Container.GetInstance<DbConnectionReadModel>();
 
-            var tableTypes = db.GetType()
-                .Properties()
-                .Where(x => x.PropertyType.GetGenericTypeDefinition() == typeof(ITable<>))
-                .Select(x => x.PropertyType.GenericTypeArguments[0])
-                .ToArray();
-
-            foreach (var tableType in tableTypes) {
-                db.CreateTableIfDoesNotExists(tableType);
-                db.DeleteAllFromTable(tableType);
-            }
-        }
-    }
-
-    public static class DataConnectionExtensions
-    {
-        public static void CreateTableIfDoesNotExists(this DataConnection dbConnection, Type tableType)
-        {
-            typeof(DataConnectionExtensions)
-                .GetMethod(nameof(CreateTableIfDoesNotExists), BindingFlags.Static | BindingFlags.NonPublic)
-                .MakeGenericMethod(tableType)
-                .Invoke(null, new[] { dbConnection });
-        }
-
-        public static void DeleteAllFromTable(this DataConnection dbConnection, Type tableType)
-        {
-            typeof(DataConnectionExtensions)
-                .GetMethod(nameof(DeleteAllFromTable), BindingFlags.Static | BindingFlags.NonPublic)
-                .MakeGenericMethod(tableType)
-                .Invoke(null, new[] { dbConnection });
-        }
-
-        private static void CreateTableIfDoesNotExists<T>(DataConnection dbConnection) where T : class
-        {
-            try {
-                dbConnection.GetTable<T>().Count();
-            }
-            catch (SqliteException e) {
-                if (e.SqliteErrorCode == 1) {
-                    dbConnection.CreateTable<T>();
-                }
-            }
-        }
-
-        private static void DeleteAllFromTable<T>(DataConnection dbConnection) where T : class
-        {
-            dbConnection
-                .GetTable<T>()
-                .Where(x => true)
-                .Delete();
+            db.GenerateMissingTables();
+            db.ClearDatabase();
         }
     }
 }

@@ -25,7 +25,6 @@ Show [**current version**](https://github.com/pierregillon/sociomedia/releases)
 - [ ] Make medias edition for admin only
 
 ## Tech
-- [ ] Enable Postgresql support
 - [ ] Docker for deployment
 
 # Architecture
@@ -36,6 +35,10 @@ Sociomedia is composed of 3 packages :
 
 ## Schema
 ![architecture](./architecture.png?raw=true)
+
+## Databases
+* Write database : [Event store](https://eventstore.com/docs/)
+* Read database : Sql server or Postgresql
 
 # Development
 Let's talk here about technical details. You might be interested of this section if you want to run the code on your machine.
