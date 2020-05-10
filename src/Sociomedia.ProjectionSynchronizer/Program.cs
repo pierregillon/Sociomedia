@@ -18,10 +18,12 @@ namespace Sociomedia.ProjectionSynchronizer
 
                 DataConnection.DefaultSettings = container.GetInstance<DbSettings>();
 
+                container.GetInstance<DbConnectionReadModel>().GenerateMissingTables();
+
                 var synchronizer = container.GetInstance<DomainEventSynchronizer>();
 
                 container.GetInstance<ILogger>().Debug("Read database synchronizer started.");
-            
+
                 await synchronizer.StartSynchronization();
 
                 Console.ReadKey();
