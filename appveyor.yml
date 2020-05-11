@@ -5,30 +5,10 @@ before_build:
   ps: dotnet restore src/Sociomedia.sln
 build:
   verbosity: minimal
-after_build:
-  ps: >-
-    dotnet test src/Sociomedia.sln
-    
-    mkdir ./dist
-
-    mkdir ./publish
-
-    dotnet publish --configuration Release ./src/Sociomedia.Front/Sociomedia.Front.csproj -o ./publish/
-
-    Compress-Archive -Path "./publish/*" -DestinationPath "./dist/Sociomedia.Front.zip"
-
-    Compress-Archive -Path "src/Sociomedia.FeedAggregator/bin/Release/*/*" -DestinationPath "./dist/Sociomedia.FeedAggregator.zip"
-    
-    Compress-Archive -Path "src/Sociomedia.ProjectionSynchronizer/bin/Release/*/*" -DestinationPath "./dist/Sociomedia.ProjectionSynchronizer.zip"
+after_test:
+  - ps: ./publish.ps1
 artifacts:
-  - path: ./dist/Sociomedia.FeedAggregator.zip
-    name: Sociomedia.FeedAggregator
-
-  - path: ./dist/Sociomedia.Front.zip
-    name: Sociomedia.Front
-
-  - path: ./dist/Sociomedia.ProjectionSynchronizer.zip
-    name: Sociomedia.ProjectionSynchronizer
+  - path: ./dist/*.zip
 deploy:
   provider: GitHub
   auth_token:
