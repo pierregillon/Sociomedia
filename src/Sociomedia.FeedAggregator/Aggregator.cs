@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
 using Sociomedia.FeedAggregator.Application.SynchronizeAllMediaFeeds;
@@ -27,14 +28,21 @@ namespace Sociomedia.FeedAggregator
             _eventPublisher = eventPublisher;
         }
 
-        public async Task StartAggregation()
+        public Task StartAggregation(CancellationToken token)
         {
-            await InitializeEventStore();
+            return Task.Factory.StartNew(async () => {
+                await InitializeEventStore();
 
-            do {
-                await Task.Delay(_configuration.FeedAggregator.SynchronizationTimespan);
-                await _commandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
-            } while (true);
+                try {
+                    do
+                    {
+                        await Task.Delay(_configuration.FeedAggregator.SynchronizationTimespan, token);
+                        await _commandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
+                    } while (true);
+                }
+                catch (TaskCanceledException) {}
+
+            }, token);
         }
 
         private async Task InitializeEventStore()

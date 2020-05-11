@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sociomedia.FeedAggregator
@@ -13,10 +14,33 @@ namespace Sociomedia.FeedAggregator
 
             var aggregator = container.GetInstance<Aggregator>();
 
-            await aggregator.StartAggregation();
+            var source = new CancellationTokenSource();
 
-            Console.WriteLine("Ended.");
-            Console.ReadKey();
+            await aggregator.StartAggregation(source.Token);
+
+            WaitForExit();
+
+            Console.WriteLine("Stopping");
+
+            source.Cancel();
+
+            Console.WriteLine("Stopped");
+        }
+
+        private static void WaitForExit()
+        {
+            var exitEvent = new ManualResetEvent(false);
+
+            AppDomain.CurrentDomain.ProcessExit += (s, e) => {
+                exitEvent.Set();
+            };
+
+            Console.CancelKeyPress += (sender, eventArgs) => {
+                eventArgs.Cancel = true;
+                exitEvent.Set();
+            };
+
+            exitEvent.WaitOne();
         }
     }
 }

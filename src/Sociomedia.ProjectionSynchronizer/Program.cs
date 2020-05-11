@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using LinqToDB.Data;
@@ -26,14 +27,34 @@ namespace Sociomedia.ProjectionSynchronizer
 
                 await synchronizer.StartSynchronization();
 
-                Console.ReadKey();
+                Console.WriteLine("Started");
+
+                WaitForExit();
 
                 synchronizer.StopSynchronization();
+
+                Console.WriteLine("Stopped");
             }
             catch (Exception ex) {
                 Console.WriteLine(ex);
                 throw;
             }
+        }
+
+        private static void WaitForExit()
+        {
+            var exitEvent = new ManualResetEvent(false);
+
+            AppDomain.CurrentDomain.ProcessExit += (s, e) => {
+                exitEvent.Set();
+            };
+
+            Console.CancelKeyPress += (sender, eventArgs) => {
+                eventArgs.Cancel = true;
+                exitEvent.Set();
+            };
+
+            exitEvent.WaitOne();
         }
     }
 }
