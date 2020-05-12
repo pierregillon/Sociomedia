@@ -54,25 +54,6 @@ namespace Sociomedia.FeedAggregator.Infrastructure
             return null;
         }
 
-        private static DateTimeOffset GetDate(CodeHollow.FeedReader.FeedItem item)
-        {
-            if (item.SpecificItem is AtomFeedItem feedItem) {
-                if (!string.IsNullOrWhiteSpace(feedItem.UpdatedDateString)) {
-                    return ParseDate(feedItem.UpdatedDateString);
-                }
-            }
-            if (!string.IsNullOrEmpty(item.PublishingDateString)) {
-                return ParseDate(item.PublishingDateString);
-            }
-            if (item.SpecificItem is Rss20FeedItem rss20FeedItem) {
-                if (!string.IsNullOrWhiteSpace(rss20FeedItem.DC.DateString)) {
-                    return ParseDate(rss20FeedItem.DC.DateString);
-                }
-            }
-
-            return DateTimeOffset.Now;
-        }
-
         private string GetImageUrl(CodeHollow.FeedReader.FeedItem item)
         {
             if (item.SpecificItem is MediaRssFeedItem feedItem) {
@@ -98,6 +79,46 @@ namespace Sociomedia.FeedAggregator.Infrastructure
             return null;
         }
 
+        private static DateTimeOffset GetDate(CodeHollow.FeedReader.FeedItem item)
+        {
+            if (item.SpecificItem is AtomFeedItem feedItem) {
+                if (!string.IsNullOrWhiteSpace(feedItem.UpdatedDateString)) {
+                    return ParseDate(feedItem.UpdatedDateString);
+                }
+            }
+            if (!string.IsNullOrEmpty(item.PublishingDateString)) {
+                return ParseDate(item.PublishingDateString);
+            }
+            if (item.SpecificItem is Rss20FeedItem rss20FeedItem) {
+                if (!string.IsNullOrWhiteSpace(rss20FeedItem.DC.DateString)) {
+                    return ParseDate(rss20FeedItem.DC.DateString);
+                }
+            }
+            if (TryExtractDateFromUrl(item.Link, out var date)) {
+                return date;
+            }
+
+            return default;
+        }
+
+        private static bool TryExtractDateFromUrl(string url, out DateTimeOffset date)
+        {
+            date = default;
+            
+            var regex = new Regex(@"(\d{2}-\d{2}-\d{4})");
+
+            var match = regex.Match(url);
+            if (match.Success) {
+                var dateStr = match.Value;
+                if (DateTime.TryParseExact(dateStr, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateFr)) {
+                    date = dateFr.ToFrenchOffset();
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private static DateTimeOffset ParseDate(string dateStr)
         {
             if (DateTimeOffset.TryParse(dateStr, out var date)) {
@@ -113,6 +134,8 @@ namespace Sociomedia.FeedAggregator.Infrastructure
 
         private static bool TryParseSpecialFrenchDateFormat(string dateStr, out DateTimeOffset date)
         {
+            date = default;
+            
             var match = Regex.Match(dateStr, @"\d{2}/\d{2}/\d{4}");
             if (match.Success) {
                 dateStr = dateStr.Substring(dateStr.IndexOf(match.Value, StringComparison.InvariantCulture));
@@ -120,12 +143,8 @@ namespace Sociomedia.FeedAggregator.Infrastructure
 
             const string format = "MM/dd/yyyy - HH:mm";
 
-            if (DateTimeOffset.TryParseExact(dateStr, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out date)) {
-                date = TimeZoneInfo.ConvertTime(
-                    date.DateTime,
-                    TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time"),
-                    TimeZoneInfo.Utc
-                );
+            if (DateTime.TryParseExact(dateStr, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateFr)) {
+                date = dateFr.ToFrenchOffset();
                 return true;
             }
 
@@ -150,6 +169,18 @@ namespace Sociomedia.FeedAggregator.Infrastructure
             return RemoveDuplicatedSpacesRegex
                 .Replace(text, " ")
                 .Trim();
+        }
+    }
+
+    public static class DateTimeExtensions
+    {
+        public static DateTimeOffset ToFrenchOffset(this DateTime date)
+        {
+            return TimeZoneInfo.ConvertTime(
+                date,
+                TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time"),
+                TimeZoneInfo.Utc
+            );
         }
     }
 }

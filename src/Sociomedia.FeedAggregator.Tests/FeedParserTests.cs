@@ -233,14 +233,9 @@ namespace Sociomedia.FeedAggregator.Tests
                     Link = "http://www.leparisien.fr/politique/coronavirus-dans-une-video-macron-et-les-dirigeants-europeens-appellent-a-l-unite-09-05-2020-8313681.php#xtor=RSS-1481423633",
                     Title = "Coronavirus : dans une vidéo, Macron et les dirigeants européens appellent à l’unité",
                     Summary = null,
-                    ImageUrl = null
-                }, x => x.Excluding(a => a.PublishDate));
-
-            rssContent.Items.First()
-                .PublishDate
-                .Date
-                .Should()
-                .Be(DateTimeOffset.Now.Date);
+                    ImageUrl = null,
+                    PublishDate = new DateTimeOffset(2020,5,9,0,0,0,TimeSpan.FromHours(2))
+                });
         }
 
         [Fact]
