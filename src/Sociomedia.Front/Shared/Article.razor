@@ -1,16 +1,16 @@
 ﻿@using Sociomedia.Front.Data
 
 <div class="card article">
-    <img class="card-img-top image" src="@Value.ImageUrl">
+    <a class="image" href="@Value.Url" target="_blank">
+        <img class="card-img-top" src="@Value.ImageUrl">
+        <span class="summary">@Value.Summary</span>
+    </a>
     <div class="card-body">
         <a href="@Value.Url" target="_blank">
             <h5 class="card-title title" data-toggle="tooltip" data-placement="right" title="@Value.Title">
                 @Value.Title
             </h5>
         </a>
-        <p class="card-text description">
-            @Value.Summary
-        </p>
         <div class="d-flex justify-content-between align-items-center">
             <div class="btn-group">
                 <a class="btn btn-sm btn-outline-secondary" href="@Value.Url" target="_blank">
@@ -41,10 +41,15 @@
         display: block;
         text-align: center;
         margin: 5px;
-        height: 25px;
+        max-height: 25px;
+        max-width: 120px;
     }
 
     .article .image {
+        position: relative;
+    }
+
+    .article .image > img {
         width: 100%;
         height: 200px;
         background-color: lightblue;
@@ -52,23 +57,32 @@
         object-fit: cover;
     }
 
-    .article .title {
-        text-align: center;
-        display: block;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -moz-box-orient: vertical;
-        height: 50px;
+    .article .image .summary {
+        display: none;
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.4);
+        color: white;
+        font-size: 17px;
+        font-weight: bold;
     }
 
-    .article .description {
-        font-size: 14px;
+    .article .image:hover .summary  {
+        display: initial;
+    }
+
+
+    .article .title {
+        text-align: left;
         overflow: hidden;
         display: -webkit-box;
-        -webkit-line-clamp: 5;
-        -webkit-box-orient: vertical;
-        height: 107px;
+        -webkit-line-clamp: 3;
+        -moz-box-orient: vertical;
+        height: 67px;
+        font-size: 18px;
     }
 </Styled>
 
