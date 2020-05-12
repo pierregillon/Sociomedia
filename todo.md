@@ -17,6 +17,14 @@
 * check agoravox rss : no image url
 * check card image for euronews invalid image.
 * remove feed update date
+* html decode title (monde diplomatique)
+* Convert date fr to utc with timezone doesn't work on linux
+  => https://dejanstojanovic.net/aspnet/2018/july/differences-in-time-zones-in-net-core-on-windows-and-linux-host-os/
+* leparisien : no date in rss, but in url ! Try to extract date if possible from url
+  => http://www.leparisien.fr/politique/rss.xml
+  => http://www.leparisien.fr/elections/municipales/municipales-edouard-philippe-accelere-pour-le-second-tour-en-juin-12-05-2020-8315910.php#xtor=RSS-1481423633
+* add media information
+  => https://fr.wikipedia.org/wiki/Presse_quotidienne_nationale_fran%C3%A7aise
 
 # ProjectionSynchronizer
 * use transaction when multiple insertion in sql db (article + keyword)
