@@ -31,30 +31,20 @@ namespace Sociomedia.FeedAggregator
         public Task StartAggregation(CancellationToken token)
         {
             return Task.Factory.StartNew(async () => {
-                await InitializeEventStore();
+                await _eventStore.SubscribeToEventsFrom(_lastPosition, DomainEventReceived, Disconnected);
 
                 try {
                     do
                     {
                         await Task.Delay(_configuration.FeedAggregator.SynchronizationTimespan, token);
-                        await _commandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
+                        if (_eventStore.IsConnected) {
+                            await _commandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
+                        }
                     } while (true);
                 }
                 catch (TaskCanceledException) {}
 
             }, token);
-        }
-
-        private async Task InitializeEventStore()
-        {
-            await _eventStore.Connect(
-                _configuration.EventStore.Server,
-                _configuration.EventStore.Port,
-                _configuration.EventStore.Login,
-                _configuration.EventStore.Password
-            );
-
-            await _eventStore.StartRepublishingEvents(_lastPosition, DomainEventReceived, Disconnected);
         }
 
         private async Task DomainEventReceived(long position, IEvent @event)
@@ -66,7 +56,7 @@ namespace Sociomedia.FeedAggregator
         private async Task Disconnected()
         {
             await Task.Delay(TimeSpan.FromSeconds(5));
-            await InitializeEventStore();
+            await _eventStore.SubscribeToEventsFrom(_lastPosition, DomainEventReceived, Disconnected);
         }
     }
 }

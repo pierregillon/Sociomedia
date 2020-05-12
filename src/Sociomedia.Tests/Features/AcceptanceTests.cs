@@ -17,7 +17,7 @@ namespace Sociomedia.Tests.Features
 
         protected AcceptanceTests()
         {
-            Container = new Container(x => x.AddRegistry<SociomediaRegistry>());
+            Container = new Container(x => x.AddRegistry(new SociomediaRegistry(new EventStoreConfiguration())));
 
             Container.Inject<ILogger>(new EmptyLogger());
             Container.Inject(Substitute.For<IWebPageDownloader>());

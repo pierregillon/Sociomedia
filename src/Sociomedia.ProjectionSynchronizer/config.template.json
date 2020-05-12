@@ -1,0 +1,15 @@
+{
+  "EventStore": {
+    "server": "localhost",
+    "port": 0,
+    "login": "",
+    "password": ""
+  },
+  "SqlDatabase": {
+    "providerName": "PostgreSQL",
+    "connectionString": ""
+  },
+  "ProjectionSynchronization": {
+    "ReconnectionDelayMs": 5000
+  }
+}
