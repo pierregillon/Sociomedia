@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Newtonsoft.Json;
+using Sociomedia.Infrastructure;
 
 namespace Sociomedia.FeedAggregator
 {
@@ -31,13 +32,5 @@ namespace Sociomedia.FeedAggregator
         public TimeSpan SynchronizationTimespan => TimeSpan.TryParse(SynchronizationInterval, out var result)
             ? result
             : throw new Exception("Unable to parse SynchronizationInterval from configuration.");
-    }
-
-    public class EventStoreConfiguration
-    {
-        public string Server { get; set; }
-        public int Port { get; set; }
-        public string Login { get; set; }
-        public string Password { get; set; }
     }
 }

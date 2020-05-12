@@ -1,4 +1,5 @@
-﻿using CQRSlite.Domain;
+﻿using System;
+using CQRSlite.Domain;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
 using EventStore.ClientAPI.Common.Log;
@@ -14,7 +15,7 @@ namespace Sociomedia.Infrastructure
 {
     public class SociomediaRegistry : Registry
     {
-        public SociomediaRegistry()
+        public SociomediaRegistry(EventStoreConfiguration eventStoreConfiguration)
         {
             For<ICommandDispatcher>().Use<StructureMapCommandDispatcher>();
             For<IEventPublisher>().Use<StructureMapEventPublisher>();
@@ -34,6 +35,7 @@ namespace Sociomedia.Infrastructure
 
             For<IRepository>().Use(context => new Repository(context.GetInstance<IEventStore>()));
             For<IEventStore>().Use<EventStoreOrg>().Singleton();
+            For<EventStoreConfiguration>().Use(eventStoreConfiguration).Singleton();
 
             For<IHtmlParser>().Use<HtmlParser>();
             For<IWebPageDownloader>().Use<WebPageDownloader>();
@@ -51,4 +53,15 @@ namespace Sociomedia.Infrastructure
             }
         }
     }
+
+    public class EventStoreConfiguration
+    {
+        public string Server { get; set; } = "localhost";
+        public int Port { get; set; } = 1113;
+        public string Login { get; set; } = "admin";
+        public string Password { get; set; } = "changeit";
+
+        public Uri Uri => new Uri($"tcp://{Login}:{Password}@{Server}:{Port}");
+    }
+
 }

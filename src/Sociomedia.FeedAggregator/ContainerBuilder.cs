@@ -16,7 +16,7 @@ namespace Sociomedia.FeedAggregator
         public static Container Build(Configuration configuration)
         {
             return new Container(registry => {
-                registry.IncludeRegistry<SociomediaRegistry>();
+                registry.IncludeRegistry(new SociomediaRegistry(configuration.EventStore));
                 registry.For<IFeedParser>().Use<FeedParser>();
                 registry.For<IFeedReader>().Use<FeedReader>();
                 registry.For<ISynchronizationFinder>().Use<SynchronizationFinder>();
