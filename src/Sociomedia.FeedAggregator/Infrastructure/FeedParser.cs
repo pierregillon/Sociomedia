@@ -1,33 +1,55 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using CodeHollow.FeedReader;
 using CodeHollow.FeedReader.Feeds;
+using EventStore.ClientAPI;
 using HtmlAgilityPack;
 using Sociomedia.Domain;
 using Sociomedia.Domain.Articles;
 using Sociomedia.FeedAggregator.Domain;
+using FeedItem = Sociomedia.FeedAggregator.Domain.FeedItem;
 
 namespace Sociomedia.FeedAggregator.Infrastructure
 {
     public class FeedParser : IFeedParser
     {
         private static readonly Regex RemoveDuplicatedSpacesRegex = new Regex(@"\s+", RegexOptions.Compiled);
-        private readonly IHtmlParser htmlParser;
+        private readonly IHtmlParser _htmlParser;
+        private readonly ILogger _logger;
 
-        public FeedParser(IHtmlParser htmlParser)
+        public FeedParser(IHtmlParser htmlParser, ILogger logger)
         {
-            this.htmlParser = htmlParser;
+            _htmlParser = htmlParser;
+            _logger = logger;
         }
 
         public FeedContent Parse(Stream rssStream)
         {
             using var ms = new MemoryStream();
             rssStream.CopyTo(ms);
-            var feed = CodeHollow.FeedReader.FeedReader.ReadFromByteArray(ms.ToArray());
-            return new FeedContent(feed.Items.Select(ConvertToRssItem).ToArray());
+
+            return CodeHollow.FeedReader.FeedReader.ReadFromByteArray(ms.ToArray())
+                .Pipe(GetFeedItems)
+                .Pipe(x => x.ToArray())
+                .Pipe(x => new FeedContent(x));
+        }
+
+        private IEnumerable<FeedItem> GetFeedItems(Feed feed)
+        {
+            foreach (var feedItem in feed.Items) {
+                var rssItem = ConvertToRssItem(feedItem);
+                if (rssItem.PublishDate != default) {
+                    yield return rssItem;
+                }
+                else {
+                    _logger.Info($"[FEED_PARSER] Unable to import feed {rssItem.Link} : publish date was not defined.");
+                }
+            }
         }
 
         private FeedItem ConvertToRssItem(CodeHollow.FeedReader.FeedItem syndicationItem)
@@ -36,13 +58,15 @@ namespace Sociomedia.FeedAggregator.Infrastructure
                 Id = syndicationItem.Id,
                 Title = WebUtility.HtmlDecode(syndicationItem.Title),
                 Link = syndicationItem.Link,
-                ImageUrl = GetImageUrl(syndicationItem)
+                PublishDate = GetDate(syndicationItem),
+                ImageUrl = syndicationItem
+                    .Pipe(GetImageUrl)
                     .Pipe(UrlSanitizer.Sanitize),
-                Summary = GetSummary(syndicationItem)
+                Summary = syndicationItem
+                    .Pipe(GetSummary)
                     .Pipe(WebUtility.HtmlDecode)
                     .Pipe(HtmlToPlainText)
-                    .Pipe(ClearConsecutiveSpaces),
-                PublishDate = GetDate(syndicationItem)
+                    .Pipe(ClearConsecutiveSpaces)
             };
         }
 
@@ -71,7 +95,7 @@ namespace Sociomedia.FeedAggregator.Infrastructure
                 }
                 if (rss20FeedItem.Description?.Contains("<img") == true) {
                     return rss20FeedItem.Description
-                        .Pipe(htmlParser.ExtractFirstImageUrl)
+                        .Pipe(_htmlParser.ExtractFirstImageUrl)
                         .Pipe(WebUtility.HtmlDecode);
                 }
             }
@@ -104,7 +128,7 @@ namespace Sociomedia.FeedAggregator.Infrastructure
         private static bool TryExtractDateFromUrl(string url, out DateTimeOffset date)
         {
             date = default;
-            
+
             var regex = new Regex(@"(\d{2}-\d{2}-\d{4})");
 
             var match = regex.Match(url);
@@ -135,7 +159,7 @@ namespace Sociomedia.FeedAggregator.Infrastructure
         private static bool TryParseSpecialFrenchDateFormat(string dateStr, out DateTimeOffset date)
         {
             date = default;
-            
+
             var match = Regex.Match(dateStr, @"\d{2}/\d{2}/\d{4}");
             if (match.Success) {
                 dateStr = dateStr.Substring(dateStr.IndexOf(match.Value, StringComparison.InvariantCulture));

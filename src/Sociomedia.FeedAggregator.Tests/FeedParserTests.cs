@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
+using EventStore.ClientAPI.Common.Log;
 using FluentAssertions;
 using Sociomedia.FeedAggregator.Domain;
 using Sociomedia.FeedAggregator.Infrastructure;
@@ -15,7 +17,27 @@ namespace Sociomedia.FeedAggregator.Tests
 
         public FeedParserTests()
         {
-            _parser = new FeedParser(new HtmlParser());
+            _parser = new FeedParser(new HtmlParser(), new ConsoleLogger());
+        }
+
+        [Fact]
+        public void Ignore_feed_with_no_publish_date()
+        {
+            const string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+                                 <rss version=""2.0"">
+                                   <channel>
+                                     <item>
+                                       <title>some title</title>
+                                       <link>http://www.test.com/article</link>
+                                     </item>
+                                   </channel>
+                                 </rss>";
+
+            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
+
+            var rssContent = _parser.Parse(stream);
+
+            rssContent.Items.Should().BeEmpty();
         }
 
         [Fact]
@@ -234,7 +256,7 @@ namespace Sociomedia.FeedAggregator.Tests
                     Title = "Coronavirus : dans une vidéo, Macron et les dirigeants européens appellent à l’unité",
                     Summary = null,
                     ImageUrl = null,
-                    PublishDate = new DateTimeOffset(2020,5,9,0,0,0,TimeSpan.FromHours(2))
+                    PublishDate = new DateTimeOffset(2020, 5, 9, 0, 0, 0, TimeSpan.FromHours(2))
                 });
         }
 
@@ -248,8 +270,7 @@ namespace Sociomedia.FeedAggregator.Tests
             rssContent.Items
                 .First()
                 .Should()
-                .BeEquivalentTo(new FeedItem
-                {
+                .BeEquivalentTo(new FeedItem {
                     Id = "https://francais.rt.com/international/74945-grande-guerre-patriotique-combat-pour-la-vie-et-la-liberte",
                     Link = "https://francais.rt.com/international/74945-grande-guerre-patriotique-combat-pour-la-vie-et-la-liberte",
                     Title = "La Grande Guerre Patriotique : un combat pour la vie et la liberté",

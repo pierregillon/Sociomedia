@@ -15,14 +15,16 @@ namespace Sociomedia.FeedAggregator.Domain
 
         public IEnumerable<ExternalArticle> ToExternalArticles()
         {
-            return Items.Select(item => new ExternalArticle(
-                item.Id,
-                item.Link,
-                item.Title,
-                item.PublishDate,
-                item.Summary,
-                item.ImageUrl
-            ));
+            return Items
+                .Select(item => new ExternalArticle(
+                    item.Id,
+                    item.Link,
+                    item.Title,
+                    item.PublishDate,
+                    item.Summary,
+                    item.ImageUrl
+                ))
+                .ToArray();
         }
     }
 }
