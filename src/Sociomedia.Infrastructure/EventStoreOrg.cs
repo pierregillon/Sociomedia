@@ -137,6 +137,7 @@ namespace Sociomedia.Infrastructure
             }
             _connection = EventStoreConnection.Create(_configuration.Uri, AppDomain.CurrentDomain.FriendlyName);
             _connection.Closed += (sender, args) => {
+                Error("Connection closed : " + args.Reason);
                 _connection = null;
             };
             await _connection.ConnectAsync();
