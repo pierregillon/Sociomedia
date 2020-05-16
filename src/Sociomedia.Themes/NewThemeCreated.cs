@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sociomedia.Application.Domain;
+using Sociomedia.Core.Domain;
 
 namespace Sociomedia.Themes.Domain
 {

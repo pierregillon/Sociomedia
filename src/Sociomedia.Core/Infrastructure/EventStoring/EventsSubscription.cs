@@ -7,7 +7,7 @@ using CQRSlite.Events;
 using EventStore.ClientAPI;
 using Newtonsoft.Json;
 
-namespace Sociomedia.Application.Infrastructure.EventStoring
+namespace Sociomedia.Core.Infrastructure.EventStoring
 {
     public class EventsSubscription
     {

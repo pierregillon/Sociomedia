@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sociomedia.Application.Domain;
+using Sociomedia.Core.Domain;
 
 namespace Sociomedia.Articles.Domain
 {

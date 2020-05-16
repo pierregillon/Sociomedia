@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
-using Sociomedia.Application.Domain;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Infrastructure;
+using Sociomedia.Core.Domain;
 using Xunit;
 
 namespace Sociomedia.Articles.Tests.UnitTests

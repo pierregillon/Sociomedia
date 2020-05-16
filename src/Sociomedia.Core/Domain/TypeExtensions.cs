@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sociomedia.Application.Domain
+namespace Sociomedia.Core.Domain
 {
     public static class TypeExtensions
     {

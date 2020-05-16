@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CQRSlite.Domain;
-using Sociomedia.Application.Application;
+using Sociomedia.Core.Application;
 using Sociomedia.Medias.Domain;
 
 namespace Sociomedia.Medias.Application.Commands.AddMedia

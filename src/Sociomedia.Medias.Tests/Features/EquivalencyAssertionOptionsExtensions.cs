@@ -1,5 +1,5 @@
 ﻿using FluentAssertions.Equivalency;
-using Sociomedia.Application.Domain;
+using Sociomedia.Core.Domain;
 
 namespace Sociomedia.Medias.Tests.Features
 {

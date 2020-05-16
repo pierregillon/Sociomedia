@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sociomedia.Application.Infrastructure.EventStoring
+namespace Sociomedia.Core.Infrastructure.EventStoring
 {
     public interface ITypeLocator
     {

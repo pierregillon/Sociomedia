@@ -1,4 +1,4 @@
-﻿namespace Sociomedia.Application.Application {
+﻿namespace Sociomedia.Core.Application {
     public interface ICommand
     {
     }

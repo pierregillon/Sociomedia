@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sociomedia.Application.Application;
+using Sociomedia.Core.Application;
 using Sociomedia.Medias.Domain;
 
 namespace Sociomedia.Medias.Application.Commands.EditMedia {

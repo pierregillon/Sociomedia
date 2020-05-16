@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Sociomedia.Application.Application {
+namespace Sociomedia.Core.Application {
     public interface ICommandHandler<in T> where T : ICommand
     {
         Task Handle(T command);

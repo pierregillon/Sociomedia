@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sociomedia.Application.Domain;
-using Sociomedia.Application.Infrastructure.EventStoring;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Core.Domain;
+using Sociomedia.Core.Infrastructure.EventStoring;
 
 namespace Sociomedia.Articles.Infrastructure
 {

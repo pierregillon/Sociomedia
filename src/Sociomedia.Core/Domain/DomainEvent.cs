@@ -1,7 +1,7 @@
 ﻿using System;
 using CQRSlite.Events;
 
-namespace Sociomedia.Application.Domain
+namespace Sociomedia.Core.Domain
 {
     public abstract class DomainEvent : IEvent
     {

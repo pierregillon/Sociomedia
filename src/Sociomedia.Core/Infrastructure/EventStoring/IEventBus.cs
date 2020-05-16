@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Sociomedia.Application.Infrastructure.EventStoring
+namespace Sociomedia.Core.Infrastructure.EventStoring
 {
     public interface IEventBus
     {

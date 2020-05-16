@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using BlazorStyled;
 using LinqToDB.Data;
 using Microsoft.AspNetCore.Builder;
@@ -7,8 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Sociomedia.Application;
-using Sociomedia.Application.Infrastructure.EventStoring;
+using Sociomedia.Core.Infrastructure.EventStoring;
 using Sociomedia.Front.Data;
 using Sociomedia.Medias.Infrastructure;
 using Sociomedia.ReadModel.DataAccess;

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Sociomedia.Application.Infrastructure.EventStoring
+namespace Sociomedia.Core.Infrastructure.EventStoring
 {
     public delegate Task PositionInStreamChanged(long position);
 }

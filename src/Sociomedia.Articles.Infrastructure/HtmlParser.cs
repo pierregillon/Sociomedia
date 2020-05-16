@@ -3,8 +3,8 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
-using Sociomedia.Application.Domain;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Core.Domain;
 
 namespace Sociomedia.Articles.Infrastructure
 {

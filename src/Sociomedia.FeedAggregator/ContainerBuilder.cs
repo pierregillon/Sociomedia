@@ -1,5 +1,5 @@
-﻿using Sociomedia.Application.Infrastructure.EventStoring;
-using Sociomedia.Articles.Infrastructure;
+﻿using Sociomedia.Articles.Infrastructure;
+using Sociomedia.Core.Infrastructure.EventStoring;
 using StructureMap;
 
 namespace Sociomedia.FeedAggregator

@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using EventStore.ClientAPI;
-using Sociomedia.Application.Application;
-using Sociomedia.Application.Infrastructure.CQRS;
+using Sociomedia.Core.Application;
+using Sociomedia.Core.Infrastructure.CQRS;
 
-namespace Sociomedia.Application.Infrastructure.Logging
+namespace Sociomedia.Core.Infrastructure.Logging
 {
     public class CommandDispatchedLogger : ICommandDispatcher
     {

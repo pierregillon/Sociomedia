@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Sociomedia.Application.Domain;
+using Sociomedia.Core.Domain;
 using Sociomedia.Medias.Application.Commands.AddMedia;
 using Sociomedia.Medias.Application.Commands.EditMedia;
 using Sociomedia.Medias.Domain;

@@ -1,8 +1,8 @@
 ﻿using System;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
-using Sociomedia.Application.Infrastructure.CQRS;
-using Sociomedia.Application.Infrastructure.EventStoring;
+using Sociomedia.Core.Infrastructure.CQRS;
+using Sociomedia.Core.Infrastructure.EventStoring;
 using Sociomedia.Medias.Infrastructure;
 using StructureMap;
 

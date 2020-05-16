@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
 
-namespace Sociomedia.Application.Infrastructure.Logging
+namespace Sociomedia.Core.Infrastructure.Logging
 {
     public class EventPublishedLogger : IEventPublisher
     {

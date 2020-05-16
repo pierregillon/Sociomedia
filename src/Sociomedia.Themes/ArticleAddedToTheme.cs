@@ -1,5 +1,5 @@
 ﻿using System;
-using Sociomedia.Application.Domain;
+using Sociomedia.Core.Domain;
 
 namespace Sociomedia.Themes.Domain
 {

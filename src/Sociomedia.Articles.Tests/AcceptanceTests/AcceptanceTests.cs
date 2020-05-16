@@ -2,10 +2,10 @@
 using CQRSlite.Events;
 using EventStore.ClientAPI;
 using NSubstitute;
-using Sociomedia.Application.Infrastructure.CQRS;
-using Sociomedia.Application.Infrastructure.EventStoring;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Infrastructure;
+using Sociomedia.Core.Infrastructure.CQRS;
+using Sociomedia.Core.Infrastructure.EventStoring;
 using StructureMap;
 
 namespace Sociomedia.Articles.Tests.AcceptanceTests {

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Sociomedia.Application.Domain;
+using Sociomedia.Core.Domain;
 
-namespace Sociomedia.Application.Application
+namespace Sociomedia.Core.Application
 {
     public interface IEventListener<in T> where T : DomainEvent
     {

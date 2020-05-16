@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Sociomedia.Application.Domain
+namespace Sociomedia.Core.Domain
 {
     public static class FunctionalProgramingExtensions
     {

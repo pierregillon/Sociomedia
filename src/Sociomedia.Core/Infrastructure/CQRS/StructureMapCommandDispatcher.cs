@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Sociomedia.Application.Application;
+using Sociomedia.Core.Application;
 using StructureMap;
 
-namespace Sociomedia.Application.Infrastructure.CQRS
+namespace Sociomedia.Core.Infrastructure.CQRS
 {
     public class StructureMapCommandDispatcher : ICommandDispatcher
     {

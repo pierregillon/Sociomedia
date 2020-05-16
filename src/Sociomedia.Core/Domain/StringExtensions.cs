@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Text;
 
-namespace Sociomedia.Application.Domain
+namespace Sociomedia.Core.Domain
 {
     public static class StringExtensions
     {

@@ -1,10 +1,10 @@
 ﻿using CQRSlite.Events;
 using EventStore.ClientAPI;
 using EventStore.ClientAPI.Common.Log;
-using Sociomedia.Application.Application;
-using Sociomedia.Application.Domain;
-using Sociomedia.Application.Infrastructure.CQRS;
-using Sociomedia.Application.Infrastructure.EventStoring;
+using Sociomedia.Core.Application;
+using Sociomedia.Core.Domain;
+using Sociomedia.Core.Infrastructure.CQRS;
+using Sociomedia.Core.Infrastructure.EventStoring;
 using Sociomedia.ProjectionSynchronizer.Application;
 using Sociomedia.ProjectionSynchronizer.Infrastructure;
 using Sociomedia.ReadModel.DataAccess;

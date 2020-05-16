@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
-using Sociomedia.Application.Domain;
+using Sociomedia.Core.Domain;
 
 namespace Sociomedia.Articles.Domain
 {

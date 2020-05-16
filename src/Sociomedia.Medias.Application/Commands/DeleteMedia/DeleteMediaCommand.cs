@@ -1,5 +1,5 @@
 ﻿using System;
-using Sociomedia.Application.Application;
+using Sociomedia.Core.Application;
 
 namespace Sociomedia.Medias.Application.Commands.DeleteMedia
 {

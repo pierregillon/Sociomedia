@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
-using Sociomedia.Application.Application;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Core.Application;
 using Sociomedia.Medias.Domain;
 
 namespace Sociomedia.Articles.Application.Queries

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using Newtonsoft.Json;
-using Sociomedia.Application.Infrastructure.EventStoring;
+using Sociomedia.Core.Infrastructure.EventStoring;
 
 namespace Sociomedia.FeedAggregator
 {

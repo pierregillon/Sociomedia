@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using Sociomedia.Application.Domain;
-using Sociomedia.Application.Infrastructure.EventStoring;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Core.Domain;
+using Sociomedia.Core.Infrastructure.EventStoring;
 using Sociomedia.Medias.Domain;
 
 namespace Sociomedia.ProjectionSynchronizer.Application

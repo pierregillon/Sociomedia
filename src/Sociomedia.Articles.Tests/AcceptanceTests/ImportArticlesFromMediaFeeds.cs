@@ -6,10 +6,10 @@ using CQRSlite.Events;
 using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Sociomedia.Application.Domain;
 using Sociomedia.Articles.Application.Commands.SynchronizeAllMediaFeeds;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Tests.UnitTests;
+using Sociomedia.Core.Domain;
 using Sociomedia.Medias.Domain;
 using Xunit;
 
