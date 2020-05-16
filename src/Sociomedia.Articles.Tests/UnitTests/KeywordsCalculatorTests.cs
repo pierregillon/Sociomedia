@@ -1,4 +1,5 @@
 using FluentAssertions;
+using NSubstitute;
 using Sociomedia.Articles.Domain;
 using Xunit;
 
@@ -7,10 +8,14 @@ namespace Sociomedia.Articles.Tests.UnitTests
     public class KeywordsCalculatorTests
     {
         private readonly KeywordsParser _keywordsParser;
+        private readonly IKeywordDictionary _keywordDictionary;
 
         public KeywordsCalculatorTests()
         {
-            _keywordsParser = new KeywordsParser();
+            _keywordDictionary = Substitute.For<IKeywordDictionary>();
+            _keywordDictionary.IsNoun(Arg.Any<string>()).Returns(true);
+
+            _keywordsParser = new KeywordsParser(_keywordDictionary);
         }
 
         [Theory]
@@ -21,6 +26,17 @@ namespace Sociomedia.Articles.Tests.UnitTests
             _keywordsParser.Parse(text)
                 .Should()
                 .BeEquivalentTo(new Keyword("test", 2));
+        }
+
+        [Theory]
+        [InlineData("I love cat, yes love cat !")]
+        public void A_keyword_is_must_be_a_noun(string text)
+        {
+            _keywordDictionary.IsNoun("love").Returns(false);
+
+            _keywordsParser.Parse(text)
+                .Should()
+                .Contain(new Keyword("cat", 1));
         }
 
         [Fact]
@@ -87,19 +103,6 @@ namespace Sociomedia.Articles.Tests.UnitTests
                 .Contain(new Keyword("john wick", 2))
                 .And.NotContain(new Keyword("john", 1))
                 .And.NotContain(new Keyword("wick", 1));
-        }
-
-        [Theory]
-        [InlineData("dans dans dans")]
-        [InlineData("pour pour")]
-        [InlineData("alors alors")]
-        [InlineData("ensuite ensuite")]
-        [InlineData("aussi aussi")]
-        public void A_keyword_is_not_french_specific_words(string text)
-        {
-            _keywordsParser.Parse(text)
-                .Should()
-                .BeEmpty();
         }
     }
 }

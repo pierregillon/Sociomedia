@@ -1,4 +1,6 @@
-﻿using CQRSlite.Domain;
+﻿using System;
+using System.IO;
+using CQRSlite.Domain;
 using CQRSlite.Events;
 using EventStore.ClientAPI.Common.Log;
 using Sociomedia.Articles.Application.Queries;
@@ -30,6 +32,11 @@ namespace Sociomedia.Articles.Infrastructure
 
             For<ICommandDispatcher>().DecorateAllWith<CommandDispatchedLogger>();
 
+            For<IKeywordDictionary>()
+                .Use<FrenchKeywordDictionary>()
+                .Ctor<string>()
+                .Is(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Dictionaries\\french_nouns.txt"));
+            
             For<IFeedReader>().Use<FeedReader>();
             For<IFeedParser>().Use<FeedParser>();
             For<InMemoryDatabase>().Singleton();

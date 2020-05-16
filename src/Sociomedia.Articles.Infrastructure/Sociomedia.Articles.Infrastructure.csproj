@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -16,6 +16,12 @@
     <ProjectReference Include="..\Sociomedia.Articles.Application\Sociomedia.Articles.Application.csproj" />
     <ProjectReference Include="..\Sociomedia.Articles.Domain\Sociomedia.Articles.Domain.csproj" />
     <ProjectReference Include="..\Sociomedia.Core\Sociomedia.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Dictionaries\french_nouns.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

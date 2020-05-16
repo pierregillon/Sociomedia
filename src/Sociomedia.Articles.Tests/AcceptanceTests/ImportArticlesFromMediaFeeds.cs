@@ -130,7 +130,6 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
 
             // Assert
             (await EventStore.GetNewEvents())
-                .OfType<ArticleImported>()
                 .Should()
                 .BeEquivalentTo(new DomainEvent[] {
                     new ArticleImported(

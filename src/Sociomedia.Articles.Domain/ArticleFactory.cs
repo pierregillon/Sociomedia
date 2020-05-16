@@ -9,11 +9,13 @@ namespace Sociomedia.Articles.Domain
     {
         private readonly IHtmlParser _htmlParser;
         private readonly IWebPageDownloader _webPageDownloader;
+        private readonly KeywordsParser _keywordsParser;
 
-        public ArticleFactory(IHtmlParser htmlParser, IWebPageDownloader webPageDownloader)
+        public ArticleFactory(IHtmlParser htmlParser, IWebPageDownloader webPageDownloader, KeywordsParser keywordsParser)
         {
             _htmlParser = htmlParser;
             _webPageDownloader = webPageDownloader;
+            _keywordsParser = keywordsParser;
         }
 
         public async Task<Article> Build(Guid mediaId, ExternalArticle externalArticle)
@@ -27,7 +29,7 @@ namespace Sociomedia.Articles.Domain
                 .Pipe(imageUrl => InjectHostIfMissing(imageUrl, externalArticle.Url))
                 .Pipe(UrlSanitizer.Sanitize);
 
-            var keywords = new KeywordsParser().Parse(articleContent).Take(50).ToArray();
+            var keywords = _keywordsParser.Parse(articleContent).Take(50).ToArray();
 
             return new Article(mediaId, externalArticle, keywords.Select(x => x.ToString()).ToArray());
         }

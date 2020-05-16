@@ -21,7 +21,10 @@ namespace Sociomedia.Articles.Tests.UnitTests
             _webPageDownloader = Substitute.For<IWebPageDownloader>();
             _webPageDownloader.Download(Arg.Any<string>()).Returns("<html></html>");
 
-            _articleFactory = new ArticleFactory(new HtmlParser(), _webPageDownloader);
+            var keywordDictionary = Substitute.For<IKeywordDictionary>();
+            keywordDictionary.IsNoun(Arg.Any<string>()).Returns(true);
+
+            _articleFactory = new ArticleFactory(new HtmlParser(), _webPageDownloader, new KeywordsParser(keywordDictionary));
         }
 
         [Fact]
