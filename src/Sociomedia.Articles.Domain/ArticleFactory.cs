@@ -29,7 +29,13 @@ namespace Sociomedia.Articles.Domain
                 .Pipe(imageUrl => InjectHostIfMissing(imageUrl, externalArticle.Url))
                 .Pipe(UrlSanitizer.Sanitize);
 
-            var keywords = _keywordsParser.Parse(articleContent).Take(50).ToArray();
+            var text = string.Join(" ", new[] {
+                articleContent,
+                externalArticle.Title,
+                externalArticle.Summary
+            });
+
+            var keywords = _keywordsParser.Parse(text).Take(50).ToArray();
 
             return new Article(mediaId, externalArticle, keywords.Select(x => x.ToString()).ToArray());
         }
