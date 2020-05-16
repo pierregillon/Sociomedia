@@ -1,62 +1,91 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
+using EventStore.ClientAPI;
+using Sociomedia.Application.Domain;
 using Sociomedia.Application.Infrastructure.CQRS;
 using Sociomedia.Application.Infrastructure.EventStoring;
 using Sociomedia.Articles.Application.Commands.SynchronizeAllMediaFeeds;
+using Sociomedia.Articles.Domain;
+using Sociomedia.Medias.Domain;
 
 namespace Sociomedia.FeedAggregator
 {
     public class Aggregator
     {
-        private readonly EventStoreOrg _eventStore;
+        private readonly IEventBus _eventBus;
         private readonly Configuration _configuration;
         private readonly ICommandDispatcher _commandDispatcher;
         private readonly IEventPublisher _eventPublisher;
-        private long? _lastPosition;
+        private readonly ILogger _logger;
 
         public Aggregator(
-            EventStoreOrg eventStore,
+            IEventBus eventBus,
             Configuration configuration,
             ICommandDispatcher commandDispatcher,
-            IEventPublisher eventPublisher)
+            IEventPublisher eventPublisher,
+            ILogger logger)
         {
-            _eventStore = eventStore;
+            _eventBus = eventBus;
             _configuration = configuration;
             _commandDispatcher = commandDispatcher;
             _eventPublisher = eventPublisher;
+            _logger = logger;
         }
 
         public Task StartAggregation(CancellationToken token)
         {
-            return Task.Factory.StartNew(async () => {
-                await _eventStore.SubscribeToEventsFrom(_lastPosition, DomainEventReceived, Disconnected);
-
-                try {
-                    do
-                    {
-                        await Task.Delay(_configuration.FeedAggregator.SynchronizationTimespan, token);
-                        if (_eventStore.IsConnected) {
-                            await _commandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
-                        }
-                    } while (true);
-                }
-                catch (TaskCanceledException) {}
-
-            }, token);
+            return Task.Factory.StartNew(async () => { await Process(token); }, token);
         }
 
-        private async Task DomainEventReceived(long position, IEvent @event)
+        private async Task Process(CancellationToken token)
+        {
+            await _eventBus.SubscribeToEvents(null, GetEventTypes(), DomainEventReceived);
+
+            try {
+                do {
+                    await Task.Delay(_configuration.FeedAggregator.SynchronizationTimespan, token);
+
+                    if (_eventBus.IsConnected) {
+                        await _commandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
+                    }
+                } while (true);
+            }
+            catch (TaskCanceledException) { }
+            catch (Exception ex) {
+                Error(ex);
+            }
+        }
+
+        private static IEnumerable<Type> GetEventTypes()
+        {
+            var domainEvent = typeof(DomainEvent);
+
+            var articlesEvents = typeof(ArticleImported).Assembly.GetTypes()
+                .Where(x=>!x.IsAbstract)
+                .Where(x => x.IsSubclassOf(domainEvent))
+                .ToArray();
+
+            var mediaEvents = typeof(MediaAdded).Assembly.GetTypes()
+                .Where(x => !x.IsAbstract)
+                .Where(x => x.IsSubclassOf(domainEvent))
+                .ToArray();
+
+            return articlesEvents.Union(mediaEvents).ToArray();
+        }
+
+        private async Task DomainEventReceived(IEvent @event)
         {
             await _eventPublisher.Publish(@event);
-            _lastPosition = position;
         }
 
-        private async Task Disconnected()
+        private void Error(Exception ex)
         {
-            await Task.Delay(TimeSpan.FromSeconds(5));
-            await _eventStore.SubscribeToEventsFrom(_lastPosition, DomainEventReceived, Disconnected);
+            _logger.Error(ex, "[AGGREGATOR] Unhandled exception : ");
         }
+
     }
 }

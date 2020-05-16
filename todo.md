@@ -9,7 +9,7 @@
 * if no photo, display media photo
 
 # FeedAggregator 
-* manual reset event to block aggregation if eventstore unreachable.
+* manual reset event to block aggregation if eventstore unreachable. (when live mode enabled)
 * PublishDate vs UpdateDate
 * add author
 * change image url only if not null

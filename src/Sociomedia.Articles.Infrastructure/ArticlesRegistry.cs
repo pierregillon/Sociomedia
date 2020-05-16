@@ -31,6 +31,7 @@ namespace Sociomedia.Articles.Infrastructure
             For<ICommandDispatcher>().DecorateAllWith<CommandDispatchedLogger>();
 
             For<IFeedReader>().Use<FeedReader>();
+            For<IFeedParser>().Use<FeedParser>();
             For<InMemoryDatabase>().Singleton();
             For<ILogger>().Use<ConsoleLogger>();
             For<ITypeLocator>().Use<ReflectionTypeLocator>();

@@ -19,9 +19,6 @@ namespace Sociomedia.Application.Infrastructure.EventStoring
         private readonly EventStoreConfiguration _configuration;
         private readonly ILogger _logger;
         private readonly ITypeLocator _typeLocator;
-        private Func<Task> _disconnected;
-        private EventStoreAllCatchUpSubscription _subscription;
-        private DomainEventReceived _domainEventReceived;
 
         public EventStoreOrg(EventStoreConfiguration configuration, ILogger logger, ITypeLocator typeLocator)
         {
@@ -39,11 +36,9 @@ namespace Sociomedia.Application.Infrastructure.EventStoring
             };
         }
 
-        public bool IsConnected => _connection != null;
-
         // ----- Public methods
 
-        public async Task<IEnumerable<IEvent>> Get(Guid aggregateId, int fromVersion, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IEnumerable<IEvent>> Get(Guid aggregateId, int fromVersion, CancellationToken cancellationToken = default)
         {
             await Connect();
 
@@ -54,7 +49,7 @@ namespace Sociomedia.Application.Infrastructure.EventStoring
                 .ToArray();
         }
 
-        public async Task Save(IEnumerable<IEvent> events, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task Save(IEnumerable<IEvent> events, CancellationToken cancellationToken = default)
         {
             await Connect();
 
@@ -73,61 +68,6 @@ namespace Sociomedia.Application.Infrastructure.EventStoring
             }
         }
 
-        public async Task SubscribeToEventsFrom(long? position, DomainEventReceived domainEventReceived, Func<Task> disconnected)
-        {
-            await Connect();
-
-            _disconnected = disconnected;
-            _domainEventReceived = domainEventReceived;
-
-            _subscription = _connection.SubscribeToAllFrom(
-                position.HasValue ? new Position(position.Value, position.Value) : (Position?) null,
-                CatchUpSubscriptionSettings.Default,
-                EventAppeared,
-                LiveProcessingStarted,
-                SubscriptionDropped
-            );
-
-            Debug($"Subscribing to all events, from position { position } ...");
-        }
-
-        // ----- Callback
-
-        private void SubscriptionDropped(EventStoreCatchUpSubscription subscription, SubscriptionDropReason reason, Exception ex)
-        {
-            Error($"Subscription dropped : {reason}.");
-            Error(ex);
-
-            _disconnected.Invoke().Wait();
-        }
-
-        private void LiveProcessingStarted(EventStoreCatchUpSubscription obj)
-        {
-            Debug("Switched to live mode");
-        }
-
-        private async Task EventAppeared(EventStoreCatchUpSubscription subscription, ResolvedEvent resolvedEvent)
-        {
-            if (resolvedEvent.OriginalStreamId.StartsWith("$")) {
-                return;
-            }
-
-            try {
-                var position = resolvedEvent.OriginalPosition.GetValueOrDefault().CommitPosition;
-                if (TryConvertToDomainEvent(resolvedEvent, out var @event)) {
-                    Debug($"{resolvedEvent.Event.EventType} received. Stream: {resolvedEvent.Event.EventStreamId}, position: {position}");
-                    await _domainEventReceived.Invoke(position, @event);
-                }
-                else {
-                    Debug($"[UNKNOWN EVENT] {resolvedEvent.Event.EventType} received. Stream: {resolvedEvent.Event.EventStreamId}, position: {position}");
-                }
-            }
-            catch (Exception ex) {
-                Error(ex);
-                throw;
-            }
-        }
-
         // ----- Internal logic
 
         private async Task Connect()
@@ -141,12 +81,6 @@ namespace Sociomedia.Application.Infrastructure.EventStoring
                 _connection = null;
             };
             await _connection.ConnectAsync();
-        }
-
-        private bool TryConvertToDomainEvent(ResolvedEvent @event, out IEvent result)
-        {
-            result = ConvertToDomainEvent(@event);
-            return result != null;
         }
 
         private IEvent ConvertToDomainEvent(ResolvedEvent @event)
@@ -190,12 +124,5 @@ namespace Sociomedia.Application.Infrastructure.EventStoring
         {
             _logger.Error("[EVENTSTORE] " + message);
         }
-
-        private void Error(Exception ex)
-        {
-            _logger.Error(ex, "[EVENTSTORE]");
-        }
     }
-
-    public delegate Task DomainEventReceived(long position, IEvent @event);
 }
