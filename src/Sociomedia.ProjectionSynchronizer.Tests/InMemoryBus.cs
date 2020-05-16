@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Sociomedia.Domain;
+using Sociomedia.Application.Domain;
 using Sociomedia.ProjectionSynchronizer.Application;
 
 namespace Sociomedia.ProjectionSynchronizer.Tests

@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using FluentAssertions;
-using Sociomedia.Domain.Themes;
+using Sociomedia.Themes.Domain;
 using Xunit;
 
 namespace Sociomedia.Tests

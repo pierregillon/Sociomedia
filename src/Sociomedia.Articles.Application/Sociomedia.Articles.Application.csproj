@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CqrsLite" Version="1.31.1" />
+    <PackageReference Include="EventStore.Client" Version="5.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sociomedia.Articles.Domain\Sociomedia.Articles.Domain.csproj" />
+    <ProjectReference Include="..\Sociomedia.Core\Sociomedia.Core.csproj" />
+    <ProjectReference Include="..\Sociomedia.Medias.Domain\Sociomedia.Medias.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

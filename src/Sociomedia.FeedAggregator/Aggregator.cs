@@ -2,9 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using Sociomedia.FeedAggregator.Application.SynchronizeAllMediaFeeds;
-using Sociomedia.Infrastructure;
-using Sociomedia.Infrastructure.CQRS;
+using Sociomedia.Application.Infrastructure.CQRS;
+using Sociomedia.Application.Infrastructure.EventStoring;
+using Sociomedia.Articles.Application.Commands.SynchronizeAllMediaFeeds;
 
 namespace Sociomedia.FeedAggregator
 {

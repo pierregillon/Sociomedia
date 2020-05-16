@@ -11,8 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Sociomedia.Articles.Domain\Sociomedia.Articles.Domain.csproj" />
+    <ProjectReference Include="..\Sociomedia.Core\Sociomedia.Core.csproj" />
+    <ProjectReference Include="..\Sociomedia.Medias.Domain\Sociomedia.Medias.Domain.csproj" />
     <ProjectReference Include="..\Sociomedia.ReadModel.DataAccess\Sociomedia.ReadModel.DataAccess.csproj" />
-    <ProjectReference Include="..\Sociomedia.Domain\Sociomedia.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
