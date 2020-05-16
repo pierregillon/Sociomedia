@@ -5,12 +5,12 @@ using Xunit;
 
 namespace Sociomedia.Articles.Tests.UnitTests
 {
-    public class KeywordsCalculatorTests
+    public class KeywordsParserTests
     {
         private readonly KeywordsParser _keywordsParser;
         private readonly IKeywordDictionary _keywordDictionary;
 
-        public KeywordsCalculatorTests()
+        public KeywordsParserTests()
         {
             _keywordDictionary = Substitute.For<IKeywordDictionary>();
             _keywordDictionary.IsNoun(Arg.Any<string>()).Returns(true);
@@ -92,6 +92,15 @@ namespace Sociomedia.Articles.Tests.UnitTests
             _keywordsParser.Parse(text)
                 .Should()
                 .BeEquivalentTo(new Keyword("test", 4));
+        }
+
+        [Theory]
+        [InlineData("être ou ne pas être")]
+        public void Keyword_can_have_diacritics(string text)
+        {
+            _keywordsParser.Parse(text)
+                .Should()
+                .BeEquivalentTo(new Keyword("être", 2));
         }
 
         [Theory]

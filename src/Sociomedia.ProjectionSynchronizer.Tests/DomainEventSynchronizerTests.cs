@@ -302,7 +302,7 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
                 .GetValueOrDefault()
                 .Date
                 .Should()
-                .Be(DateTime.UtcNow.Date);
+                .Be(DateTime.Now.Date);
         }
 
         // ----- Internal logic
