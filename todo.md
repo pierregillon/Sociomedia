@@ -19,13 +19,9 @@
 * remove feed update date
 * add media information
   => https://fr.wikipedia.org/wiki/Presse_quotidienne_nationale_fran%C3%A7aise
-* add media information
-  => https://fr.wikipedia.org/wiki/Presse_quotidienne_nationale_fran%C3%A7aise/fr.wikipedia.org/wiki/Presse_quotidienne_nationale_fran%C3%A7aise 
 * remove feed articles without date
 * Convert date fr to utc with timezone doesn't work on linux
   => https://dejanstojanovic.net/aspnet/2018/july/differences-in-time-zones-in-net-core-on-windows-and-linux-host-os/
-* add media information
-  => https://fr.wikipedia.org/wiki/Presse_quotidienne_nationale_fran%C3%A7aise
 
 # ProjectionSynchronizer
 * use transaction when multiple insertion in sql db (article + keyword)
