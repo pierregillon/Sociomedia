@@ -6,6 +6,7 @@ using EventStore.ClientAPI;
 using FluentAssertions;
 using LinqToDB;
 using LinqToDB.Data;
+using Sociomedia.Application.Infrastructure.EventStoring;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Medias.Domain;
 using Sociomedia.ProjectionSynchronizer.Application;
@@ -302,18 +303,6 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
                 .Date
                 .Should()
                 .Be(DateTime.UtcNow.Date);
-        }
-
-        [Fact]
-        public async Task Restart_connection_on_connection_lost()
-        {
-            await _synchronizer.StartSynchronization();
-
-            await _inMemoryBus.SimulateConnectionLost();
-
-            _inMemoryBus.IsListening
-                .Should()
-                .Be(true);
         }
 
         // ----- Internal logic

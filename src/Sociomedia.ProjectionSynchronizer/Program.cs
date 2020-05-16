@@ -23,11 +23,9 @@ namespace Sociomedia.ProjectionSynchronizer
 
                 var synchronizer = container.GetInstance<DomainEventSynchronizer>();
 
-                container.GetInstance<ILogger>().Debug("Read database synchronizer started.");
-
                 await synchronizer.StartSynchronization();
 
-                Console.WriteLine("Started");
+                container.GetInstance<ILogger>().Debug("[PROGRAM] Read database synchronizer started.");
 
                 WaitForExit();
 

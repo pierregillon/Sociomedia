@@ -89,7 +89,7 @@ namespace Sociomedia.Application.Infrastructure.EventStoring
                 var json = Encoding.UTF8.GetString(@event.Event.Data);
                 var type = _typeLocator.FindEventType(@event.Event.EventType);
                 if (type == null) {
-                    return null;
+                    throw new Exception("Event is unknown, unable to correctly deserialize it.");
                 }
                 var domainEvent = (IEvent) JsonConvert.DeserializeObject(json, type, _serializerSettings);
                 domainEvent.Version = (int) @event.OriginalEventNumber + 1;

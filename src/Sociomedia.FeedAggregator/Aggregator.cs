@@ -62,16 +62,12 @@ namespace Sociomedia.FeedAggregator
 
         private static IEnumerable<Type> GetEventTypes()
         {
-            var domainEvent = typeof(DomainEvent);
-
             var articlesEvents = typeof(ArticleImported).Assembly.GetTypes()
-                .Where(x=>!x.IsAbstract)
-                .Where(x => x.IsSubclassOf(domainEvent))
+                .Where(x => x.IsDomainEvent())
                 .ToArray();
 
             var mediaEvents = typeof(MediaAdded).Assembly.GetTypes()
-                .Where(x => !x.IsAbstract)
-                .Where(x => x.IsSubclassOf(domainEvent))
+                .Where(x => x.IsDomainEvent())
                 .ToArray();
 
             return articlesEvents.Union(mediaEvents).ToArray();

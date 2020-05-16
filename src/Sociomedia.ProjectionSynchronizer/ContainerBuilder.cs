@@ -1,6 +1,10 @@
-﻿using EventStore.ClientAPI;
+﻿using CQRSlite.Events;
+using EventStore.ClientAPI;
 using EventStore.ClientAPI.Common.Log;
+using Sociomedia.Application.Application;
 using Sociomedia.Application.Domain;
+using Sociomedia.Application.Infrastructure.CQRS;
+using Sociomedia.Application.Infrastructure.EventStoring;
 using Sociomedia.ProjectionSynchronizer.Application;
 using Sociomedia.ProjectionSynchronizer.Infrastructure;
 using Sociomedia.ReadModel.DataAccess;
@@ -15,7 +19,7 @@ namespace Sociomedia.ProjectionSynchronizer
         public static IContainer Build(Configuration configuration)
         {
             return new Container(x => {
-                x.For<IEventBus>().Use<EventStoreOrg>().Singleton();
+                x.For<IEventBus>().Use<EventStoreOrgBus>().Singleton();
                 x.For<IEventPublisher>().Use<StructureMapEventPublisher>();
                 x.For<IDomainEventTypeLocator>().Use<ReflectionDomainEventTypeLocator>().Singleton();
                 x.For<ILogger>().Use<ConsoleLogger>();

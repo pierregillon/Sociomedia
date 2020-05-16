@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using LinqToDB;
+using Sociomedia.Application.Application;
 using Sociomedia.Medias.Domain;
 using Sociomedia.ReadModel.DataAccess;
 

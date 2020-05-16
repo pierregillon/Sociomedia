@@ -20,18 +20,29 @@ namespace Sociomedia.Application.Infrastructure.EventStoring
 
         public bool IsConnected => _connection != null;
 
-        public async Task SubscribeToEvents(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived)
+        public async Task SubscribeToEvents(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, PositionInStreamChanged positionInStreamChanged)
         {
             var subscription = new EventsSubscription(
                 initialPosition,
                 eventTypes,
                 domainEventReceived,
+                positionInStreamChanged,
                 _logger
             );
 
             _subscriptions.Add(subscription);
 
             subscription.DefineConnection(await GetOrCreateNewConnection());
+        }
+
+        public void Stop()
+        {
+            foreach (var subscription in _subscriptions) {
+                subscription.Stop();
+            }
+            _subscriptions.Clear();
+            _connection?.Close();
+            _connection = null;
         }
 
         private async Task<IEventStoreConnection> GetOrCreateNewConnection()

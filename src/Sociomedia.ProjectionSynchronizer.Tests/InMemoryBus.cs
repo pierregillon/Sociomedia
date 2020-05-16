@@ -1,40 +1,39 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sociomedia.Application.Domain;
-using Sociomedia.ProjectionSynchronizer.Application;
+using Sociomedia.Application.Infrastructure.EventStoring;
 
 namespace Sociomedia.ProjectionSynchronizer.Tests
 {
     public class InMemoryBus : IEventBus
     {
         private DomainEventReceived _domainEventReceived;
-        private Func<Task> _disconnected;
+        private PositionInStreamChanged _positionInStreamChanged;
         public bool IsListening { get; private set; }
 
         public long? LastStreamPosition { get; private set; }
 
-        public Task StartListeningEvents(long? lastPosition, DomainEventReceived domainEventReceived, Func<Task> disconnected)
+        public bool IsConnected => IsListening;
+
+        public Task SubscribeToEvents(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, PositionInStreamChanged positionInStreamChanged = null)
         {
             _domainEventReceived = domainEventReceived;
-            LastStreamPosition = lastPosition;
-            _disconnected = disconnected;
+            _positionInStreamChanged = positionInStreamChanged;
+            LastStreamPosition = initialPosition;
             IsListening = true;
             return Task.CompletedTask;
         }
 
-        public void StopListeningEvents()
+        public void Stop()
         {
             IsListening = false;
         }
 
         public async Task Push(long position, DomainEvent @event)
         {
-            await _domainEventReceived(position, @event);
-        }
-
-        public Task SimulateConnectionLost()
-        {
-            return _disconnected.Invoke();
+            await _positionInStreamChanged(position);
+            await _domainEventReceived(@event);
         }
     }
 }

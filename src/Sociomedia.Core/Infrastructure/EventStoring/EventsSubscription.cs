@@ -12,16 +12,18 @@ namespace Sociomedia.Application.Infrastructure.EventStoring
     public class EventsSubscription
     {
         private readonly DomainEventReceived _domainEventReceived;
+        private readonly PositionInStreamChanged _positionInStreamChanged;
         private readonly ILogger _logger;
         private EventStoreAllCatchUpSubscription _subscription;
         private readonly Dictionary<string, Type> _nameToEventType;
         private readonly JsonSerializerSettings _serializerSettings;
         private Position? _lastPosition;
 
-        public EventsSubscription(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, ILogger logger)
+        public EventsSubscription(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, PositionInStreamChanged positionInStreamChanged, ILogger logger)
         {
             _lastPosition = initialPosition.HasValue ? new Position(initialPosition.Value, initialPosition.Value) : (Position?) null;
             _domainEventReceived = domainEventReceived;
+            _positionInStreamChanged = positionInStreamChanged;
             _logger = logger;
             _nameToEventType = eventTypes.ToDictionary(x => x.Name);
 
@@ -49,6 +51,11 @@ namespace Sociomedia.Application.Infrastructure.EventStoring
             );
         }
 
+        public void Stop()
+        {
+            _subscription?.Stop();
+        }
+
         // ----- Callback
 
         private void ConnectionOnClosed(object? sender, ClientClosedEventArgs e)
@@ -72,6 +79,9 @@ namespace Sociomedia.Application.Infrastructure.EventStoring
 
             if (TryConvertToDomainEvent(resolvedEvent, out var @event)) {
                 Debug($"Event received : stream: {resolvedEvent.OriginalStreamId}, date: {resolvedEvent.Event.Created:g} type: {@event.GetType().Name}");
+                if (_positionInStreamChanged != null) {
+                    await _positionInStreamChanged.Invoke(_lastPosition.GetValueOrDefault().CommitPosition);
+                }
                 await _domainEventReceived.Invoke(@event);
             }
         }

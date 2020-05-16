@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sociomedia.Core\Sociomedia.Core.csproj" />
+    <ProjectReference Include="..\Sociomedia.Medias.Domain\Sociomedia.Medias.Domain.csproj" />
   </ItemGroup>
 
 </Project>
