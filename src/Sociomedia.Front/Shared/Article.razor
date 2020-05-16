@@ -3,7 +3,14 @@
 <div class="card article">
     <a class="image" href="@Value.Url" target="_blank">
         <img class="card-img-top" src="@Value.ImageUrl">
-        <span class="summary">@Value.Summary</span>
+        <div class="summary">
+            <span class="summary-text">
+                @Value.Summary
+            </span>
+        </div>
+        <span class="publish-date badge badge-pill badge-warning" data-toggle="tooltip" data-placement="right" title="@Value.PublishDate.ToString("F")">
+            @GetElapsedTimeFromDate(Value.PublishDate)
+        </span>
     </a>
     <div class="card-body">
         <a href="@Value.Url" target="_blank">
@@ -20,9 +27,6 @@
             <a href="@("/medias/" + Value.MediaId)">
                 <img class="logo" src="@Value.MediaImageUrl"/>
             </a>
-            <small class="text-muted" data-toggle="tooltip" data-placement="right" title="@Value.PublishDate.ToString("F")">
-                @GetEllapsedTimeFromDate(Value.PublishDate)
-            </small>
         </div>
     </div>
 </div>
@@ -42,6 +46,7 @@
         text-align: center;
         margin: 5px;
         max-height: 25px;
+        min-height: 15px;
         max-width: 120px;
     }
 
@@ -63,17 +68,32 @@
         left: 0;
         width: 100%;
         height: 100%;
-        padding: 10px;
-        background: rgba(0, 0, 0, 0.4);
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.5);
         color: white;
         font-size: 17px;
-        font-weight: bold;
+    }
+
+    .article .image .summary .summary-text {
+        text-align: left;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 6;
+        -moz-box-orient: vertical;
+        height: 162px;
+        font-size: 18px;
     }
 
     .article .image:hover .summary  {
         display: initial;
     }
 
+    .article .image .publish-date {
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+        border: solid black 1px;
+    }
 
     .article .title {
         text-align: left;
@@ -91,28 +111,28 @@
     [Parameter]
     public ArticleListItem Value { get; set; }
 
-    private string GetEllapsedTimeFromDate(DateTimeOffset value)
+    private string GetElapsedTimeFromDate(DateTimeOffset value)
     {
         var result = DateTimeOffset.Now.Subtract(value);
         if (result.TotalSeconds < 60) {
-            return $"Il y a {(int)result.TotalSeconds} secondes.";
+            return $"Il y a {(int)result.TotalSeconds} secondes";
         }
         if (result.TotalSeconds < 120) {
-            return "Il y a 1 minute.";
+            return "Il y a 1 minute";
         }
         if (result.TotalMinutes < 60) {
-            return $"Il y a {(int)result.TotalMinutes} minutes.";
+            return $"Il y a {(int)result.TotalMinutes} minutes";
         }
         if (result.TotalHours < 2) {
-            return "Il y a 1 heure.";
+            return "Il y a 1 heure";
         }
         if (result.TotalHours < 24) {
-            return $"Il y a {(int)result.TotalHours} heures.";
+            return $"Il y a {(int)result.TotalHours} heures";
         }
         if (result.TotalDays < 2) {
-            return "Il y a 1 jour.";
+            return "Il y a 1 jour";
         }
-        return $"Il y a {(int)result.TotalDays} jours.";
+        return $"Il y a {(int)result.TotalDays} jours";
     }
 
 }
