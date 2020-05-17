@@ -30,7 +30,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
 
         [Theory]
         [InlineData("I love cat, yes love cat !")]
-        public void A_keyword_is_must_be_a_noun(string text)
+        public void A_keyword_is_must_be_validated_by_dictionary(string text)
         {
             _keywordDictionary.IsValidKeyword("love").Returns(false);
 
@@ -112,6 +112,26 @@ namespace Sociomedia.Articles.Tests.UnitTests
                 .Contain(new Keyword("john wick", 2))
                 .And.NotContain(new Keyword("john", 1))
                 .And.NotContain(new Keyword("wick", 1));
+        }
+
+        [Theory]
+        [InlineData("2020 a 2020 a test2 a test2")]
+        public void A_keyword_does_not_contain_digit(string text)
+        {
+            _keywordsParser.Parse(text)
+                .Should()
+                .BeEmpty();
+        }
+
+        [Theory]
+        [InlineData("Le président est Jean Petit. Jean Petit aime diriger.")]
+        public void A_keyword_can_be_a_first_name_and_last_name(string text)
+        {
+            _keywordDictionary.IsValidKeyword("Petit").Returns(false);
+            
+            _keywordsParser.Parse(text)
+                .Should()
+                .Contain(new Keyword("jean petit", 2));
         }
     }
 }

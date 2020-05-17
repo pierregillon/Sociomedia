@@ -45,7 +45,7 @@ namespace Sociomedia.Articles.Domain
                    && (char.IsUpper(word[0]) || _keywordDictionary.IsValidKeyword(word));
         }
 
-        private IEnumerable<Keyword> TransformToKeywords(IReadOnlyCollection<string> words)
+        private static IEnumerable<Keyword> TransformToKeywords(IReadOnlyCollection<string> words)
         {
             if (words.Count == 0) {
                 yield break;
@@ -72,14 +72,14 @@ namespace Sociomedia.Articles.Domain
             }
         }
 
-        private IEnumerable<Keyword> GetKeywordsComposed(IReadOnlyCollection<string> words, int combinationSize)
+        private static IEnumerable<Keyword> GetKeywordsComposed(IReadOnlyCollection<string> words, int combinationSize)
         {
             return Enumerable.Range(0, combinationSize)
                 .SelectMany(x => words.Skip(x).Chunk(combinationSize))
                 .Where(x => x.All(w => w != null))
-                .GroupBy(x => string.Join(' ', x).RemoveDiacritics().ToLower())
+                .GroupBy(x => x.ConcatWords().RemoveDiacritics().ToLower())
                 .Where(x => x.Count() >= WORD_MIN_OCCURENCE)
-                .Select(x => new Keyword(string.Join(' ', x.First()).ToLowerInvariant(), x.Count()));
+                .Select(x => new Keyword(x.First().ConcatWords().ToLower(), x.Count()));
         }
     }
 }
