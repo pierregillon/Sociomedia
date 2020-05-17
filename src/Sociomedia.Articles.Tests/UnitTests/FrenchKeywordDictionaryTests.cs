@@ -21,7 +21,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [InlineData("information")]
         public void Is_a_french_noun(string word)
         {
-            _dictionary.IsNoun(word).Should().BeTrue();
+            _dictionary.IsValidKeyword(word).Should().BeTrue();
         }
 
 
@@ -30,7 +30,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [InlineData("VOITURE")]
         public void Compare_in_case_invariant(string word)
         {
-            _dictionary.IsNoun(word).Should().BeTrue();
+            _dictionary.IsValidKeyword(word).Should().BeTrue();
         }
 
         [Theory]
@@ -44,7 +44,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [InlineData("aventurais")]
         public void Is_not_a_french_noun(string word)
         {
-            _dictionary.IsNoun(word).Should().BeFalse();
+            _dictionary.IsValidKeyword(word).Should().BeFalse();
         }
     }
 }

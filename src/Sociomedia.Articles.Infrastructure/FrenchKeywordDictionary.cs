@@ -12,7 +12,7 @@ namespace Sociomedia.Articles.Infrastructure
 
         public FrenchKeywordDictionary(string fileName)
         {
-            var content = File.ReadAllText(Path.Combine(fileName));
+            var content = File.ReadAllText(fileName);
 
             _nouns = content
                 .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
@@ -20,7 +20,7 @@ namespace Sociomedia.Articles.Infrastructure
                 .ToDictionary(x => x.Key, x => x.ToArray());
         }
 
-        public bool IsNoun(string word)
+        public bool IsValidKeyword(string word)
         {
             if (string.IsNullOrWhiteSpace(word)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(word));
             var lowerCase = word.ToLowerInvariant();

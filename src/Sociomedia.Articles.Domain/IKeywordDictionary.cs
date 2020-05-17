@@ -2,6 +2,6 @@
 {
     public interface IKeywordDictionary
     {
-        bool IsNoun(string word);
+        bool IsValidKeyword(string word);
     }
 }

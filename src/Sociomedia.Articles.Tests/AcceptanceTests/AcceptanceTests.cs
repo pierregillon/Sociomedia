@@ -8,7 +8,8 @@ using Sociomedia.Core.Infrastructure.CQRS;
 using Sociomedia.Core.Infrastructure.EventStoring;
 using StructureMap;
 
-namespace Sociomedia.Articles.Tests.AcceptanceTests {
+namespace Sociomedia.Articles.Tests.AcceptanceTests
+{
     public abstract class AcceptanceTests
     {
         protected readonly ICommandDispatcher CommandDispatcher;
@@ -23,6 +24,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests {
             Container.Inject<ILogger>(new EmptyLogger());
             Container.Inject(Substitute.For<IWebPageDownloader>());
             Container.Inject<IEventStore>(Container.GetInstance<InMemoryEventStore>());
+            Container.Inject(Substitute.For<IKeywordDictionary>());
 
             CommandDispatcher = Container.GetInstance<ICommandDispatcher>();
             WebPageDownloader = Container.GetInstance<IWebPageDownloader>();

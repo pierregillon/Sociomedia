@@ -1,4 +1,4 @@
-using FluentAssertions;
+ï»¿using FluentAssertions;
 using NSubstitute;
 using Sociomedia.Articles.Domain;
 using Xunit;
@@ -13,7 +13,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
         public KeywordsParserTests()
         {
             _keywordDictionary = Substitute.For<IKeywordDictionary>();
-            _keywordDictionary.IsNoun(Arg.Any<string>()).Returns(true);
+            _keywordDictionary.IsValidKeyword(Arg.Any<string>()).Returns(true);
 
             _keywordsParser = new KeywordsParser(_keywordDictionary);
         }
@@ -32,7 +32,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [InlineData("I love cat, yes love cat !")]
         public void A_keyword_is_must_be_a_noun(string text)
         {
-            _keywordDictionary.IsNoun("love").Returns(false);
+            _keywordDictionary.IsValidKeyword("love").Returns(false);
 
             _keywordsParser.Parse(text)
                 .Should()
@@ -86,7 +86,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
         }
 
         [Theory]
-        [InlineData("TEST a Test b test c tést")]
+        [InlineData("TEST a Test b test c tÃ©st")]
         public void Keyword_is_a_group_of_words_ignoring_case_or_diacritics(string text)
         {
             _keywordsParser.Parse(text)
@@ -95,12 +95,12 @@ namespace Sociomedia.Articles.Tests.UnitTests
         }
 
         [Theory]
-        [InlineData("être ou ne pas être")]
+        [InlineData("Ãªtre ou ne pas Ãªtre")]
         public void Keyword_can_have_diacritics(string text)
         {
             _keywordsParser.Parse(text)
                 .Should()
-                .BeEquivalentTo(new Keyword("être", 2));
+                .BeEquivalentTo(new Keyword("Ãªtre", 2));
         }
 
         [Theory]

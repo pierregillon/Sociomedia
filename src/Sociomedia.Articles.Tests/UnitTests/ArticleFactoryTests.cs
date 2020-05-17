@@ -22,7 +22,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
             _webPageDownloader.Download(Arg.Any<string>()).Returns("<html></html>");
 
             var keywordDictionary = Substitute.For<IKeywordDictionary>();
-            keywordDictionary.IsNoun(Arg.Any<string>()).Returns(true);
+            keywordDictionary.IsValidKeyword(Arg.Any<string>()).Returns(true);
 
             _articleFactory = new ArticleFactory(new HtmlParser(), _webPageDownloader, new KeywordsParser(keywordDictionary));
         }

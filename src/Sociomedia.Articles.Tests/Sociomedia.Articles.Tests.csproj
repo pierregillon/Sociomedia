@@ -22,6 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Dictionaries\french.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Dictionaries\french_nouns.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

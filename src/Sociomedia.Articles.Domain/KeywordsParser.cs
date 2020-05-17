@@ -13,7 +13,7 @@ namespace Sociomedia.Articles.Domain
         private const int WORD_MIN_OCCURENCE = 2;
         private const int MIN_WORD_LENGTH = 2;
 
-        private static readonly string[] Separators = { " ", "\"", "'", "’", "«", "»", "?", "!", ";", ",", "." };
+        private static readonly string[] Separators = { " ", "\"", "'", "’", "«", "»", "?", "!", ";", ",", ".", ":" };
 
         public KeywordsParser(IKeywordDictionary keywordDictionary)
         {
@@ -28,13 +28,21 @@ namespace Sociomedia.Articles.Domain
                 .ToArray()
                 .Pipe(TransformToKeywords)
                 .Pipe(FilterOnlyNewKeywords)
-                .OrderByDescending(x => x.Occurence)
+                .OrderByDescending(x => x.Score)
                 .ThenBy(x => x.WordCount);
         }
 
         private string ReplaceWordIfInvalid(string word)
         {
-            return word.Length > MIN_WORD_LENGTH && _keywordDictionary.IsNoun(word) ? word : null;
+            return IsValidWord(word) ? word : null;
+        }
+
+        private bool IsValidWord(string word)
+        {
+            return !string.IsNullOrWhiteSpace(word) 
+                   && word.Length > MIN_WORD_LENGTH 
+                   && !word.Any(char.IsDigit) 
+                   && (char.IsUpper(word[0]) || _keywordDictionary.IsValidKeyword(word));
         }
 
         private IEnumerable<Keyword> TransformToKeywords(IReadOnlyCollection<string> words)

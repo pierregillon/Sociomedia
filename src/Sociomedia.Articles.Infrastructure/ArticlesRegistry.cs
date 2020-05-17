@@ -2,6 +2,7 @@
 using System.IO;
 using CQRSlite.Domain;
 using CQRSlite.Events;
+using EventStore.ClientAPI;
 using EventStore.ClientAPI.Common.Log;
 using Sociomedia.Articles.Application.Queries;
 using Sociomedia.Articles.Domain;
@@ -12,7 +13,6 @@ using Sociomedia.Core.Infrastructure.Logging;
 using StructureMap;
 using StructureMap.Graph;
 using StructureMap.Graph.Scanning;
-using ILogger = EventStore.ClientAPI.ILogger;
 
 namespace Sociomedia.Articles.Infrastructure
 {
@@ -33,10 +33,12 @@ namespace Sociomedia.Articles.Infrastructure
             For<ICommandDispatcher>().DecorateAllWith<CommandDispatchedLogger>();
 
             For<IKeywordDictionary>()
-                .Use<FrenchKeywordDictionary>()
+                .Use<FullFrenchKeywordDictionary>()
                 .Ctor<string>()
-                .Is(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Dictionaries\\french_nouns.txt"));
-            
+                .Is(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "./Dictionaries/french.csv"))
+                .OnCreation(x => x.BuildFromFile())
+                .Singleton();
+
             For<IFeedReader>().Use<FeedReader>();
             For<IFeedParser>().Use<FeedParser>();
             For<InMemoryDatabase>().Singleton();
@@ -63,7 +65,4 @@ namespace Sociomedia.Articles.Infrastructure
             }
         }
     }
-
-
-
 }

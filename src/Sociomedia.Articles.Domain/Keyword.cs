@@ -12,6 +12,7 @@ namespace Sociomedia.Articles.Domain
         public int Occurence { get; }
         public int WordCount => _words.Count;
         public IEnumerable<string> Words => _words;
+        public int Score => Occurence * WordCount;
 
         public Keyword(string value, int occurence)
         {
