@@ -9,10 +9,10 @@ namespace Sociomedia.FeedAggregator
     public class FeedAggregatorApplication
     {
         private readonly ILogger _logger;
-        private readonly FullFrenchKeywordDictionary _dictionary;
+        private readonly FrenchKeywordDictionary _dictionary;
         private readonly Aggregator _aggregator;
 
-        public FeedAggregatorApplication(ILogger logger, FullFrenchKeywordDictionary dictionary, Aggregator aggregator)
+        public FeedAggregatorApplication(ILogger logger, FrenchKeywordDictionary dictionary, Aggregator aggregator)
         {
             _logger = logger;
             _dictionary = dictionary;

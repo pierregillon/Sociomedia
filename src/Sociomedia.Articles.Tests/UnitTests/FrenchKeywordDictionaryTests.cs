@@ -6,45 +6,54 @@ namespace Sociomedia.Articles.Tests.UnitTests
 {
     public class FrenchKeywordDictionaryTests
     {
-        private readonly FrenchKeywordDictionary _dictionary;
+        private static readonly FrenchKeywordDictionary Dictionary;
 
-        public FrenchKeywordDictionaryTests()
+        static FrenchKeywordDictionaryTests()
         {
-            _dictionary = new FrenchKeywordDictionary("Dictionaries\\french_nouns.txt");
+            Dictionary = new FrenchKeywordDictionary("./Dictionaries/french.csv");
+            Dictionary.BuildFromFile();
         }
 
         [Theory]
-        [InlineData("voiture")]
-        [InlineData("alimentation")]
-        [InlineData("santé")]
-        [InlineData("ordinateur")]
-        [InlineData("information")]
-        public void Is_a_french_noun(string word)
+        [InlineData("aventure")]
+        [InlineData("chat")]
+        [InlineData("écologiste")]
+        [InlineData("climatique")]
+        [InlineData("écologique")]
+        public void Valid_keyword_is_a_noun_or_an_adjective(string noun)
         {
-            _dictionary.IsValidKeyword(word).Should().BeTrue();
-        }
-
-
-        [Theory]
-        [InlineData("Voiture")]
-        [InlineData("VOITURE")]
-        public void Compare_in_case_invariant(string word)
-        {
-            _dictionary.IsValidKeyword(word).Should().BeTrue();
+            Dictionary.IsValidKeyword(noun).Should().BeTrue();
         }
 
         [Theory]
-        [InlineData("tester")]
-        [InlineData("assouplir")]
-        [InlineData("réduire")]
-        [InlineData("tant")]
+        [InlineData("plus")]
+        [InlineData("pour")]
+        [InlineData("fait")]
+        [InlineData("moins")]
         [InlineData("mais")]
-        [InlineData("le")]
-        [InlineData("du")]
-        [InlineData("aventurais")]
-        public void Is_not_a_french_noun(string word)
+        [InlineData("est")]
+        public void Some_words_are_forbidden(string adjective)
         {
-            _dictionary.IsValidKeyword(word).Should().BeFalse();
+            Dictionary.IsValidKeyword(adjective).Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData("trump")]
+        [InlineData("coronavirus")]
+        [InlineData("rachida dati")]
+        public void Valid_keyword_is_unknown_word(string word)
+        {
+            Dictionary.IsValidKeyword(word).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData("le")]
+        [InlineData("de")]
+        [InlineData("mais")]
+        [InlineData("depuis")]
+        public void Invalid_keyword_is_article_or_auxiliary(string word)
+        {
+            Dictionary.IsValidKeyword(word).Should().BeFalse();
         }
     }
 }

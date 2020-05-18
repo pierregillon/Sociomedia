@@ -32,13 +32,13 @@ namespace Sociomedia.Articles.Infrastructure
 
             For<ICommandDispatcher>().DecorateAllWith<CommandDispatchedLogger>();
 
-            For<FullFrenchKeywordDictionary>()
-                .Use<FullFrenchKeywordDictionary>()
+            For<FrenchKeywordDictionary>()
+                .Use<FrenchKeywordDictionary>()
                 .Ctor<string>()
                 .Is(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "./Dictionaries/french.csv"))
                 .Singleton();
 
-            For<IKeywordDictionary>().Use(x => x.GetInstance<FullFrenchKeywordDictionary>());
+            For<IKeywordDictionary>().Use(x => x.GetInstance<FrenchKeywordDictionary>());
 
             For<IFeedReader>().Use<FeedReader>();
             For<IFeedParser>().Use<FeedParser>();
