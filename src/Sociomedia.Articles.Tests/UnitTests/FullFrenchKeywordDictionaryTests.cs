@@ -30,7 +30,9 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [InlineData("pour")]
         [InlineData("fait")]
         [InlineData("moins")]
-        public void Some_adjectives_are_forbidden(string adjective)
+        [InlineData("mais")]
+        [InlineData("est")]
+        public void Some_words_are_forbidden(string adjective)
         {
             Dictionary.IsValidKeyword(adjective).Should().BeFalse();
         }

@@ -12,7 +12,7 @@ namespace Sociomedia.Articles.Infrastructure
     {
         private readonly string _fileName;
         private readonly IDictionary<string, List<WordDescriptor>> _wordDescriptors = new Dictionary<string, List<WordDescriptor>>();
-        private readonly IReadOnlyCollection<string> _specialForbiddenWords = new[] { "plus", "pour", "fait", "moins" };
+        private readonly IReadOnlyCollection<string> _specialForbiddenWords = new[] { "plus", "pour", "fait", "moins", "mais", "est" };
         private bool _isDictionaryBuilt;
 
         public FullFrenchKeywordDictionary(string fileName)
@@ -37,6 +37,7 @@ namespace Sociomedia.Articles.Infrastructure
         public bool IsValidKeyword(string word)
         {
             if (string.IsNullOrWhiteSpace(word)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(word));
+
             if (!_isDictionaryBuilt) {
                 throw new InvalidOperationException("The french dictionary must be initialized first.");
             }
@@ -81,7 +82,8 @@ namespace Sociomedia.Articles.Infrastructure
             private readonly HashSet<string> _types;
 
             public string Word { get; }
-            public bool IsKeyWord => _types.Contains("NOM") || _types.Contains("ADJ");
+            public bool IsKeyWord => !_types.Any(x => x.StartsWith("ADJ:") || x.StartsWith("PRO:") || x.StartsWith("ART:") || x == "PRE") 
+                                     && (_types.Contains("NOM") || _types.Contains("ADJ"));
 
             public WordDescriptor(string word, string type)
             {

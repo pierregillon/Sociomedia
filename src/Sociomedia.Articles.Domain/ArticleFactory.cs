@@ -37,7 +37,7 @@ namespace Sociomedia.Articles.Domain
 
             var keywords = _keywordsParser.Parse(text).Take(50).ToArray();
 
-            return new Article(mediaId, externalArticle, keywords.Select(x => x.ToString()).ToArray());
+            return new Article(mediaId, externalArticle, keywords.Select(x => x.Value).ToArray());
         }
 
         private static string InjectHostIfMissing(string imageUrl, string articleUrl)

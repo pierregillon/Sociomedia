@@ -9,11 +9,11 @@ namespace Sociomedia.Articles.Domain
     {
         private readonly IKeywordDictionary _keywordDictionary;
 
-        private const int COMPOSED_WORD_MAX_SIZE = 4;
-        private const int WORD_MIN_OCCURENCE = 2;
-        private const int MIN_WORD_LENGTH = 2;
+        private const int MAX_COMPOSED_WORD_LENGTH = 3;
+        private const int MIN_WORD_OCCURENCE = 2;
+        private const int MIN_WORD_LENGTH = 3;
 
-        private static readonly string[] Separators = { " ", "\"", "'", "’", "«", "»", "?", "!", ";", ",", ".", ":" };
+        private static readonly string[] Separators = { " ", "\"", "'", "’", "“", "”", "«", "»", "?", "!", ";", ",", ".", ":", "(", ")" };
 
         public KeywordsParser(IKeywordDictionary keywordDictionary)
         {
@@ -27,17 +27,16 @@ namespace Sociomedia.Articles.Domain
                 .Select(ReplaceWordIfInvalid)
                 .ToArray()
                 .Pipe(TransformToKeywords)
-                .Pipe(FilterOnlyNewKeywords)
-                .OrderByDescending(x => x.Score)
-                .ThenBy(x => x.WordCount);
+                .OrderByDescending(x => x.Occurence)
+                .ThenByDescending(x => x.WordCount);
         }
 
         private string ReplaceWordIfInvalid(string word)
         {
-            return IsValidWord(word) ? word : null;
+            return IsWordEligible(word) ? word : null;
         }
 
-        private bool IsValidWord(string word)
+        private bool IsWordEligible(string word)
         {
             return !string.IsNullOrWhiteSpace(word) 
                    && word.Length > MIN_WORD_LENGTH 
@@ -51,24 +50,11 @@ namespace Sociomedia.Articles.Domain
                 yield break;
             }
 
-            for (var combinationSize = COMPOSED_WORD_MAX_SIZE; combinationSize >= 1; combinationSize--) {
+            for (var combinationSize = MAX_COMPOSED_WORD_LENGTH; combinationSize >= 1; combinationSize--) {
                 var keywords = GetKeywordsComposed(words, combinationSize);
                 foreach (var keyword in keywords) {
                     yield return keyword;
                 }
-            }
-        }
-
-        private static IEnumerable<Keyword> FilterOnlyNewKeywords(IEnumerable<Keyword> keywords)
-        {
-            var allKeywords = new List<Keyword>();
-            foreach (var keyword in keywords) {
-                var existing = allKeywords.FirstOrDefault(x => x.Contains(keyword));
-                if (existing != null && existing.Occurence == keyword.Occurence) {
-                    continue;
-                }
-                allKeywords.Add(keyword);
-                yield return keyword;
             }
         }
 
@@ -78,7 +64,7 @@ namespace Sociomedia.Articles.Domain
                 .SelectMany(x => words.Skip(x).Chunk(combinationSize))
                 .Where(x => x.All(w => w != null))
                 .GroupBy(x => x.ConcatWords().RemoveDiacritics().ToLower())
-                .Where(x => x.Count() >= WORD_MIN_OCCURENCE)
+                .Where(x => x.Count() >= MIN_WORD_OCCURENCE)
                 .Select(x => new Keyword(x.First().ConcatWords().ToLower(), x.Count()));
         }
     }

@@ -29,14 +29,14 @@ namespace Sociomedia.Articles.Tests.UnitTests
         }
 
         [Theory]
-        [InlineData("I love cat, yes love cat !")]
+        [InlineData("I love cats, yes love cats !")]
         public void A_keyword_is_must_be_validated_by_dictionary(string text)
         {
             _keywordDictionary.IsValidKeyword("love").Returns(false);
 
             _keywordsParser.Parse(text)
                 .Should()
-                .Contain(new Keyword("cat", 1));
+                .Contain(new Keyword("cats", 2));
         }
 
         [Fact]
@@ -77,15 +77,6 @@ namespace Sociomedia.Articles.Tests.UnitTests
         }
 
         [Theory]
-        [InlineData("John wick enjoys killing during winter time. Of course, john wick enjoys killing in summer time too.")]
-        public void Keywords_can_be_a_combination_four_words(string text)
-        {
-            _keywordsParser.Parse(text)
-                .Should()
-                .Contain(new Keyword("john wick enjoys killing", 2));
-        }
-
-        [Theory]
         [InlineData("TEST a Test b test c tést")]
         public void Keyword_is_a_group_of_words_ignoring_case_or_diacritics(string text)
         {
@@ -105,13 +96,13 @@ namespace Sociomedia.Articles.Tests.UnitTests
 
         [Theory]
         [InlineData("John wick enjoys killing during winter time, and John wick is great.")]
-        public void A_keyword_with_multiple_words_overrides_other_keyword(string text)
+        public void A_keyword_with_multiple_words_do_not_override_keyword_with_single(string text)
         {
             _keywordsParser.Parse(text)
                 .Should()
                 .Contain(new Keyword("john wick", 2))
-                .And.NotContain(new Keyword("john", 1))
-                .And.NotContain(new Keyword("wick", 1));
+                .And.Contain(new Keyword("john", 1))
+                .And.Contain(new Keyword("wick", 1));
         }
 
         [Theory]
@@ -132,6 +123,20 @@ namespace Sociomedia.Articles.Tests.UnitTests
             _keywordsParser.Parse(text)
                 .Should()
                 .Contain(new Keyword("jean petit", 2));
+        }
+
+        [Theory]
+        [InlineData("John wick enjoys killing during winter time, and John wick is great. Winter is great. Winter is cold.")]
+        public void Order_keywords_by_occurence_and_then_word_count_descending(string text)
+        {
+            _keywordsParser.Parse(text)
+                .Should()
+                .ContainInOrder(new [] {
+                    new Keyword("winter", 3),
+                    new Keyword("john wick", 2),
+                    new Keyword("john", 2),
+                    new Keyword("wick", 2), 
+                });
         }
     }
 }

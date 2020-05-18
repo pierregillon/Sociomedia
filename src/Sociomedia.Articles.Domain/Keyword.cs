@@ -6,28 +6,27 @@ namespace Sociomedia.Articles.Domain
 {
     public class Keyword : IEquatable<Keyword>
     {
-        private readonly string _value;
         private readonly IReadOnlyCollection<string> _words;
 
         public int Occurence { get; }
         public int WordCount => _words.Count;
-        public int Score => Occurence * WordCount;
+        public string Value { get; }
 
         public Keyword(string value, int occurence)
         {
-            _value = value;
+            Value = value;
             _words = value.Split(' ');
             Occurence = occurence;
         }
 
         public bool Contains(Keyword keyword)
         {
-            return _value.Contains(keyword._value);
+            return Value.Contains(keyword.Value);
         }
 
         public override string ToString()
         {
-            return _value;
+            return Value + $" ({Occurence})";
         }
 
         public bool Equals(Keyword other)
@@ -47,7 +46,7 @@ namespace Sociomedia.Articles.Domain
 
         public override int GetHashCode()
         {
-            return _value.GetHashCode();
+            return Value.GetHashCode();
         }
     }
 }
