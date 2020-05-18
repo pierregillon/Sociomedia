@@ -40,7 +40,7 @@ namespace Sociomedia.Articles.Domain
         {
             return !string.IsNullOrWhiteSpace(word) 
                    && word.Length >= MIN_WORD_LENGTH 
-                   && !word.Any(char.IsDigit) 
+                   && !word.All(char.IsDigit) 
                    && (char.IsUpper(word[0]) || _keywordDictionary.IsValidKeyword(word));
         }
 

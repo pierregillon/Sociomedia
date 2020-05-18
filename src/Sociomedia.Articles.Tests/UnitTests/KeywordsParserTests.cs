@@ -106,12 +106,21 @@ namespace Sociomedia.Articles.Tests.UnitTests
         }
 
         [Theory]
-        [InlineData("2020 a 2020 a test2 a test2")]
-        public void A_keyword_does_not_contain_digit(string text)
+        [InlineData("2020 a 2020 a 9001 a 9001")]
+        public void A_keyword_can_not_contain_only_digits(string text)
         {
             _keywordsParser.Parse(text)
                 .Should()
                 .BeEmpty();
+        }
+
+        [Theory]
+        [InlineData("COVID-19 b COVID-19")]
+        public void A_keyword_can_contain_some_digit(string text)
+        {
+            _keywordsParser.Parse(text)
+                .Should()
+                .Contain(new Keyword("covid-19", 2));
         }
 
         [Theory]
