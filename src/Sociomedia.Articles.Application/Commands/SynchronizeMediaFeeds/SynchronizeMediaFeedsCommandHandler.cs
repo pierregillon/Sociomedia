@@ -4,13 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using CQRSlite.Domain;
 using EventStore.ClientAPI;
+using Sociomedia.Articles.Application.Commands.SynchronizeMediaFeeds;
 using Sociomedia.Articles.Application.Queries;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Core.Application;
 
 namespace Sociomedia.Articles.Application.Commands.SynchronizeAllMediaFeeds
 {
-    public class SynchronizeAllMediaFeedsCommandHandler : ICommandHandler<SynchronizeAllMediaFeedsCommand>
+    public class SynchronizeMediaFeedsCommandHandler : ICommandHandler<SynchronizeAllMediaFeedsCommand>, ICommandHandler<SynchronizeMediaFeedCommand>
     {
         private readonly IRepository _repository;
         private readonly IFeedReader _feedReader;
@@ -18,7 +19,7 @@ namespace Sociomedia.Articles.Application.Commands.SynchronizeAllMediaFeeds
         private readonly ISynchronizationFinder _synchronizationFinder;
         private readonly ILogger _logger;
 
-        public SynchronizeAllMediaFeedsCommandHandler(
+        public SynchronizeMediaFeedsCommandHandler(
             IRepository repository,
             IFeedReader feedReader,
             ArticleFactory articleFactory,
@@ -38,6 +39,14 @@ namespace Sociomedia.Articles.Application.Commands.SynchronizeAllMediaFeeds
             foreach (var feed in mediaFeeds) {
                 await SynchronizeFeed(feed);
             }
+        }
+
+        public async Task Handle(SynchronizeMediaFeedCommand command)
+        {
+            await SynchronizeFeed(new MediaFeedReadModel {
+                MediaId = command.MediaId,
+                FeedUrl = command.FeedUrl
+            });
         }
 
         private async Task SynchronizeFeed(MediaFeedReadModel feed)

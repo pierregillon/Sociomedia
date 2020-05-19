@@ -73,7 +73,8 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             });
 
             EventStore.CommitEvents();
-
+            _feedParser.ClearReceivedCalls();
+            
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
 
             _feedParser
@@ -91,6 +92,8 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml"),
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss2.xml"),
             });
+
+            _feedParser.ClearReceivedCalls();
 
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
 
@@ -348,6 +351,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             });
 
             EventStore.CommitEvents();
+            _feedParser.ClearReceivedCalls();
 
             // Act
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
