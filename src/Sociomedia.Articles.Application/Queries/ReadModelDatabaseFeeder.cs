@@ -13,7 +13,8 @@ namespace Sociomedia.Articles.Application.Queries
         IEventListener<MediaFeedRemoved>,
         IEventListener<ArticleImported>,
         IEventListener<ArticleUpdated>,
-        IEventListener<MediaDeleted>
+        IEventListener<MediaDeleted>,
+        IEventListener<ArticleDeleted>
     {
         private readonly InMemoryDatabase _database;
         private readonly ILogger _logger;
@@ -97,9 +98,14 @@ namespace Sociomedia.Articles.Application.Queries
                 _database.Remove(feed);
             }
 
+            return Task.CompletedTask;
+        }
+
+        public Task On(ArticleDeleted @event)
+        {
             var articles = _database
                 .List<ArticleReadModel>()
-                .Where(x => x.MediaId == @event.Id);
+                .Where(x => x.ArticleId == @event.Id);
 
             foreach (var article in articles) {
                 _database.Remove(article);

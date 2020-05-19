@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using CQRSlite.Domain;
+using CQRSlite.Events;
 
 namespace Sociomedia.Articles.Domain
 {
@@ -42,6 +43,11 @@ namespace Sociomedia.Articles.Domain
                 externalArticle.Url,
                 externalArticle.ImageUrl ?? _imageUrl
             ));
+        }
+
+        public void Delete()
+        {
+            ApplyChange(new ArticleDeleted(Id));
         }
 
         private void Apply(ArticleImported @event)

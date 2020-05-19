@@ -31,6 +31,10 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             CommandDispatcher = Container.GetInstance<ICommandDispatcher>();
             WebPageDownloader = Container.GetInstance<IWebPageDownloader>();
             EventStore = (InMemoryEventStore) Container.GetInstance<IEventStore>();
+
+            WebPageDownloader
+                .Download(Arg.Any<string>())
+                .Returns("<html></html>");
         }
 
         private class EmptyLogger : ILogger
