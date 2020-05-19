@@ -13,7 +13,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
         {
             var previousArticle = SomeExternalArticle();
 
-            var article = new Article(Guid.NewGuid(), previousArticle, new string[0]);
+            var article = new Article(Guid.NewGuid(), previousArticle);
 
             var newVersionOfExternalArticle = SomeOtherArticle();
 
@@ -39,7 +39,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
         {
             var previousArticle = SomeExternalArticle();
 
-            var article = new Article(Guid.NewGuid(), previousArticle, new string[0]);
+            var article = new Article(Guid.NewGuid(), previousArticle);
 
             var newVersionOfExternalArticle = SomeExternalArticle();
             newVersionOfExternalArticle.ImageUrl = null;

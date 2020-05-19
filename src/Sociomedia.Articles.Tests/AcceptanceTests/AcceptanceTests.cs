@@ -26,6 +26,8 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             Container.Inject<IEventStore>(Container.GetInstance<InMemoryEventStore>());
             Container.Inject(Substitute.For<IKeywordDictionary>());
 
+            Container.GetInstance<IKeywordDictionary>().IsValidKeyword(Arg.Any<string>()).Returns(true);
+
             CommandDispatcher = Container.GetInstance<ICommandDispatcher>();
             WebPageDownloader = Container.GetInstance<IWebPageDownloader>();
             EventStore = (InMemoryEventStore) Container.GetInstance<IEventStore>();

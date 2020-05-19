@@ -9,7 +9,7 @@ namespace Sociomedia.Articles.Domain
         private string _imageUrl;
         private Article() { }
 
-        public Article(Guid mediaId, ExternalArticle externalArticle, IReadOnlyCollection<string> keywords) : this()
+        public Article(Guid mediaId, ExternalArticle externalArticle) : this()
         {
             ApplyChange(new ArticleImported(
                 Guid.NewGuid(),
@@ -19,8 +19,17 @@ namespace Sociomedia.Articles.Domain
                 externalArticle.Url,
                 externalArticle.ImageUrl,
                 externalArticle.Id,
-                keywords,
+                Array.Empty<string>(),
                 mediaId));
+        }
+
+        public string Url { get; private set; }
+        public string Title { get; private set; }
+        public string Summary { get; private set; }
+
+        public void DefineKeywords(IReadOnlyCollection<Keyword> keywords)
+        {
+            ApplyChange(new ArticleKeywordsDefined(Id, keywords));
         }
 
         public void Update(ExternalArticle externalArticle)
@@ -38,6 +47,10 @@ namespace Sociomedia.Articles.Domain
         private void Apply(ArticleImported @event)
         {
             Id = @event.Id;
+            Url = @event.Url;
+            Title = @event.Title;
+            Summary = @event.Summary;
+
             _imageUrl = @event.ImageUrl;
         }
     }

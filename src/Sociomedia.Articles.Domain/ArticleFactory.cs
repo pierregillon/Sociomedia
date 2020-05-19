@@ -20,24 +20,12 @@ namespace Sociomedia.Articles.Domain
 
         public async Task<Article> Build(Guid mediaId, ExternalArticle externalArticle)
         {
-            var html = await _webPageDownloader.Download(externalArticle.Url);
-
-            var articleContent = _htmlParser.ExtractPlainTextArticleContent(html);
-
-            externalArticle.ImageUrl ??= html
+            externalArticle.ImageUrl ??= await _webPageDownloader.Download(externalArticle.Url)
                 .Pipe(_htmlParser.ExtractArticleImageUrl)
                 .Pipe(imageUrl => InjectHostIfMissing(imageUrl, externalArticle.Url))
                 .Pipe(UrlSanitizer.Sanitize);
 
-            var text = string.Join(" ", new[] {
-                articleContent,
-                externalArticle.Title,
-                externalArticle.Summary
-            });
-
-            var keywords = _keywordsParser.Parse(text).Take(50).ToArray();
-
-            return new Article(mediaId, externalArticle, keywords.Select(x => x.Value).ToArray());
+            return new Article(mediaId, externalArticle);
         }
 
         private static string InjectHostIfMissing(string imageUrl, string articleUrl)

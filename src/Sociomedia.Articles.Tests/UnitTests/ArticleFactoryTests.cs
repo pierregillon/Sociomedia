@@ -48,37 +48,10 @@ namespace Sociomedia.Articles.Tests.UnitTests
                         externalArticle.Url,
                         externalArticle.ImageUrl,
                         externalArticle.Id,
-                        new[]{"some"},
+                        Array.Empty<string>(),
                         mediaId
                     ),
                 }, x => x.ExcludeDomainEventTechnicalFields());
-        }
-
-        [Fact]
-        public async Task Build_keywords_from_article_content_summary_and_title()
-        {
-            var mediaId = Guid.NewGuid();
-
-            var externalArticle = new ExternalArticle(
-                "",
-                "",
-                "some title",
-                DateTimeOffset.Now,
-                "some summary",
-                ""
-            );
-
-            _webPageDownloader.Download(Arg.Any<string>()).Returns("<html>some content with summary</html>");
-
-            var article = await _articleFactory.Build(mediaId, externalArticle);
-
-            article
-                .GetUncommittedChanges()
-                .OfType<ArticleImported>()
-                .Single()
-                .Keywords
-                .Should()
-                .BeEquivalentTo("some", "summary");
         }
 
         [Fact]
