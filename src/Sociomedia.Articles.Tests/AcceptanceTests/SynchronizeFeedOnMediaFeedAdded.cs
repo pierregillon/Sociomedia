@@ -15,11 +15,11 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
 {
     public class SynchronizeFeedOnMediaFeedAdded : AcceptanceTests
     {
-        private readonly IFeedParser _feedParser = Substitute.For<IFeedParser>();
+        private readonly IFeedReader _feedReader = Substitute.For<IFeedReader>();
 
         public SynchronizeFeedOnMediaFeedAdded()
         {
-            Container.Inject(_feedParser);
+            Container.Inject(_feedReader);
         }
 
         [Fact]
@@ -33,9 +33,9 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
 
             EventStore.CommitEvents();
 
-            _feedParser
-                .Parse(Arg.Any<Stream>())
-                .Returns(x => new FeedContent(new[] {
+            _feedReader
+                .Read("https://www.test.com/rss.xml")
+                .Returns(x => new[] {
                     new FeedItem {
                         Id = "feedItem1",
                         Title = "coronavirus increases",
@@ -52,7 +52,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
                         PublishDate = DateTimeOffset.Now.Date,
                         ImageUrl = "https://news/article2.jpg"
                     }
-                }));
+                });
 
             await EventStore.Save(new IEvent[] {
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml"),

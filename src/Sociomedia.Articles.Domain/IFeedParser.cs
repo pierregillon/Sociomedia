@@ -1,9 +1,10 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Sociomedia.Articles.Domain
 {
     public interface IFeedParser
     {
-        FeedContent Parse(Stream rssStream);
+        IReadOnlyCollection<FeedItem> Parse(Stream stream);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 
-namespace Sociomedia.Articles.Domain {
+namespace Sociomedia.Articles.Domain
+{
     public class FeedItem
     {
         public string Id { get; set; }

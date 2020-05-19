@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using CQRSlite.Domain;
-using CQRSlite.Events;
 
 namespace Sociomedia.Articles.Domain
 {
@@ -10,16 +9,16 @@ namespace Sociomedia.Articles.Domain
         private string _imageUrl;
         private Article() { }
 
-        public Article(Guid mediaId, ExternalArticle externalArticle) : this()
+        public Article(Guid mediaId, FeedItem feedItem) : this()
         {
             ApplyChange(new ArticleImported(
                 Guid.NewGuid(),
-                externalArticle.Title,
-                externalArticle.Summary,
-                externalArticle.PublishDate,
-                externalArticle.Url,
-                externalArticle.ImageUrl,
-                externalArticle.Id,
+                feedItem.Title,
+                feedItem.Summary,
+                feedItem.PublishDate,
+                feedItem.Link,
+                feedItem.ImageUrl,
+                feedItem.Id,
                 Array.Empty<string>(),
                 mediaId));
         }
@@ -33,15 +32,15 @@ namespace Sociomedia.Articles.Domain
             ApplyChange(new ArticleKeywordsDefined(Id, keywords));
         }
 
-        public void Update(ExternalArticle externalArticle)
+        public void Update(FeedItem feedItem)
         {
             ApplyChange(new ArticleUpdated(
                 Id,
-                externalArticle.Title,
-                externalArticle.Summary,
-                externalArticle.PublishDate,
-                externalArticle.Url,
-                externalArticle.ImageUrl ?? _imageUrl
+                feedItem.Title,
+                feedItem.Summary,
+                feedItem.PublishDate,
+                feedItem.Link,
+                feedItem.ImageUrl ?? _imageUrl
             ));
         }
 

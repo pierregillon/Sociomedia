@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using CQRSlite.Domain;
 using EventStore.ClientAPI;
-using Sociomedia.Articles.Application.Commands.SynchronizeMediaFeeds;
+using Sociomedia.Articles.Application.Commands.SynchronizeAllMediaFeeds;
 using Sociomedia.Articles.Application.Queries;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Core.Application;
 
-namespace Sociomedia.Articles.Application.Commands.SynchronizeAllMediaFeeds
+namespace Sociomedia.Articles.Application.Commands.SynchronizeMediaFeeds
 {
     public class SynchronizeMediaFeedsCommandHandler : ICommandHandler<SynchronizeAllMediaFeedsCommand>, ICommandHandler<SynchronizeMediaFeedCommand>
     {
@@ -54,7 +54,7 @@ namespace Sociomedia.Articles.Application.Commands.SynchronizeAllMediaFeeds
             _logger.Debug("[SYNCHRONIZE_MEDIA_FEED] " + feed.FeedUrl);
 
             try {
-                var externalArticles = await _feedReader.ReadArticles(feed.FeedUrl);
+                var externalArticles = await _feedReader.Read(feed.FeedUrl);
                 if (externalArticles.Any()) {
                     await SynchronizeArticles(feed.MediaId, externalArticles);
                 }
@@ -64,34 +64,34 @@ namespace Sociomedia.Articles.Application.Commands.SynchronizeAllMediaFeeds
             }
         }
 
-        private async Task SynchronizeArticles(Guid mediaId, IEnumerable<ExternalArticle> externalArticles)
+        private async Task SynchronizeArticles(Guid mediaId, IEnumerable<FeedItem> feedItems)
         {
-            foreach (var externalArticle in externalArticles) {
+            foreach (var externalArticle in feedItems) {
                 var articleInfo = await _synchronizationFinder.GetArticle(mediaId, externalArticle.Id);
                 if (articleInfo == null) {
                     await AddNewArticle(mediaId, externalArticle);
                 }
-                else if(externalArticle.PublishDate > articleInfo.PublishDate) {
+                else if (externalArticle.PublishDate > articleInfo.PublishDate) {
                     await UpdateArticle(externalArticle, articleInfo);
                 }
             }
         }
 
-        private async Task AddNewArticle(Guid mediaId, ExternalArticle externalArticle)
+        private async Task AddNewArticle(Guid mediaId, FeedItem feedItem)
         {
             try {
-                var article = await _articleFactory.Build(mediaId, externalArticle);
+                var article = await _articleFactory.Build(mediaId, feedItem);
                 await _repository.Save(article);
             }
             catch (UnreachableWebDocumentException) { }
         }
 
-        private async Task UpdateArticle(ExternalArticle externalArticle, ArticleReadModel articleInfo)
+        private async Task UpdateArticle(FeedItem feedItem, ArticleReadModel articleInfo)
         {
             var article = await _repository.Get<Article>(articleInfo.ArticleId);
-            
-            article.Update(externalArticle);
-            
+
+            article.Update(feedItem);
+
             await _repository.Save(article);
         }
     }

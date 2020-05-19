@@ -17,7 +17,9 @@ namespace Sociomedia.Articles.Application
 
         public async Task On(MediaFeedAdded @event)
         {
-            await _commandDispatcher.Dispatch(new SynchronizeMediaFeedCommand(@event.Id, @event.FeedUrl));
+            if (!string.IsNullOrWhiteSpace(@event.FeedUrl)) {
+                await _commandDispatcher.Dispatch(new SynchronizeMediaFeedCommand(@event.Id, @event.FeedUrl));
+            }
         }
     }
 }

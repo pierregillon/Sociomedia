@@ -5,6 +5,6 @@ namespace Sociomedia.Articles.Domain
 {
     public interface IFeedReader
     {
-        Task<IReadOnlyCollection<ExternalArticle>> ReadArticles(string url);
+        Task<IReadOnlyCollection<FeedItem>> Read(string url);
     }
 }

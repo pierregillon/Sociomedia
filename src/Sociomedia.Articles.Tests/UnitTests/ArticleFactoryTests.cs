@@ -32,9 +32,9 @@ namespace Sociomedia.Articles.Tests.UnitTests
         {
             var mediaId = Guid.NewGuid();
 
-            var externalArticle = SomeExternalArticle();
-            
-            var article = await _articleFactory.Build(mediaId, externalArticle);
+            var feedItem = SomeFeedItem();
+
+            var article = await _articleFactory.Build(mediaId, feedItem);
 
             article
                 .GetUncommittedChanges()
@@ -42,12 +42,12 @@ namespace Sociomedia.Articles.Tests.UnitTests
                 .BeEquivalentTo(new DomainEvent[] {
                     new ArticleImported(
                         default,
-                        externalArticle.Title,
-                        externalArticle.Summary,
-                        externalArticle.PublishDate,
-                        externalArticle.Url,
-                        externalArticle.ImageUrl,
-                        externalArticle.Id,
+                        feedItem.Title,
+                        feedItem.Summary,
+                        feedItem.PublishDate,
+                        feedItem.Link,
+                        feedItem.ImageUrl,
+                        feedItem.Id,
                         Array.Empty<string>(),
                         mediaId
                     ),
@@ -57,12 +57,12 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [Fact]
         public async Task Extract_image_from_article_html_if_no_set_from_feed()
         {
-            var externalArticle = SomeExternalArticle();
+            var externalArticle = SomeFeedItem();
 
             externalArticle.ImageUrl = null;
 
             _webPageDownloader
-                .Download(externalArticle.Url)
+                .Download(externalArticle.Link)
                 .Returns(File.ReadAllText("./UnitTests/Resources/marianne_article_example.html"));
 
             var article = await _articleFactory.Build(Guid.NewGuid(), externalArticle);
@@ -79,15 +79,15 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [Fact]
         public async Task Make_extracted_image_url_absolute()
         {
-            var externalArticle = SomeExternalArticle("http://www.leparisien.fr/politique/deconfinement-edouard-philippe-donnera-les-details-jeudi-sur-l-etape-du-11-mai-06-05-2020-8312091.php#xtor=RSS-1481423633");
+            var feedItem = SomeFeedItem("http://www.leparisien.fr/politique/deconfinement-edouard-philippe-donnera-les-details-jeudi-sur-l-etape-du-11-mai-06-05-2020-8312091.php#xtor=RSS-1481423633");
 
-            externalArticle.ImageUrl = null;
+            feedItem.ImageUrl = null;
 
             _webPageDownloader
-                .Download(externalArticle.Url)
+                .Download(feedItem.Link)
                 .Returns(File.ReadAllText("./UnitTests/Resources/leparisien_article_example.html"));
 
-            var article = await _articleFactory.Build(Guid.NewGuid(), externalArticle);
+            var article = await _articleFactory.Build(Guid.NewGuid(), feedItem);
 
             article
                 .GetUncommittedChanges()
@@ -98,16 +98,16 @@ namespace Sociomedia.Articles.Tests.UnitTests
                 .Be("http://www.leparisien.fr/resizer/V8S9uKi5m2kfPd6k7xcDu_4hdag=/932x582/arc-anglerfish-eu-central-1-prod-leparisien.s3.amazonaws.com/public/RQQRFMFZZRTZJF6D2ZSMVSQTVU.jpg");
         }
 
-        private static ExternalArticle SomeExternalArticle(string url = default)
+        private static FeedItem SomeFeedItem(string url = default)
         {
-            return new ExternalArticle(
-                "someExternalId",
-                url ?? "https://someurl",
-                "some title",
-                DateTimeOffset.Now,
-                "some summary",
-                "https://someImageUrl"
-            );
+            return new FeedItem {
+                Id = "someExternalId",
+                Link = url ?? "https://someurl",
+                Title = "some title",
+                PublishDate = DateTimeOffset.Now,
+                Summary = "some summary",
+                ImageUrl = "https://someImageUrl"
+            };
         }
     }
 }
