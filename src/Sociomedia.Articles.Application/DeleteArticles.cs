@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using CQRSlite.Domain;
+using Sociomedia.Articles.Application.Projections;
 using Sociomedia.Articles.Application.Queries;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Core.Application;
