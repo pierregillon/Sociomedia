@@ -249,17 +249,16 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
         }
 
         [Fact]
-        public async Task Delete_articles_and_keywords_when_receiving_media_deleted()
+        public async Task Delete_articles_and_keywords_when_receiving_article_deleted()
         {
             await _synchronizer.StartSynchronization();
 
             // Acts
+            var articleId = Guid.NewGuid();
             var mediaId = Guid.NewGuid();
 
-            await _inMemoryBus.Push(1, new MediaAdded(mediaId, "Liberation", "test", PoliticalOrientation.Center));
-            await _inMemoryBus.Push(2, new MediaFeedAdded(mediaId, "https://test/myfeed.xml"));
-            await _inMemoryBus.Push(3, new ArticleImported(
-                Guid.NewGuid(),
+            await _inMemoryBus.Push(1, new ArticleImported(
+                articleId,
                 "My title",
                 "This is a simple summary",
                 new DateTimeOffset(2020, 05, 06, 10, 0, 0, TimeSpan.FromHours(2)),
@@ -269,7 +268,11 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
                 Array.Empty<string>(),
                 mediaId
             ));
-            await _inMemoryBus.Push(3, new MediaDeleted(mediaId));
+            await _inMemoryBus.Push(2, new ArticleKeywordsDefined(articleId, new [] {
+                new Keyword("test", 2), 
+                new Keyword("john", 6),
+            }));
+            await _inMemoryBus.Push(3, new ArticleDeleted(articleId));
 
             // Asserts
 
