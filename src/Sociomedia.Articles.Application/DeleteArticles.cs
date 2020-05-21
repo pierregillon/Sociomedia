@@ -1,22 +1,22 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using CQRSlite.Domain;
+using Sociomedia.Articles.Application.Commands.DeleteArticle;
 using Sociomedia.Articles.Application.Projections;
 using Sociomedia.Articles.Application.Queries;
-using Sociomedia.Articles.Domain;
 using Sociomedia.Core.Application;
+using Sociomedia.Core.Infrastructure.CQRS;
 using Sociomedia.Medias.Domain;
 
 namespace Sociomedia.Articles.Application
 {
     public class DeleteArticles : IEventListener<MediaDeleted>
     {
-        private readonly IRepository _repository;
+        private readonly ICommandDispatcher _commandDispatcher;
         private readonly InMemoryDatabase _database;
 
-        public DeleteArticles(IRepository repository, InMemoryDatabase database)
+        public DeleteArticles(ICommandDispatcher commandDispatcher, InMemoryDatabase database)
         {
-            _repository = repository;
+            _commandDispatcher = commandDispatcher;
             _database = database;
         }
 
@@ -28,9 +28,7 @@ namespace Sociomedia.Articles.Application
                 .ToList();
 
             foreach (var articleReadModel in articleReadModels) {
-                var article = await _repository.Get<Article>(articleReadModel.ArticleId);
-                article.Delete();
-                await _repository.Save(article);
+                await _commandDispatcher.Dispatch(new DeleteArticleCommand(articleReadModel.ArticleId));
             }
         }
     }

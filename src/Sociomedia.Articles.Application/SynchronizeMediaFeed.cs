@@ -6,11 +6,11 @@ using Sociomedia.Medias.Domain;
 
 namespace Sociomedia.Articles.Application
 {
-    public class SynchronizeFeedRss : IEventListener<MediaFeedAdded>
+    public class SynchronizeMediaFeed : IEventListener<MediaFeedAdded>
     {
         private readonly ICommandDispatcher _commandDispatcher;
 
-        public SynchronizeFeedRss(ICommandDispatcher commandDispatcher)
+        public SynchronizeMediaFeed(ICommandDispatcher commandDispatcher)
         {
             _commandDispatcher = commandDispatcher;
         }

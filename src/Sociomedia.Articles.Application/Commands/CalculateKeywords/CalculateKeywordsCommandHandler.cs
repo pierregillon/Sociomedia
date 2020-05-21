@@ -6,9 +6,9 @@ using Sociomedia.Articles.Domain;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Domain;
 
-namespace Sociomedia.Articles.Application
+namespace Sociomedia.Articles.Application.Commands.CalculateKeywords
 {
-    public class GenerateKeywords : IEventListener<ArticleImported>
+    public class CalculateKeywordsCommandHandler : ICommandHandler<CalculateKeywordsCommand>
     {
         private readonly IRepository _repository;
         private readonly KeywordsParser _keywordsParser;
@@ -16,7 +16,7 @@ namespace Sociomedia.Articles.Application
         private readonly IHtmlParser _htmlParser;
         private readonly ILogger _logger;
 
-        public GenerateKeywords(IRepository repository, KeywordsParser keywordsParser, IWebPageDownloader webPageDownloader, IHtmlParser htmlParser, ILogger logger)
+        public CalculateKeywordsCommandHandler(IRepository repository, KeywordsParser keywordsParser, IWebPageDownloader webPageDownloader, IHtmlParser htmlParser, ILogger logger)
         {
             _repository = repository;
             _keywordsParser = keywordsParser;
@@ -25,16 +25,12 @@ namespace Sociomedia.Articles.Application
             _logger = logger;
         }
 
-        public async Task On(ArticleImported @event)
+        public async Task Handle(CalculateKeywordsCommand command)
         {
             try {
-                var article = await _repository.Get<Article>(@event.Id);
+                var article = await _repository.Get<Article>(command.ArticleId);
 
-                var articleContent = await GetArticleContent(article.Url);
-
-                var concatenatedText = string.Join(" ", articleContent, article.Title, article.Summary);
-
-                var keywords = _keywordsParser.Parse(concatenatedText).Take(50).ToArray();
+                var keywords = await CalculateKeywords(article);
 
                 article.DefineKeywords(keywords);
 
@@ -43,7 +39,16 @@ namespace Sociomedia.Articles.Application
             catch (UnreachableWebDocumentException) { }
         }
 
-        private async Task<string> GetArticleContent(string url)
+        private async Task<Keyword[]> CalculateKeywords(Article article)
+        {
+            var articleContent = await DownloadArticleContent(article.Url);
+
+            var concatenatedText = string.Join(" ", articleContent, article.Title, article.Summary);
+
+            return _keywordsParser.Parse(concatenatedText).Take(50).ToArray();
+        }
+
+        private async Task<string> DownloadArticleContent(string url)
         {
             try {
                 return await url
