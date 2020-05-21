@@ -52,20 +52,26 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 
         public async Task Save(IEnumerable<IEvent> events, CancellationToken cancellationToken = default)
         {
-            await Connect();
+            try {
+                await Connect();
 
-            foreach (var @event in events) {
-                var json = JsonConvert.SerializeObject(@event, _serializerSettings);
-                var eventData = new EventData(
-                    Guid.NewGuid(),
-                    @event.GetType().Name,
-                    true,
-                    Encoding.UTF8.GetBytes(json),
-                    null
-                );
-                var version = @event.Version - 2; // CQRSLite start event version at 1. EventStore at -1.
-                await _connection.AppendToStreamAsync(@event.Id.ToString(), version, eventData);
-                Debug($"{eventData.Type} stored.");
+                foreach (var @event in events) {
+                    var json = JsonConvert.SerializeObject(@event, _serializerSettings);
+                    var eventData = new EventData(
+                        Guid.NewGuid(),
+                        @event.GetType().Name,
+                        true,
+                        Encoding.UTF8.GetBytes(json),
+                        null
+                    );
+                    var version = @event.Version - 2; // CQRSLite start event version at 1. EventStore at -1.
+                    await _connection.AppendToStreamAsync(@event.Id.ToString(), version, eventData);
+                    Debug($"{eventData.Type} stored.");
+                }
+            }
+            catch (Exception e) {
+                Console.WriteLine(e);
+                throw;
             }
         }
 
@@ -107,6 +113,7 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
                 return;
             }
             _connection = EventStoreConnection.Create(_configuration.Uri, AppDomain.CurrentDomain.FriendlyName);
+            _connection.ErrorOccurred += (sender, args) => Error(args.Exception.ToString());
             _connection.Closed += (sender, args) => {
                 Error("Connection closed : " + args.Reason);
                 _connection = null;

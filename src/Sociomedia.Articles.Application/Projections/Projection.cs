@@ -49,16 +49,10 @@ namespace Sociomedia.Articles.Application.Projections
             _logger.Error($"[{GetType().Name.SeparatePascalCaseWords().ToUpper()}] {message}");
         }
 
-        protected void LogDebug(string message)
-        {
-            _logger.Debug($"[{GetType().Name.SeparatePascalCaseWords().ToUpper()}] {message}");
-        }
-
         async Task IProjection.On(IEvent @event)
         {
             if (_onMethods.TryGetValue(@event.GetType(), out var onMethod)) {
                 await (Task) onMethod.Invoke(this, new object[] { @event });
-                LogDebug($"Applying {@event.GetType().Name}");
             }
             else {
                 LogError("Method On() not found !");

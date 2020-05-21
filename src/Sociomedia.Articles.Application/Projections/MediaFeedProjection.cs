@@ -10,7 +10,6 @@ namespace Sociomedia.Articles.Application.Projections
     public class MediaFeedProjection :
         Projection<MediaFeedReadModel>,
         IEventListener<MediaFeedAdded>,
-        IEventListener<MediaFeedSynchronized>,
         IEventListener<MediaFeedRemoved>,
         IEventListener<MediaDeleted>
     {
@@ -20,17 +19,8 @@ namespace Sociomedia.Articles.Application.Projections
         {
             return Add(new MediaFeedReadModel {
                 MediaId = @event.Id,
-                FeedUrl = @event.FeedUrl,
-                LastSynchronizationDate = null
+                FeedUrl = @event.FeedUrl
             });
-        }
-
-        public async Task On(MediaFeedSynchronized @event)
-        {
-            var source = (await GetAll()).SingleOrDefault(x => x.MediaId == @event.Id && x.FeedUrl == @event.FeedUrl);
-            if (source != null) {
-                source.LastSynchronizationDate = @event.SynchronizationDate;
-            }
         }
 
         public async Task On(MediaFeedRemoved @event)
@@ -42,7 +32,7 @@ namespace Sociomedia.Articles.Application.Projections
                 await Remove(source);
             }
             else {
-                LogError($"Media feed {@event.FeedUrl} on media {@event.Id} not found in projection.");
+                LogError($"Unable to apply {@event.GetType().Name} : media feed {@event.FeedUrl} on media {@event.Id} not found in projection.");
             }
         }
 

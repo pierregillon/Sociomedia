@@ -22,21 +22,21 @@ namespace Sociomedia.Articles.Infrastructure
         {
             return await url
                 .Pipe(DownloadWebPageContent)
-                .Pipe(x => x.ReadAsStringAsync());
+                .Pipe(async x => await x.ReadAsStringAsync().ConfigureAwait(false));
         }
 
         public async Task<Stream> DownloadStream(string url)
         {
             return await url
                 .Pipe(DownloadWebPageContent)
-                .Pipe(x => x.ReadAsStreamAsync());
+                .Pipe(async x => await x.ReadAsStreamAsync().ConfigureAwait(false));
         }
 
         private async Task<HttpContent> DownloadWebPageContent(string url)
         {
             try {
                 using var client = new HttpClient();
-                var response = await client.GetAsync(url);
+                var response = await client.GetAsync(url).ConfigureAwait(false); ;
                 if (response.IsSuccessStatusCode) {
                     return response.Content;
                 }

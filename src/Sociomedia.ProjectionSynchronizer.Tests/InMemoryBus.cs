@@ -9,17 +9,15 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
     public class InMemoryBus : IEventBus
     {
         private DomainEventReceived _domainEventReceived;
-        private PositionInStreamChanged _positionInStreamChanged;
         public bool IsListening { get; private set; }
 
         public long? LastStreamPosition { get; private set; }
 
         public bool IsConnected => IsListening;
 
-        public Task SubscribeToEvents(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, PositionInStreamChanged positionInStreamChanged = null)
+        public Task SubscribeToEvents(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived)
         {
             _domainEventReceived = domainEventReceived;
-            _positionInStreamChanged = positionInStreamChanged;
             LastStreamPosition = initialPosition;
             IsListening = true;
             return Task.CompletedTask;
@@ -32,8 +30,7 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
 
         public async Task Push(long position, DomainEvent @event)
         {
-            await _positionInStreamChanged(position);
-            await _domainEventReceived(@event);
+            await _domainEventReceived(@event, position);
         }
     }
 }

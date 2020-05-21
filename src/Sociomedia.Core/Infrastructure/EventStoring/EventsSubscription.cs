@@ -12,18 +12,17 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
     public class EventsSubscription
     {
         private readonly DomainEventReceived _domainEventReceived;
-        private readonly PositionInStreamChanged _positionInStreamChanged;
         private readonly ILogger _logger;
         private EventStoreAllCatchUpSubscription _subscription;
         private readonly Dictionary<string, Type> _nameToEventType;
         private readonly JsonSerializerSettings _serializerSettings;
         private Position? _lastPosition;
+        private IEventStoreConnection _currentConnection;
 
-        public EventsSubscription(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, PositionInStreamChanged positionInStreamChanged, ILogger logger)
+        public EventsSubscription(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, ILogger logger)
         {
             _lastPosition = initialPosition.HasValue ? new Position(initialPosition.Value, initialPosition.Value) : (Position?) null;
             _domainEventReceived = domainEventReceived;
-            _positionInStreamChanged = positionInStreamChanged;
             _logger = logger;
             _nameToEventType = eventTypes.ToDictionary(x => x.Name);
 
@@ -39,29 +38,41 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 
         public void DefineConnection(IEventStoreConnection connection)
         {
-            connection.Closed += ConnectionOnClosed;
+            _currentConnection = connection;
+            _currentConnection.Closed += ConnectionOnClosed;
+
+            Subscribe();
+        }
+
+        private void Subscribe()
+        {
+            if (_currentConnection == null) {
+                return;
+            }
 
             _subscription?.Stop();
 
-            _subscription = connection.SubscribeToAllFrom(
+            _subscription = _currentConnection.SubscribeToAllFrom(
                 _lastPosition,
                 CatchUpSubscriptionSettings.Default,
                 EventAppeared,
-                LiveProcessingStarted
+                LiveProcessingStarted,
+                SubscriptionDropped
             );
         }
 
         public void Stop()
         {
             _subscription?.Stop();
+            _subscription = null;
         }
 
         // ----- Callback
 
-        private void ConnectionOnClosed(object? sender, ClientClosedEventArgs e)
+        private void ConnectionOnClosed(object sender, ClientClosedEventArgs e)
         {
-            _subscription?.Stop();
-            _subscription = null;
+            Stop();
+            _currentConnection = null;
         }
 
         private void LiveProcessingStarted(EventStoreCatchUpSubscription obj)
@@ -71,19 +82,22 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 
         private async Task EventAppeared(EventStoreCatchUpSubscription subscription, ResolvedEvent resolvedEvent)
         {
-            _lastPosition = resolvedEvent.OriginalPosition;
-
-            if (resolvedEvent.OriginalStreamId.StartsWith("$")) {
+            if (resolvedEvent.OriginalStreamId.StartsWith("$") || !TryConvertToDomainEvent(resolvedEvent, out var @event)) {
+                _lastPosition = resolvedEvent.OriginalPosition;
                 return;
             }
 
-            if (TryConvertToDomainEvent(resolvedEvent, out var @event)) {
-                Debug($"Event received : stream: {resolvedEvent.OriginalStreamId}, date: {resolvedEvent.Event.Created:g} type: {@event.GetType().Name}");
-                if (_positionInStreamChanged != null) {
-                    await _positionInStreamChanged.Invoke(_lastPosition.GetValueOrDefault().CommitPosition);
-                }
-                await _domainEventReceived.Invoke(@event);
-            }
+            Debug($"Event received : stream: {resolvedEvent.OriginalStreamId}, date: {resolvedEvent.Event.Created:g} type: {@event.GetType().Name}");
+            await _domainEventReceived.Invoke(@event, resolvedEvent.OriginalPosition.GetValueOrDefault().CommitPosition);
+            _lastPosition = resolvedEvent.OriginalPosition;
+        }
+
+        private void SubscriptionDropped(EventStoreCatchUpSubscription _, SubscriptionDropReason reason, Exception error)
+        {
+            Stop();
+            Debug("Subscription dropped. Reason: " + reason);
+            Error(error);
+            Subscribe();
         }
 
         private bool TryConvertToDomainEvent(ResolvedEvent @event, out IEvent result)
@@ -108,6 +122,10 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
         private void Debug(string message)
         {
             _logger.Debug("[EVENTS_SUBSCRIPTION] " + message);
+        }
+        private void Error(Exception ex)
+        {
+            _logger.Error(ex, "[EVENTS_SUBSCRIPTION]");
         }
     }
 }

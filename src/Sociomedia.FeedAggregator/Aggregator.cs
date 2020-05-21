@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
-using Sociomedia.Articles.Application.Commands.SynchronizeAllMediaFeeds;
+using Sociomedia.Articles.Application.Commands.SynchronizeMediaFeeds;
 using Sociomedia.Articles.Application.Projections;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Infrastructure;
@@ -57,7 +57,7 @@ namespace Sociomedia.FeedAggregator
             try {
                 var lastEventPosition = await GetLastEventPosition();
                 await _projectionsBootstrap.Initialize(lastEventPosition.Value);
-                await _eventBus.SubscribeToEvents(lastEventPosition, GetEventTypes(), DomainEventReceived, PositionInStreamChanged);
+                await _eventBus.SubscribeToEvents(lastEventPosition, GetEventTypes(), DomainEventReceived);
                 await PeriodicallySynchronizeFeeds(token);
             }
             catch (Exception ex) {
@@ -103,13 +103,9 @@ namespace Sociomedia.FeedAggregator
             return articlesEvents.Union(mediaEvents).ToArray();
         }
 
-        private async Task DomainEventReceived(IEvent @event)
+        private async Task DomainEventReceived(IEvent @event, long position)
         {
             await _eventPublisher.Publish(@event);
-        }
-
-        private async Task PositionInStreamChanged(long position)
-        {
             await _eventPositionRepository.Save(position);
         }
 

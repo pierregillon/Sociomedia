@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using CQRSlite.Domain;
 using EventStore.ClientAPI;
-using Sociomedia.Articles.Application.Commands.SynchronizeAllMediaFeeds;
 using Sociomedia.Articles.Application.Projections;
 using Sociomedia.Articles.Application.Queries;
 using Sociomedia.Articles.Domain;

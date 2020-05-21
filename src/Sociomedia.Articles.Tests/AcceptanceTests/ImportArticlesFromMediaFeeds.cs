@@ -6,7 +6,7 @@ using CQRSlite.Events;
 using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Sociomedia.Articles.Application.Commands.SynchronizeAllMediaFeeds;
+using Sociomedia.Articles.Application.Commands.SynchronizeMediaFeeds;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Tests.UnitTests;
 using Sociomedia.Core.Domain;
