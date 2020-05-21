@@ -4,9 +4,11 @@ using CQRSlite.Domain;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
 using EventStore.ClientAPI.Common.Log;
+using Sociomedia.Articles.Application.Projections;
 using Sociomedia.Articles.Application.Queries;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Core.Application;
+using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.CQRS;
 using Sociomedia.Core.Infrastructure.EventStoring;
 using Sociomedia.Core.Infrastructure.Logging;
@@ -40,6 +42,8 @@ namespace Sociomedia.Articles.Infrastructure
 
             For<IKeywordDictionary>().Use(x => x.GetInstance<FrenchKeywordDictionary>());
 
+            For<IProjectionLocator>().Use<ProjectionLocator>();
+
             For<IFeedReader>().Use<FeedReader>();
             For<IFeedParser>().Use<FeedParser>();
             For<InMemoryDatabase>().Singleton();
@@ -48,6 +52,7 @@ namespace Sociomedia.Articles.Infrastructure
 
             For<IRepository>().Use(context => new Repository(context.GetInstance<IEventStore>()));
             For<IEventStore>().Use<EventStoreOrg>().Singleton();
+            For<IEventStoreExtended>().Use(x => x.GetInstance<EventStoreOrg>());
             For<EventStoreConfiguration>().Use(eventStoreConfiguration).Singleton();
 
             For<IHtmlParser>().Use<HtmlParser>();

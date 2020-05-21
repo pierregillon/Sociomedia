@@ -1,10 +1,11 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
+using Sociomedia.Articles.Application.Queries;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Core.Application;
 
-namespace Sociomedia.Articles.Application.Queries
+namespace Sociomedia.Articles.Application.Projections
 {
     public class ArticleProjection :
         Projection<ArticleReadModel>,

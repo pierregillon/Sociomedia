@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
 using Sociomedia.Articles.Application.Commands.SynchronizeAllMediaFeeds;
+using Sociomedia.Articles.Application.Projections;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Infrastructure;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.CQRS;
 using Sociomedia.Core.Infrastructure.EventStoring;
@@ -21,19 +23,28 @@ namespace Sociomedia.FeedAggregator
         private readonly ICommandDispatcher _commandDispatcher;
         private readonly IEventPublisher _eventPublisher;
         private readonly ILogger _logger;
+        private readonly ProjectionsBootstrap _projectionsBootstrap;
+        private readonly EventPositionRepository _eventPositionRepository;
+        private readonly IEventStoreExtended _eventStore;
 
         public Aggregator(
             IEventBus eventBus,
             Configuration configuration,
             ICommandDispatcher commandDispatcher,
             IEventPublisher eventPublisher,
-            ILogger logger)
+            ILogger logger,
+            ProjectionsBootstrap projectionsBootstrap,
+            EventPositionRepository eventPositionRepository,
+            IEventStoreExtended eventStore)
         {
             _eventBus = eventBus;
             _configuration = configuration;
             _commandDispatcher = commandDispatcher;
             _eventPublisher = eventPublisher;
             _logger = logger;
+            _projectionsBootstrap = projectionsBootstrap;
+            _eventPositionRepository = eventPositionRepository;
+            _eventStore = eventStore;
         }
 
         public Task StartAggregation(CancellationToken token)
@@ -43,8 +54,30 @@ namespace Sociomedia.FeedAggregator
 
         private async Task Process(CancellationToken token)
         {
-            await _eventBus.SubscribeToEvents(null, GetEventTypes(), DomainEventReceived);
+            try {
+                var lastEventPosition = await GetLastEventPosition();
+                await _projectionsBootstrap.Initialize(lastEventPosition.Value);
+                await _eventBus.SubscribeToEvents(lastEventPosition, GetEventTypes(), DomainEventReceived, PositionInStreamChanged);
+                await PeriodicallySynchronizeFeeds(token);
+            }
+            catch (Exception ex) {
+                Error(ex);
+            }
+        }
 
+        private async Task<long?> GetLastEventPosition()
+        {
+            var lastPosition = await _eventPositionRepository.GetLastProcessedPosition();
+            if (!lastPosition.HasValue) {
+                lastPosition = await _eventStore.GetCurrentPosition();
+                await _eventPositionRepository.Save(lastPosition.Value);
+                Info($"No last position found, initializing the last position to the current event store position : {lastPosition}");
+            }
+            return lastPosition;
+        }
+
+        private async Task PeriodicallySynchronizeFeeds(CancellationToken token)
+        {
             try {
                 do {
                     await Task.Delay(_configuration.FeedAggregator.SynchronizationTimespan, token);
@@ -55,9 +88,6 @@ namespace Sociomedia.FeedAggregator
                 } while (true);
             }
             catch (TaskCanceledException) { }
-            catch (Exception ex) {
-                Error(ex);
-            }
         }
 
         private static IEnumerable<Type> GetEventTypes()
@@ -78,10 +108,19 @@ namespace Sociomedia.FeedAggregator
             await _eventPublisher.Publish(@event);
         }
 
+        private async Task PositionInStreamChanged(long position)
+        {
+            await _eventPositionRepository.Save(position);
+        }
+
         private void Error(Exception ex)
         {
             _logger.Error(ex, "[AGGREGATOR] Unhandled exception : ");
         }
 
+        private void Info(string message)
+        {
+            _logger.Info("[AGGREGATOR] " + message);
+        }
     }
 }

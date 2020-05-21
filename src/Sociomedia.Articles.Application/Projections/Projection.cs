@@ -1,20 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using CQRSlite.Events;
 using EventStore.ClientAPI;
 using Sociomedia.Articles.Application.Queries;
 using Sociomedia.Articles.Domain;
 
 namespace Sociomedia.Articles.Application.Projections
 {
-    public abstract class Projection<T>
+    public abstract class Projection<T> : IProjection
     {
         private readonly InMemoryDatabase _database;
         private readonly ILogger _logger;
+        private readonly Dictionary<Type, MethodInfo> _onMethods;
 
         protected Projection(InMemoryDatabase database, ILogger logger)
         {
             _database = database;
             _logger = logger;
+
+            _onMethods = GetType()
+                .GetMethods()
+                .Where(x => x.Name == nameof(IProjection.On))
+                .ToDictionary(x => x.GetParameters()[0].ParameterType);
         }
 
         protected Task<IReadOnlyCollection<T>> GetAll()
@@ -37,6 +47,22 @@ namespace Sociomedia.Articles.Application.Projections
         protected void LogError(string message)
         {
             _logger.Error($"[{GetType().Name.SeparatePascalCaseWords().ToUpper()}] {message}");
+        }
+
+        protected void LogDebug(string message)
+        {
+            _logger.Debug($"[{GetType().Name.SeparatePascalCaseWords().ToUpper()}] {message}");
+        }
+
+        async Task IProjection.On(IEvent @event)
+        {
+            if (_onMethods.TryGetValue(@event.GetType(), out var onMethod)) {
+                await (Task) onMethod.Invoke(this, new object[] { @event });
+                LogDebug($"Applying {@event.GetType().Name}");
+            }
+            else {
+                LogError("Method On() not found !");
+            }
         }
     }
 }
