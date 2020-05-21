@@ -23,7 +23,7 @@ namespace Sociomedia.Articles.Application.Projections
             _logger = logger;
         }
 
-        public async Task Initialize(long lastStreamPosition)
+        public async Task InitializeUntil(long lastStreamPosition)
         {
             Info($"Updating projections until {lastStreamPosition} event position ...");
 

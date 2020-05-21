@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
+using EventStore.ClientAPI;
+using Sociomedia.Core.Domain;
 
 namespace Sociomedia.Core.Infrastructure.EventStoring
 {
-    public class InMemoryEventStore : IEventStore
+    public class InMemoryEventStore : IEventStore, IEventStoreExtended
     {
         private readonly IEventPublisher _eventPublisher;
         private readonly Dictionary<Guid, List<IEvent>> _domainEventsPerGuid = new Dictionary<Guid, List<IEvent>>();
@@ -59,6 +61,16 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
         public void CommitEvents()
         {
             _now = DateTimeOffset.Now;
+        }
+
+        public IAsyncEnumerable<IEvent> GetAllEventsBetween(Position startPosition, Position endPosition, IReadOnlyCollection<Type> eventTypes)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<long> GetCurrentPosition()
+        {
+            throw new NotImplementedException();
         }
     }
 }

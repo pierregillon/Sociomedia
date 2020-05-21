@@ -56,7 +56,7 @@ namespace Sociomedia.FeedAggregator
         {
             try {
                 var lastEventPosition = await GetLastEventPosition();
-                await _projectionsBootstrap.Initialize(lastEventPosition.Value);
+                await _projectionsBootstrap.InitializeUntil(lastEventPosition.Value);
                 await _eventBus.SubscribeToEvents(lastEventPosition, GetEventTypes(), DomainEventReceived, () => {
                     Task.Factory.StartNew(async () => { await PeriodicallySynchronizeFeeds(token); }, token);
                 });
