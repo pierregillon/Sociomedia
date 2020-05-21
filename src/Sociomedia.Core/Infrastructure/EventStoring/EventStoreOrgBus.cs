@@ -20,12 +20,13 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 
         public bool IsConnected => _connection != null;
 
-        public async Task SubscribeToEvents(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived)
+        public async Task SubscribeToEvents(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, LiveProcessingStarted liveProcessingStarted = null)
         {
             var subscription = new EventsSubscription(
                 initialPosition,
                 eventTypes,
                 domainEventReceived,
+                liveProcessingStarted,
                 _logger
             );
 

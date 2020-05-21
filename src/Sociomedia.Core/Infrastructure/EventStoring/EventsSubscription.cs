@@ -12,6 +12,7 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
     public class EventsSubscription
     {
         private readonly DomainEventReceived _domainEventReceived;
+        private readonly LiveProcessingStarted _liveProcessingStarted;
         private readonly ILogger _logger;
         private EventStoreAllCatchUpSubscription _subscription;
         private readonly Dictionary<string, Type> _nameToEventType;
@@ -19,10 +20,11 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
         private Position? _lastPosition;
         private IEventStoreConnection _currentConnection;
 
-        public EventsSubscription(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, ILogger logger)
+        public EventsSubscription(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, LiveProcessingStarted liveProcessingStarted, ILogger logger)
         {
             _lastPosition = initialPosition.HasValue ? new Position(initialPosition.Value, initialPosition.Value) : (Position?) null;
             _domainEventReceived = domainEventReceived;
+            _liveProcessingStarted = liveProcessingStarted;
             _logger = logger;
             _nameToEventType = eventTypes.ToDictionary(x => x.Name);
 
@@ -78,6 +80,7 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
         private void LiveProcessingStarted(EventStoreCatchUpSubscription obj)
         {
             Debug("Switched to live mode");
+            _liveProcessingStarted?.Invoke();
         }
 
         private async Task EventAppeared(EventStoreCatchUpSubscription subscription, ResolvedEvent resolvedEvent)

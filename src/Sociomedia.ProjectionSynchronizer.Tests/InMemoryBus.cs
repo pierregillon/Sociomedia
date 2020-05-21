@@ -15,7 +15,7 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
 
         public bool IsConnected => IsListening;
 
-        public Task SubscribeToEvents(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived)
+        public Task SubscribeToEvents(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, LiveProcessingStarted liveProcessingStarted)
         {
             _domainEventReceived = domainEventReceived;
             LastStreamPosition = initialPosition;

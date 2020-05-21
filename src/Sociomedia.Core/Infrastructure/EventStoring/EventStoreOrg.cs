@@ -52,26 +52,20 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 
         public async Task Save(IEnumerable<IEvent> events, CancellationToken cancellationToken = default)
         {
-            try {
-                await Connect();
+            await Connect();
 
-                foreach (var @event in events) {
-                    var json = JsonConvert.SerializeObject(@event, _serializerSettings);
-                    var eventData = new EventData(
-                        Guid.NewGuid(),
-                        @event.GetType().Name,
-                        true,
-                        Encoding.UTF8.GetBytes(json),
-                        null
-                    );
-                    var version = @event.Version - 2; // CQRSLite start event version at 1. EventStore at -1.
-                    await _connection.AppendToStreamAsync(@event.Id.ToString(), version, eventData);
-                    Debug($"{eventData.Type} stored.");
-                }
-            }
-            catch (Exception e) {
-                Console.WriteLine(e);
-                throw;
+            foreach (var @event in events) {
+                var json = JsonConvert.SerializeObject(@event, _serializerSettings);
+                var eventData = new EventData(
+                    Guid.NewGuid(),
+                    @event.GetType().Name,
+                    true,
+                    Encoding.UTF8.GetBytes(json),
+                    null
+                );
+                var version = @event.Version - 2; // CQRSLite start event version at 1. EventStore at -1.
+                await _connection.AppendToStreamAsync(@event.Id.ToString(), version, eventData);
+                Debug($"{eventData.Type} stored.");
             }
         }
 

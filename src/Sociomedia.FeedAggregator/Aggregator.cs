@@ -57,8 +57,9 @@ namespace Sociomedia.FeedAggregator
             try {
                 var lastEventPosition = await GetLastEventPosition();
                 await _projectionsBootstrap.Initialize(lastEventPosition.Value);
-                await _eventBus.SubscribeToEvents(lastEventPosition, GetEventTypes(), DomainEventReceived);
-                await PeriodicallySynchronizeFeeds(token);
+                await _eventBus.SubscribeToEvents(lastEventPosition, GetEventTypes(), DomainEventReceived, () => {
+                    Task.Factory.StartNew(async () => { await PeriodicallySynchronizeFeeds(token); }, token);
+                });
             }
             catch (Exception ex) {
                 Error(ex);
@@ -74,20 +75,6 @@ namespace Sociomedia.FeedAggregator
                 Info($"No last position found, initializing the last position to the current event store position : {lastPosition}");
             }
             return lastPosition;
-        }
-
-        private async Task PeriodicallySynchronizeFeeds(CancellationToken token)
-        {
-            try {
-                do {
-                    await Task.Delay(_configuration.FeedAggregator.SynchronizationTimespan, token);
-
-                    if (_eventBus.IsConnected) {
-                        await _commandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
-                    }
-                } while (true);
-            }
-            catch (TaskCanceledException) { }
         }
 
         private static IEnumerable<Type> GetEventTypes()
@@ -107,6 +94,19 @@ namespace Sociomedia.FeedAggregator
         {
             await _eventPublisher.Publish(@event);
             await _eventPositionRepository.Save(position);
+        }
+
+        private async Task PeriodicallySynchronizeFeeds(CancellationToken token)
+        {
+            try {
+                do {
+                    if (_eventBus.IsConnected) {
+                        await _commandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
+                    }
+                    await Task.Delay(_configuration.FeedAggregator.SynchronizationTimespan, token);
+                } while (true);
+            }
+            catch (TaskCanceledException) { }
         }
 
         private void Error(Exception ex)
