@@ -23,6 +23,7 @@
 * remove feed articles without date
 * Convert date fr to utc with timezone doesn't work on linux
   => https://dejanstojanovic.net/aspnet/2018/july/differences-in-time-zones-in-net-core-on-windows-and-linux-host-os/
+* Update article when title or summary changed a little bit : introduce % accuracy
 
 # ProjectionSynchronizer
 * use transaction when multiple insertion in sql db (article + keyword)

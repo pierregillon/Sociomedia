@@ -17,7 +17,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
 
             var newVersionOfExternalArticle = SomeOtherArticle();
 
-            article.Update(newVersionOfExternalArticle);
+            article.UpdateFromFeed(newVersionOfExternalArticle);
 
             article
                 .GetUncommittedChanges()
@@ -44,7 +44,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
             var newVersionOfExternalArticle = SomeExternalArticle();
             newVersionOfExternalArticle.ImageUrl = null;
 
-            article.Update(newVersionOfExternalArticle);
+            article.UpdateFromFeed(newVersionOfExternalArticle);
 
             article
                 .GetUncommittedChanges()

@@ -32,7 +32,7 @@ namespace Sociomedia.Articles.Domain
             ApplyChange(new ArticleKeywordsDefined(Id, keywords));
         }
 
-        public void Update(FeedItem feedItem)
+        public void UpdateFromFeed(FeedItem feedItem)
         {
             ApplyChange(new ArticleUpdated(
                 Id,

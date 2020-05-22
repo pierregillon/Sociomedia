@@ -66,13 +66,13 @@ namespace Sociomedia.Articles.Application.Commands.SynchronizeMediaFeeds
 
         private async Task SynchronizeArticles(Guid mediaId, IEnumerable<FeedItem> feedItems)
         {
-            foreach (var externalArticle in feedItems) {
-                var articleInfo = await _synchronizationFinder.GetArticle(mediaId, externalArticle.Id);
+            foreach (var feedItem in feedItems) {
+                var articleInfo = await _synchronizationFinder.GetArticle(mediaId, feedItem.Id);
                 if (articleInfo == null) {
-                    await AddNewArticle(mediaId, externalArticle);
+                    await AddNewArticle(mediaId, feedItem);
                 }
-                else if (externalArticle.PublishDate > articleInfo.PublishDate) {
-                    await UpdateArticle(externalArticle, articleInfo);
+                else if (feedItem.PublishDate > articleInfo.PublishDate) {
+                    await UpdateArticle(feedItem, articleInfo);
                 }
             }
         }
@@ -90,7 +90,7 @@ namespace Sociomedia.Articles.Application.Commands.SynchronizeMediaFeeds
         {
             var article = await _repository.Get<Article>(articleInfo.ArticleId);
 
-            article.Update(feedItem);
+            article.UpdateFromFeed(feedItem);
 
             await _repository.Save(article);
         }
