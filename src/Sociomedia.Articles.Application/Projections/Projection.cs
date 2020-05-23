@@ -7,6 +7,7 @@ using CQRSlite.Events;
 using EventStore.ClientAPI;
 using Sociomedia.Articles.Application.Queries;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Core;
 
 namespace Sociomedia.Articles.Application.Projections
 {

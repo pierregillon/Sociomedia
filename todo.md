@@ -1,6 +1,6 @@
-* Removing articles when removing media [DOMAIN event ?]
 * try to reimport "leparisien"
 * Remove keywords table => merge into a single column ?
+* Logging : indent logs automatically
 
 # Front
 * Infinite scroll

@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Core;
 using Xunit;
 
 namespace Sociomedia.Articles.Tests.UnitTests

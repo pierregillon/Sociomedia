@@ -23,7 +23,7 @@ namespace Sociomedia.FeedAggregator
         private readonly ICommandDispatcher _commandDispatcher;
         private readonly IEventPublisher _eventPublisher;
         private readonly ILogger _logger;
-        private readonly ProjectionsBootstrap _projectionsBootstrap;
+        private readonly ProjectionsBootstrapper _projectionsBootstrapper;
         private readonly EventPositionRepository _eventPositionRepository;
         private readonly IEventStoreExtended _eventStore;
 
@@ -33,7 +33,7 @@ namespace Sociomedia.FeedAggregator
             ICommandDispatcher commandDispatcher,
             IEventPublisher eventPublisher,
             ILogger logger,
-            ProjectionsBootstrap projectionsBootstrap,
+            ProjectionsBootstrapper projectionsBootstrapper,
             EventPositionRepository eventPositionRepository,
             IEventStoreExtended eventStore)
         {
@@ -42,7 +42,7 @@ namespace Sociomedia.FeedAggregator
             _commandDispatcher = commandDispatcher;
             _eventPublisher = eventPublisher;
             _logger = logger;
-            _projectionsBootstrap = projectionsBootstrap;
+            _projectionsBootstrapper = projectionsBootstrapper;
             _eventPositionRepository = eventPositionRepository;
             _eventStore = eventStore;
         }
@@ -56,7 +56,7 @@ namespace Sociomedia.FeedAggregator
         {
             try {
                 var lastEventPosition = await GetLastEventPosition();
-                await _projectionsBootstrap.InitializeUntil(lastEventPosition.Value);
+                await _projectionsBootstrapper.InitializeUntil(lastEventPosition.Value);
                 await _eventBus.SubscribeToEvents(lastEventPosition, GetEventTypes(), DomainEventReceived, () => {
                     Task.Factory.StartNew(async () => { await PeriodicallySynchronizeFeeds(token); }, token);
                 });

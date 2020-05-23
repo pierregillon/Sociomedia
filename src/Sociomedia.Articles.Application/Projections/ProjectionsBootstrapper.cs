@@ -5,18 +5,19 @@ using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Core;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Domain;
 
 namespace Sociomedia.Articles.Application.Projections
 {
-    public class ProjectionsBootstrap
+    public class ProjectionsBootstrapper
     {
         private readonly IEventStoreExtended _eventStore;
         private readonly IProjectionLocator _projectionLocator;
         private readonly ILogger _logger;
 
-        public ProjectionsBootstrap(IEventStoreExtended eventStore, IProjectionLocator projectionLocator, ILogger logger)
+        public ProjectionsBootstrapper(IEventStoreExtended eventStore, IProjectionLocator projectionLocator, ILogger logger)
         {
             _eventStore = eventStore;
             _projectionLocator = projectionLocator;
@@ -25,18 +26,21 @@ namespace Sociomedia.Articles.Application.Projections
 
         public async Task InitializeUntil(long lastStreamPosition)
         {
-            Info($"Updating projections until {lastStreamPosition} event position ...");
+            Info($"Updating projections to {lastStreamPosition} event position ...");
 
             IDictionary<Type, List<IProjection>> projectionsByType = new Dictionary<Type, List<IProjection>>();
             foreach (var projection in _projectionLocator.FindProjections()) {
                 AddProjectionEvents(projectionsByType, projection);
             }
-            
+
+            var eventCount = 0;
+
             await foreach (var @event in _eventStore.GetAllEventsBetween(Position.Start, new Position(lastStreamPosition, lastStreamPosition), projectionsByType.Keys.ToArray())) {
                 await ApplyInProjections(projectionsByType, @event);
+                eventCount++;
             }
 
-            Info("Projections up-to-date.");
+            Info($"Projections up-to-date ({eventCount} events replayed).");
         }
 
         private static async Task ApplyInProjections(IDictionary<Type, List<IProjection>> projectionsByEventType, IEvent @event)

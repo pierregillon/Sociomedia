@@ -7,6 +7,7 @@ using EventStore.ClientAPI;
 using Sociomedia.Articles.Application.Projections;
 using Sociomedia.Articles.Application.Queries;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Core;
 using Sociomedia.Core.Application;
 
 namespace Sociomedia.Articles.Application.Commands.SynchronizeMediaFeeds
@@ -35,9 +36,15 @@ namespace Sociomedia.Articles.Application.Commands.SynchronizeMediaFeeds
 
         public async Task Handle(SynchronizeAllMediaFeedsCommand command)
         {
-            var mediaFeeds = await _synchronizationFinder.GetAllMediaFeeds();
-            foreach (var feed in mediaFeeds) {
-                await SynchronizeFeed(feed);
+            try {
+                Debug("Start all feeds synchronization");
+                var mediaFeeds = await _synchronizationFinder.GetAllMediaFeeds();
+                foreach (var feed in mediaFeeds) {
+                    await SynchronizeFeed(feed);
+                }
+            }
+            finally {
+                Debug("All feeds synchronization ended");
             }
         }
 
@@ -51,16 +58,15 @@ namespace Sociomedia.Articles.Application.Commands.SynchronizeMediaFeeds
 
         private async Task SynchronizeFeed(MediaFeedReadModel feed)
         {
-            _logger.Debug("[SYNCHRONIZE_MEDIA_FEED] " + feed.FeedUrl);
-
             try {
+                Debug($"Synchronizing {feed.FeedUrl}");
                 var externalArticles = await _feedReader.Read(feed.FeedUrl);
                 if (externalArticles.Any()) {
                     await SynchronizeArticles(feed.MediaId, externalArticles);
                 }
             }
             catch (Exception ex) {
-                _logger.Error(ex, "[SYNCHRONIZE_MEDIA_FEED] An error occurs during synchronization of " + feed.FeedUrl);
+                Error(ex, "An error occurs during synchronization of " + feed.FeedUrl);
             }
         }
 
@@ -93,6 +99,16 @@ namespace Sociomedia.Articles.Application.Commands.SynchronizeMediaFeeds
             article.UpdateFromFeed(feedItem);
 
             await _repository.Save(article);
+        }
+
+        private void Debug(string message)
+        {
+            _logger.Debug($"[{GetType().DisplayableName()}] {message}");
+        }
+
+        private void Error(Exception ex, string error)
+        {
+            _logger.Error(ex, $"[{GetType().DisplayableName()}] {error}");
         }
     }
 }

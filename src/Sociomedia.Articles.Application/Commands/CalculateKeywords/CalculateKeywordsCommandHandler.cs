@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CQRSlite.Domain;
 using EventStore.ClientAPI;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Core;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Domain;
 

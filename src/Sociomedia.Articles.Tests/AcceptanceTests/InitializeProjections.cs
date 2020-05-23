@@ -16,7 +16,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
 {
     public class InitializeProjections : AcceptanceTests
     {
-        private readonly ProjectionsBootstrap _projectionsBootstrap;
+        private readonly ProjectionsBootstrapper _projectionsBootstrapper;
         private readonly IEventStoreExtended _eventStore = Substitute.For<IEventStoreExtended>();
         private readonly ISynchronizationFinder _finder;
 
@@ -24,7 +24,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
         {
             Container.Inject(_eventStore);
 
-            _projectionsBootstrap = Container.GetInstance<ProjectionsBootstrap>();
+            _projectionsBootstrapper = Container.GetInstance<ProjectionsBootstrapper>();
             _finder = Container.GetInstance<ISynchronizationFinder>();
         }
 
@@ -42,7 +42,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
                     new MediaFeedRemoved(mediaId, "https://site/rss1.xml"),
                 });
 
-            await _projectionsBootstrap.InitializeUntil(0);
+            await _projectionsBootstrapper.InitializeUntil(0);
 
             (await _finder.GetAllMediaFeeds())
                 .Should()
@@ -74,7 +74,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
                     new ArticleDeleted(article2Id)
                 });
 
-            await _projectionsBootstrap.InitializeUntil(0);
+            await _projectionsBootstrapper.InitializeUntil(0);
 
             (await _finder.GetArticle(mediaId, "externalId"))
                 .Should()

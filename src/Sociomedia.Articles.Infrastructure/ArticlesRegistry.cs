@@ -32,7 +32,7 @@ namespace Sociomedia.Articles.Infrastructure
                 scanner.AddAllTypesOf(typeof(ICommandHandler<>));
             });
 
-            For<ICommandDispatcher>().DecorateAllWith<CommandDispatchedLogger>();
+            For<ICommandDispatcher>().DecorateAllWith<CommandDispatcherLogger>();
 
             For<FrenchKeywordDictionary>()
                 .Use<FrenchKeywordDictionary>()
