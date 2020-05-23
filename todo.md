@@ -1,5 +1,4 @@
 * try to reimport "leparisien"
-* Remove keywords table => merge into a single column ?
 * Logging : indent logs automatically
 
 # Front
@@ -8,6 +7,7 @@
 * Add query and queryhandler to reduce coupling for ui query
 * display articles count
 * if no photo, display media photo
+* keywords search can be easily cleared like tag (with an x)
 
 # FeedAggregator 
 * manual reset event to block aggregation if eventstore unreachable. (when live mode enabled)
