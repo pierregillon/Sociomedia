@@ -8,6 +8,5 @@ namespace Sociomedia.ReadModel.DataAccess.Tables
     {
         [NotNull] [Column] public Guid MediaId { get; set; }
         [NotNull] [Column] public string FeedUrl { get; set; }
-        [Column]  public DateTimeOffset? SynchronizationDate { get; set; }
     }
 }
