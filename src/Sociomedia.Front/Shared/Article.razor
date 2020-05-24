@@ -82,6 +82,7 @@
         -moz-box-orient: vertical;
         height: 162px;
         font-size: 18px;
+        margin-top: 15px;
     }
 
     .article .image:hover .summary  {
@@ -91,7 +92,7 @@
     .article .image .publish-date {
         position: absolute;
         right: 5px;
-        bottom: 5px;
+        top: 5px;
         border: solid black 1px;
     }
 
@@ -104,6 +105,15 @@
         height: 67px;
         font-size: 18px;
     }
+
+    @@media screen and (max-width: 375px) {
+        .article .title {
+            -webkit-line-clamp: 4;
+            font-size: 18px;
+            height: 86px;
+        }
+    }
+
 </Styled>
 
 @code {
