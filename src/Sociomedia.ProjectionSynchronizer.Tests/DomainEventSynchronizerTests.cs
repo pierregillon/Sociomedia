@@ -225,8 +225,7 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
                 .BeEquivalentTo(new[] {
                     new MediaFeedTable {
                         MediaId = mediaId,
-                        FeedUrl = "https://test/myfeed.xml",
-                        SynchronizationDate = DateTime.Today
+                        FeedUrl = "https://test/myfeed.xml"
                     },
                 });
         }

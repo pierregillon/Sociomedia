@@ -12,7 +12,6 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
         IEventListener<MediaEdited>,
         IEventListener<MediaFeedAdded>,
         IEventListener<MediaFeedRemoved>,
-        IEventListener<MediaFeedSynchronized>,
         IEventListener<MediaDeleted>
     {
         private readonly DbConnectionReadModel _dbConnection;
@@ -55,14 +54,6 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
             await _dbConnection.MediaFeeds
                 .Where(x => x.MediaId == @event.Id && x.FeedUrl == @event.FeedUrl)
                 .DeleteAsync();
-        }
-
-        public async Task On(MediaFeedSynchronized @event)
-        {
-            await _dbConnection.MediaFeeds
-                .Where(x => x.MediaId == @event.Id && x.FeedUrl == @event.FeedUrl)
-                .Set(x => x.SynchronizationDate, @event.SynchronizationDate)
-                .UpdateAsync();
         }
 
         public async Task On(MediaDeleted @event)
