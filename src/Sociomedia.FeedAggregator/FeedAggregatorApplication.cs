@@ -23,7 +23,7 @@ namespace Sociomedia.FeedAggregator
         {
             var source = new CancellationTokenSource();
 
-            Info("Loading dictionary ...");
+            Info("Loading language dictionary ...");
 
             _dictionary.BuildFromFile();
 

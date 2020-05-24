@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Sociomedia.Articles.Application.Projections;
 
 namespace Sociomedia.Articles.Application.Queries
 {

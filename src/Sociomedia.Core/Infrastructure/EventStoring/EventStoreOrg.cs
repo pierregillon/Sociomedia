@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
 using Newtonsoft.Json;
+using Sociomedia.Core.Domain;
 
 namespace Sociomedia.Core.Infrastructure.EventStoring
 {
-    public class EventStoreOrg : IEventStore
+    public class EventStoreOrg : IEventStore, IEventStoreExtended
     {
         private const int EVENT_COUNT = 200;
 
@@ -64,8 +65,37 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
                 );
                 var version = @event.Version - 2; // CQRSLite start event version at 1. EventStore at -1.
                 await _connection.AppendToStreamAsync(@event.Id.ToString(), version, eventData);
-                Debug($"{eventData.Type} stored.");
             }
+        }
+
+        public async IAsyncEnumerable<IEvent> GetAllEventsBetween(Position startPosition, Position endPosition, IReadOnlyCollection<Type> eventTypes)
+        {
+            await Connect();
+
+            var eventTypesByName = eventTypes.ToDictionary(x => x.Name);
+
+            AllEventsSlice currentSlice;
+
+            do {
+                currentSlice = await _connection.ReadAllEventsForwardAsync(startPosition, EVENT_COUNT, false);
+                startPosition = currentSlice.NextPosition;
+                foreach (var @event in currentSlice.Events.Where(x => !x.Event.EventType.StartsWith("$"))) {
+                    if (eventTypesByName.TryGetValue(@event.Event.EventType, out var eventType)) {
+                        yield return ConvertToDomainEvent(@event, eventType);
+                    }
+                    if (@event.OriginalPosition == endPosition) {
+                        yield break;
+                    }
+                }
+            } while (!currentSlice.IsEndOfStream);
+        }
+
+        public async Task<long> GetCurrentPosition()
+        {
+            await Connect();
+
+            var slice = await _connection.ReadAllEventsBackwardAsync(Position.End, 1, false);
+            return slice.FromPosition.CommitPosition;
         }
 
         // ----- Internal logic
@@ -76,6 +106,7 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
                 return;
             }
             _connection = EventStoreConnection.Create(_configuration.Uri, AppDomain.CurrentDomain.FriendlyName);
+            _connection.ErrorOccurred += (sender, args) => Error(args.Exception.ToString());
             _connection.Closed += (sender, args) => {
                 Error("Connection closed : " + args.Reason);
                 _connection = null;
@@ -86,18 +117,23 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
         private IEvent ConvertToDomainEvent(ResolvedEvent @event)
         {
             try {
-                var json = Encoding.UTF8.GetString(@event.Event.Data);
                 var type = _typeLocator.FindEventType(@event.Event.EventType);
                 if (type == null) {
                     throw new Exception("Event is unknown, unable to correctly deserialize it.");
                 }
-                var domainEvent = (IEvent) JsonConvert.DeserializeObject(json, type, _serializerSettings);
-                domainEvent.Version = (int) @event.OriginalEventNumber + 1;
-                return domainEvent;
+                return ConvertToDomainEvent(@event, type);
             }
             catch (Exception ex) {
                 throw new Exception($"An error occurred while parsing event from event store. Stream: {@event.Event.EventStreamId}, Position: {@event.Event.EventNumber}", ex);
             }
+        }
+
+        private IEvent ConvertToDomainEvent(ResolvedEvent @event, Type eventType)
+        {
+            var json = Encoding.UTF8.GetString(@event.Event.Data);
+            var domainEvent = (IEvent) JsonConvert.DeserializeObject(json, eventType, _serializerSettings);
+            domainEvent.Version = (int) @event.OriginalEventNumber + 1;
+            return domainEvent;
         }
 
         private async Task<IEnumerable<ResolvedEvent>> ReadAllEventsInStream(string streamId, int fromVersion)

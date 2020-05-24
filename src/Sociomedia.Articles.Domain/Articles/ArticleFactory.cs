@@ -18,26 +18,14 @@ namespace Sociomedia.Articles.Domain
             _keywordsParser = keywordsParser;
         }
 
-        public async Task<Article> Build(Guid mediaId, ExternalArticle externalArticle)
+        public async Task<Article> Build(Guid mediaId, FeedItem feedItem)
         {
-            var html = await _webPageDownloader.Download(externalArticle.Url);
-
-            var articleContent = _htmlParser.ExtractPlainTextArticleContent(html);
-
-            externalArticle.ImageUrl ??= html
+            feedItem.ImageUrl ??= await _webPageDownloader.Download(feedItem.Link)
                 .Pipe(_htmlParser.ExtractArticleImageUrl)
-                .Pipe(imageUrl => InjectHostIfMissing(imageUrl, externalArticle.Url))
+                .Pipe(imageUrl => InjectHostIfMissing(imageUrl, feedItem.Link))
                 .Pipe(UrlSanitizer.Sanitize);
 
-            var text = string.Join(" ", new[] {
-                articleContent,
-                externalArticle.Title,
-                externalArticle.Summary
-            });
-
-            var keywords = _keywordsParser.Parse(text).Take(50).ToArray();
-
-            return new Article(mediaId, externalArticle, keywords.Select(x => x.Value).ToArray());
+            return new Article(mediaId, feedItem);
         }
 
         private static string InjectHostIfMissing(string imageUrl, string articleUrl)

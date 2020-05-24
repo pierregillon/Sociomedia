@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
 using Sociomedia.Articles.Domain;
@@ -33,7 +32,7 @@ namespace Sociomedia.ProjectionSynchronizer.Application
         public async Task StartSynchronization()
         {
             var lastPosition = await _streamPositionRepository.GetLastPosition();
-            await _eventBus.SubscribeToEvents(lastPosition, GetEventTypes(), DomainEventReceived, PositionInStreamChanged);
+            await _eventBus.SubscribeToEvents(lastPosition, GetEventTypes(), DomainEventReceived);
         }
 
         private static IEnumerable<Type> GetEventTypes()
@@ -49,13 +48,9 @@ namespace Sociomedia.ProjectionSynchronizer.Application
             return articlesEvents.Union(mediaEvents).ToArray();
         }
 
-        private async Task DomainEventReceived(IEvent @event)
+        private async Task DomainEventReceived(IEvent @event, long position)
         {
             await _eventPublisher.Publish(@event);
-        }
-
-        private async Task PositionInStreamChanged(long position)
-        {
             await _streamPositionRepository.Save(position);
         }
 

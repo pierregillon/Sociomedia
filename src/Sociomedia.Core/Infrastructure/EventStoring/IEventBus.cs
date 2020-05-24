@@ -7,7 +7,7 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
     public interface IEventBus
     {
         bool IsConnected { get; }
-        Task SubscribeToEvents(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, PositionInStreamChanged positionInStreamChanged = null);
+        Task SubscribeToEvents(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, LiveProcessingStarted liveProcessingStarted = null);
         void Stop();
     }
 }

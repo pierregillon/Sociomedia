@@ -27,15 +27,14 @@ namespace Sociomedia.Articles.Infrastructure
             _logger = logger;
         }
 
-        public FeedContent Parse(Stream rssStream)
+        public IReadOnlyCollection<FeedItem> Parse(Stream stream)
         {
             using var ms = new MemoryStream();
-            rssStream.CopyTo(ms);
+            stream.CopyTo(ms);
 
             return CodeHollow.FeedReader.FeedReader.ReadFromByteArray(ms.ToArray())
                 .Pipe(GetFeedItems)
-                .Pipe(x => x.ToArray())
-                .Pipe(x => new FeedContent(x));
+                .Pipe(x => x.ToArray());
         }
 
         private IEnumerable<FeedItem> GetFeedItems(Feed feed)
