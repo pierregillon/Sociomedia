@@ -20,13 +20,13 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 
         public bool IsConnected => _connection != null;
 
-        public async Task SubscribeToEvents(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, PositionInStreamChanged positionInStreamChanged)
+        public async Task SubscribeToEvents(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, LiveProcessingStarted liveProcessingStarted = null)
         {
             var subscription = new EventsSubscription(
                 initialPosition,
                 eventTypes,
                 domainEventReceived,
-                positionInStreamChanged,
+                liveProcessingStarted,
                 _logger
             );
 
@@ -58,6 +58,7 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
             Info("Connecting to event bus ...");
 
             _connection = EventStoreConnection.Create(_configuration.Uri, AppDomain.CurrentDomain.FriendlyName);
+            _connection.ErrorOccurred += (sender, args) => { Error(args.Exception); };
             _connection.Closed += async (sender, args) => {
                 Info("Connection closed : " + args.Reason);
                 _connection = null;
@@ -65,6 +66,11 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
             };
             await _connection.ConnectAsync();
             return _connection;
+        }
+
+        private void Error(Exception exception)
+        {
+            _logger.Error($"[{this.GetType().Name.ToUpper()}]", exception);
         }
 
         private async Task TryToReconnect()

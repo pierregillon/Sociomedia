@@ -19,5 +19,7 @@ namespace Sociomedia.ReadModel.DataAccess.Tables
         [Column] public string ImageUrl { get; set; }
 
         [Column]  public Guid MediaId { get; set; }
+        
+        [Column] public string Keywords { get; set; }
     }
 }

@@ -6,7 +6,7 @@ using CQRSlite.Events;
 using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Sociomedia.Articles.Application.Commands.SynchronizeAllMediaFeeds;
+using Sociomedia.Articles.Application.Commands.SynchronizeMediaFeeds;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Tests.UnitTests;
 using Sociomedia.Core.Domain;
@@ -17,15 +17,15 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
 {
     public class ImportArticlesFromMediaFeeds : AcceptanceTests
     {
-        private readonly IFeedParser _feedParser = Substitute.For<IFeedParser>();
+        private readonly IFeedReader _feedReader = Substitute.For<IFeedReader>();
 
         public ImportArticlesFromMediaFeeds()
         {
-            Container.Inject(_feedParser);
+            Container.Inject(_feedReader);
 
-            _feedParser
-                .Parse(Arg.Any<Stream>())
-                .Returns(x => new FeedContent(Array.Empty<FeedItem>()));
+            _feedReader
+                .Read(Arg.Any<string>())
+                .Returns(x => Array.Empty<FeedItem>());
 
             WebPageDownloader
                 .Download(Arg.Any<string>())
@@ -73,12 +73,13 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             });
 
             EventStore.CommitEvents();
-
+            _feedReader.ClearReceivedCalls();
+            
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
 
-            _feedParser
+            await _feedReader
                 .Received(0)
-                .Parse(Arg.Any<Stream>());
+                .Read(Arg.Any<string>());
         }
 
         [Fact]
@@ -92,11 +93,13 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss2.xml"),
             });
 
+            _feedReader.ClearReceivedCalls();
+
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
 
-            _feedParser
-                .Received(2)
-                .Parse(Arg.Any<Stream>());
+            await _feedReader.Received(2).Read(Arg.Any<string>());
+            await _feedReader.Received(1).Read("https://www.test.com/rss.xml");
+            await _feedReader.Received(1).Read("https://www.test.com/rss2.xml");
         }
 
         [Fact]
@@ -112,9 +115,9 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
 
             EventStore.CommitEvents();
 
-            _feedParser
-                .Parse(Arg.Any<Stream>())
-                .Returns(x => new FeedContent(new[] {
+            _feedReader
+                .Read("https://www.test.com/rss.xml")
+                .Returns(x => new[] {
                     new FeedItem {
                         Id = "someExternalId",
                         Title = "some title",
@@ -123,7 +126,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
                         PublishDate = new DateTime(2020, 04, 01),
                         ImageUrl = "https://test/image.jpg"
                     }
-                }));
+                });
 
             // Act
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
@@ -141,6 +144,12 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
                         "https://test/image.jpg",
                         "someExternalId",
                         Array.Empty<string>(), mediaId
+                    ),
+                    new ArticleKeywordsDefined(
+                        default,
+                        new [] {
+                            new Keyword("some", 2), 
+                        }
                     )
                 }, x => x.ExcludeDomainEventTechnicalFields());
         }
@@ -159,9 +168,9 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
 
             EventStore.CommitEvents();
 
-            _feedParser
-                .Parse(Arg.Any<Stream>())
-                .Returns(x => new FeedContent(new[] {
+            _feedReader
+                .Read("https://www.test.com/rss.xml")
+                .Returns(x => new[] {
                     new FeedItem {
                         Id = "articleExternalId",
                         Title = "my title",
@@ -170,7 +179,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
                         Link = "https://www.test.com/newpage.html",
                         PublishDate = new DateTime(2020, 04, 02)
                     }
-                }));
+                });
 
             // Act
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
@@ -205,9 +214,9 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
 
             EventStore.CommitEvents();
 
-            _feedParser
-                .Parse(Arg.Any<Stream>())
-                .Returns(x => new FeedContent(new[] {
+            _feedReader
+                .Read("https://www.test.com/rss.xml")
+                .Returns(x => new[] {
                     new FeedItem {
                         Id = "articleExternalId",
                         Title = "my title",
@@ -216,7 +225,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
                         Link = "https://www.test.com/newpage.html",
                         PublishDate = new DateTime(2020, 04, 01)
                     }
-                }));
+                });
 
             // Act
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
@@ -244,9 +253,9 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
 
             EventStore.CommitEvents();
 
-            _feedParser
-                .Parse(Arg.Any<Stream>())
-                .Returns(x => new FeedContent(new[] {
+            _feedReader
+                .Read("https://www.test.com/rss.xml")
+                .Returns(x => new[] {
                     new FeedItem {
                         Id = "articleExternalId",
                         Title = "my title",
@@ -255,7 +264,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
                         Link = "https://www.test.com/newpage.html",
                         PublishDate = new DateTime(2020, 04, 02)
                     }
-                }));
+                });
 
             // Act
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
@@ -305,24 +314,16 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             });
 
             EventStore.CommitEvents();
-
-            _feedParser
-                .Parse(Arg.Any<Stream>())
-                .Returns(x => new FeedContent(new[] {
-                    new FeedItem {
-                        Id = "articleExternalId",
-                        Title = "my title",
-                        Summary = "summary",
-                        ImageUrl = null,
-                        Link = "https://www.test.com/newpage.html",
-                        PublishDate = new DateTime(2020, 04, 01)
-                    }
-                }));
+            _feedReader.ClearReceivedCalls();
 
             // Act
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
 
             // Assert
+            await _feedReader
+                .Received(0)
+                .Read("");
+
             (await EventStore.GetNewEvents())
                 .Should()
                 .BeEmpty();
@@ -342,14 +343,15 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             });
 
             EventStore.CommitEvents();
+            _feedReader.ClearReceivedCalls();
 
             // Act
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
 
             // Assert
-            _feedParser
+            await _feedReader
                 .Received(0)
-                .Parse(Arg.Any<Stream>());
+                .Read(Arg.Any<string>());
         }
     }
 }

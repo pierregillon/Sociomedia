@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -36,19 +37,19 @@ namespace Sociomedia.Articles.Tests.UnitTests
 
             using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
 
-            var feedContent = _parser.Parse(stream);
+            var feedItems = _parser.Parse(stream);
 
-            feedContent.Items.Should().BeEmpty();
+            feedItems.Should().BeEmpty();
         }
 
         [Fact]
         public void Parse_lemonde_rss()
         {
-            var feedContent = ParseFile("rss_lemonde.xml");
+            var feedItems = ParseFile("rss_lemonde.xml");
 
-            feedContent.Items.Should().HaveCount(20);
+            feedItems.Should().HaveCount(20);
 
-            feedContent.Items
+            feedItems
                 .First()
                 .Should()
                 .BeEquivalentTo(new FeedItem {
@@ -64,11 +65,11 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [Fact]
         public void Parse_marianne_rss()
         {
-            var feedContent = ParseFile("rss_marianne.xml");
+            var feedItems = ParseFile("rss_marianne.xml");
 
-            feedContent.Items.Should().HaveCount(20);
+            feedItems.Should().HaveCount(20);
 
-            feedContent.Items
+            feedItems
                 .First()
                 .Should()
                 .BeEquivalentTo(new FeedItem {
@@ -84,11 +85,11 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [Fact]
         public void Parse_liberation_rss()
         {
-            var feedContent = ParseFile("rss_liberation.xml");
+            var feedItems = ParseFile("rss_liberation.xml");
 
-            feedContent.Items.Should().HaveCount(50);
+            feedItems.Should().HaveCount(50);
 
-            feedContent.Items
+            feedItems
                 .First()
                 .Should()
                 .BeEquivalentTo(new FeedItem {
@@ -104,11 +105,11 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [Fact]
         public void Parse_franceTVInfo_rss()
         {
-            var feedContent = ParseFile("rss_francetvinfo.xml");
+            var feedItems = ParseFile("rss_francetvinfo.xml");
 
-            feedContent.Items.Should().HaveCount(20);
+            feedItems.Should().HaveCount(20);
 
-            feedContent.Items
+            feedItems
                 .First()
                 .Should()
                 .BeEquivalentTo(new FeedItem {
@@ -124,11 +125,11 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [Fact]
         public void Parse_LHumanite_rss()
         {
-            var feedContent = ParseFile("rss_lhumanite.xml");
+            var feedItems = ParseFile("rss_lhumanite.xml");
 
-            feedContent.Items.Should().HaveCount(10);
+            feedItems.Should().HaveCount(10);
 
-            feedContent.Items
+            feedItems
                 .First()
                 .Should()
                 .BeEquivalentTo(new FeedItem {
@@ -144,11 +145,11 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [Fact]
         public void Parse_UsineNouvelle_rss()
         {
-            var feedContent = ParseFile("rss_usinenouvelle.xml");
+            var feedItems = ParseFile("rss_usinenouvelle.xml");
 
-            feedContent.Items.Should().HaveCount(50);
+            feedItems.Should().HaveCount(50);
 
-            feedContent.Items
+            feedItems
                 .First()
                 .Should()
                 .BeEquivalentTo(new FeedItem {
@@ -164,11 +165,11 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [Fact]
         public void Parse_Figaro_rss()
         {
-            var feedContent = ParseFile("rss_figaro.xml");
+            var feedItems = ParseFile("rss_figaro.xml");
 
-            feedContent.Items.Should().HaveCount(20);
+            feedItems.Should().HaveCount(20);
 
-            feedContent.Items
+            feedItems
                 .First()
                 .Should()
                 .BeEquivalentTo(new FeedItem {
@@ -184,11 +185,11 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [Fact]
         public void Parse_lemediapresse_rss()
         {
-            var feedContent = ParseFile("rss_lemediapresse.xml");
+            var feedItems = ParseFile("rss_lemediapresse.xml");
 
-            feedContent.Items.Should().HaveCount(10);
+            feedItems.Should().HaveCount(10);
 
-            feedContent.Items
+            feedItems
                 .First()
                 .Should()
                 .BeEquivalentTo(new FeedItem {
@@ -204,11 +205,11 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [Fact]
         public void Parse_euronews_rss()
         {
-            var feedContent = ParseFile("rss_euronews.xml");
+            var feedItems = ParseFile("rss_euronews.xml");
 
-            feedContent.Items.Should().HaveCount(50);
+            feedItems.Should().HaveCount(50);
 
-            feedContent.Items
+            feedItems
                 .First()
                 .Should()
                 .BeEquivalentTo(new FeedItem {
@@ -224,11 +225,11 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [Fact]
         public void Parse_agoravox_rss()
         {
-            var feedContent = ParseFile("rss_agoravox.xml");
+            var feedItems = ParseFile("rss_agoravox.xml");
 
-            feedContent.Items.Should().HaveCount(16);
+            feedItems.Should().HaveCount(16);
 
-            feedContent.Items
+            feedItems
                 .First()
                 .Should()
                 .BeEquivalentTo(new FeedItem {
@@ -244,11 +245,11 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [Fact]
         public void Parse_leparisien_rss()
         {
-            var feedContent = ParseFile("rss_parisien.xml");
+            var feedItems = ParseFile("rss_parisien.xml");
 
-            feedContent.Items.Should().HaveCount(30);
+            feedItems.Should().HaveCount(30);
 
-            feedContent.Items
+            feedItems
                 .First()
                 .Should()
                 .BeEquivalentTo(new FeedItem {
@@ -264,11 +265,11 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [Fact]
         public void Parse_rt_rss()
         {
-            var feedContent = ParseFile("rss_rt.xml");
+            var feedItems = ParseFile("rss_rt.xml");
 
-            feedContent.Items.Should().HaveCount(10);
+            feedItems.Should().HaveCount(10);
 
-            feedContent.Items
+            feedItems
                 .First()
                 .Should()
                 .BeEquivalentTo(new FeedItem {
@@ -282,7 +283,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
         }
 
 
-        private FeedContent ParseFile(string fileName)
+        private IReadOnlyCollection<FeedItem> ParseFile(string fileName)
         {
             using var stream = File.OpenRead(Path.Combine(PATH, fileName));
             return _parser.Parse(stream);

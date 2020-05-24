@@ -13,11 +13,11 @@ namespace Sociomedia.Articles.Tests.UnitTests
         {
             var previousArticle = SomeExternalArticle();
 
-            var article = new Article(Guid.NewGuid(), previousArticle, new string[0]);
+            var article = new Article(Guid.NewGuid(), previousArticle);
 
             var newVersionOfExternalArticle = SomeOtherArticle();
 
-            article.Update(newVersionOfExternalArticle);
+            article.UpdateFromFeed(newVersionOfExternalArticle);
 
             article
                 .GetUncommittedChanges()
@@ -29,7 +29,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
                         newVersionOfExternalArticle.Title,
                         newVersionOfExternalArticle.Summary,
                         newVersionOfExternalArticle.PublishDate,
-                        newVersionOfExternalArticle.Url,
+                        newVersionOfExternalArticle.Link,
                         newVersionOfExternalArticle.ImageUrl),
                 });
         }
@@ -39,12 +39,12 @@ namespace Sociomedia.Articles.Tests.UnitTests
         {
             var previousArticle = SomeExternalArticle();
 
-            var article = new Article(Guid.NewGuid(), previousArticle, new string[0]);
+            var article = new Article(Guid.NewGuid(), previousArticle);
 
             var newVersionOfExternalArticle = SomeExternalArticle();
             newVersionOfExternalArticle.ImageUrl = null;
 
-            article.Update(newVersionOfExternalArticle);
+            article.UpdateFromFeed(newVersionOfExternalArticle);
 
             article
                 .GetUncommittedChanges()
@@ -57,28 +57,28 @@ namespace Sociomedia.Articles.Tests.UnitTests
 
         // ----- Private methods
 
-        private static ExternalArticle SomeExternalArticle()
+        private static FeedItem SomeExternalArticle()
         {
-            return new ExternalArticle(
-                "someExternalId",
-                "https://someurl",
-                "some title",
-                DateTimeOffset.Now,
-                "some summary",
-                "https://someImageUrl"
-            );
+            return new FeedItem {
+                Id = "someExternalId",
+                Link = "https://someurl",
+                Title = "some title",
+                PublishDate = DateTimeOffset.Now,
+                Summary = "some summary",
+                ImageUrl = "https://someImageUrl"
+            };
         }
 
-        private static ExternalArticle SomeOtherArticle()
+        private static FeedItem SomeOtherArticle()
         {
-            return new ExternalArticle(
-                "someExternalId2",
-                "https://someurl2",
-                "some title2",
-                DateTimeOffset.Now,
-                "some summary2",
-                "https://someImageUrl2"
-            );
+            return new FeedItem {
+                Id = "someExternalId2",
+                Link = "https://someurl2",
+                Title = "some title2",
+                PublishDate = DateTimeOffset.Now,
+                Summary = "some summary2",
+                ImageUrl = "https://someImageUrl2"
+            };
         }
     }
 }

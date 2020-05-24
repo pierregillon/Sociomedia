@@ -3,5 +3,5 @@ using CQRSlite.Events;
 
 namespace Sociomedia.Core.Infrastructure.EventStoring
 {
-    public delegate Task DomainEventReceived(IEvent @event);
+    public delegate Task DomainEventReceived(IEvent @event, long position);
 }

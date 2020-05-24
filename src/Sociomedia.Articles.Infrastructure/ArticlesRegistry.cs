@@ -2,17 +2,19 @@
 using System.IO;
 using CQRSlite.Domain;
 using CQRSlite.Events;
+using EventStore.ClientAPI;
 using EventStore.ClientAPI.Common.Log;
+using Sociomedia.Articles.Application.Projections;
 using Sociomedia.Articles.Application.Queries;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Core.Application;
+using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.CQRS;
 using Sociomedia.Core.Infrastructure.EventStoring;
 using Sociomedia.Core.Infrastructure.Logging;
 using StructureMap;
 using StructureMap.Graph;
 using StructureMap.Graph.Scanning;
-using ILogger = EventStore.ClientAPI.ILogger;
 
 namespace Sociomedia.Articles.Infrastructure
 {
@@ -30,13 +32,18 @@ namespace Sociomedia.Articles.Infrastructure
                 scanner.AddAllTypesOf(typeof(ICommandHandler<>));
             });
 
-            For<ICommandDispatcher>().DecorateAllWith<CommandDispatchedLogger>();
+            For<ICommandDispatcher>().DecorateAllWith<CommandDispatcherLogger>();
 
-            For<IKeywordDictionary>()
+            For<FrenchKeywordDictionary>()
                 .Use<FrenchKeywordDictionary>()
                 .Ctor<string>()
-                .Is(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Dictionaries\\french_nouns.txt"));
-            
+                .Is(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "./Dictionaries/french.csv"))
+                .Singleton();
+
+            For<IKeywordDictionary>().Use(x => x.GetInstance<FrenchKeywordDictionary>());
+
+            For<IProjectionLocator>().Use<ProjectionLocator>();
+
             For<IFeedReader>().Use<FeedReader>();
             For<IFeedParser>().Use<FeedParser>();
             For<InMemoryDatabase>().Singleton();
@@ -45,6 +52,7 @@ namespace Sociomedia.Articles.Infrastructure
 
             For<IRepository>().Use(context => new Repository(context.GetInstance<IEventStore>()));
             For<IEventStore>().Use<EventStoreOrg>().Singleton();
+            For<IEventStoreExtended>().Use(x => x.GetInstance<EventStoreOrg>());
             For<EventStoreConfiguration>().Use(eventStoreConfiguration).Singleton();
 
             For<IHtmlParser>().Use<HtmlParser>();
@@ -63,7 +71,4 @@ namespace Sociomedia.Articles.Infrastructure
             }
         }
     }
-
-
-
 }

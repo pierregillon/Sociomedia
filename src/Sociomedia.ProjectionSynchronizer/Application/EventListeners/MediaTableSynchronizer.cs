@@ -74,15 +74,6 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
             await _dbConnection.MediaFeeds
                 .Where(x => x.MediaId == @event.Id)
                 .DeleteAsync();
-
-            await _dbConnection.Keywords
-                .Join(_dbConnection.Articles, keyword => keyword.FK_Article, article => article.Id, (keyword, article) => new { keyword, article })
-                .Where(@t => @t.article.MediaId == @event.Id)
-                .DeleteAsync();
-
-            await _dbConnection.Articles
-                .Where(x => x.MediaId == @event.Id)
-                .DeleteAsync();
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Sociomedia.Medias.Infrastructure
                 scanner.AddAllTypesOf(typeof(ICommandHandler<>));
             });
 
-            For<ICommandDispatcher>().DecorateAllWith<CommandDispatchedLogger>();
+            For<ICommandDispatcher>().DecorateAllWith<CommandDispatcherLogger>();
 
             For<ILogger>().Use<ConsoleLogger>();
             For<ITypeLocator>().Use<ReflectionTypeLocator>();
