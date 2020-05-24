@@ -68,7 +68,7 @@ namespace Sociomedia.Articles.Application.Projections
 
         private void Info(string message)
         {
-            _logger.Info($"[{this.GetType().Name.SeparatePascalCaseWords().ToUpper()}] " + message);
+            _logger.Info($"[{this.GetType().DisplayableName()}] " + message);
         }
     }
 }

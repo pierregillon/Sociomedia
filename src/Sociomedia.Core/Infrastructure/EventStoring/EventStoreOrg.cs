@@ -90,7 +90,7 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
             } while (!currentSlice.IsEndOfStream);
         }
 
-        public async Task<long> GetCurrentPosition()
+        public async Task<long> GetCurrentGlobalStreamPosition()
         {
             await Connect();
 

@@ -2,9 +2,9 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Sociomedia.Articles.Infrastructure
+namespace Sociomedia.FeedAggregator.Infrastructure
 {
-    public class EventPositionRepository
+    public class EventPositionRepository : IEventPositionRepository
     {
         private const string FILE_NAME = ".StreamPosition";
 

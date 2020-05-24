@@ -56,6 +56,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.Medias.Applicati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.Core", "Sociomedia.Core\Sociomedia.Core.csproj", "{FD729AE1-DB35-4F03-92D0-B2625972FAFA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sociomedia.FeedAggregator.Tests", "Sociomedia.FeedAggregator.Tests\Sociomedia.FeedAggregator.Tests.csproj", "{CFDC9982-B99C-4F78-A6BF-028F1D9DD5B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -126,6 +128,10 @@ Global
 		{FD729AE1-DB35-4F03-92D0-B2625972FAFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD729AE1-DB35-4F03-92D0-B2625972FAFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD729AE1-DB35-4F03-92D0-B2625972FAFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFDC9982-B99C-4F78-A6BF-028F1D9DD5B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFDC9982-B99C-4F78-A6BF-028F1D9DD5B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFDC9982-B99C-4F78-A6BF-028F1D9DD5B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFDC9982-B99C-4F78-A6BF-028F1D9DD5B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

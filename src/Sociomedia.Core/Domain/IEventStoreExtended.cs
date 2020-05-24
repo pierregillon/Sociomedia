@@ -9,6 +9,6 @@ namespace Sociomedia.Core.Domain
     public interface IEventStoreExtended
     {
         IAsyncEnumerable<IEvent> GetAllEventsBetween(Position startPosition, Position endPosition, IReadOnlyCollection<Type> eventTypes);
-        Task<long> GetCurrentPosition();
+        Task<long> GetCurrentGlobalStreamPosition();
     }
 }

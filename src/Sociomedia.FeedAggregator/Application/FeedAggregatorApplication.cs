@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using Sociomedia.Articles.Infrastructure;
 
-namespace Sociomedia.FeedAggregator
+namespace Sociomedia.FeedAggregator.Application
 {
     public class FeedAggregatorApplication
     {

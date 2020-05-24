@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Sociomedia.FeedAggregator.Application;
 
 namespace Sociomedia.FeedAggregator
 {

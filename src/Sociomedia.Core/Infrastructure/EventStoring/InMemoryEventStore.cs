@@ -68,7 +68,7 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
             throw new NotImplementedException();
         }
 
-        public Task<long> GetCurrentPosition()
+        public Task<long> GetCurrentGlobalStreamPosition()
         {
             throw new NotImplementedException();
         }
