@@ -10,8 +10,9 @@ using CodeHollow.FeedReader.Feeds;
 using EventStore.ClientAPI;
 using HtmlAgilityPack;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Feeds;
 using Sociomedia.Core.Domain;
-using FeedItem = Sociomedia.Articles.Domain.FeedItem;
+using FeedItem = Sociomedia.Articles.Domain.Feeds.FeedItem;
 
 namespace Sociomedia.Articles.Infrastructure
 {

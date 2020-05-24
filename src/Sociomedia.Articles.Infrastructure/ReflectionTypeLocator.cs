@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.EventStoring;
 

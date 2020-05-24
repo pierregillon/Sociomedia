@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.VisualBasic.FileIO;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Keywords;
 
 namespace Sociomedia.Articles.Infrastructure
 {

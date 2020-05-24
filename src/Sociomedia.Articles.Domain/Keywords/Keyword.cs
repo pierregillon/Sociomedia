@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sociomedia.Articles.Domain
+namespace Sociomedia.Articles.Domain.Keywords
 {
     public class Keyword : IEquatable<Keyword>
     {

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using Sociomedia.Articles.Application.Queries;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Application;
 
 namespace Sociomedia.Articles.Application.Projections

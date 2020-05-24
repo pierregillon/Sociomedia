@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Sociomedia.Core.Domain;
 
-namespace Sociomedia.Articles.Domain
+namespace Sociomedia.Articles.Domain.Keywords
 {
     public class KeywordsParser
     {

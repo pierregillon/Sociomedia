@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sociomedia.Articles.Domain
+namespace Sociomedia.Articles.Domain.Feeds
 {
     public class FeedItem
     {

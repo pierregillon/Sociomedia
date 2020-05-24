@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using CQRSlite.Domain;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Application;
 
 namespace Sociomedia.Articles.Application.Commands.DeleteArticle

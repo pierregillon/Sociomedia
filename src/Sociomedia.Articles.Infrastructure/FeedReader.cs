@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Feeds;
 using Sociomedia.Core.Domain;
 
 namespace Sociomedia.Articles.Infrastructure

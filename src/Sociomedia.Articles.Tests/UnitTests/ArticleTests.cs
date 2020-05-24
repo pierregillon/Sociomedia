@@ -2,6 +2,8 @@
 using System.Linq;
 using FluentAssertions;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Articles;
+using Sociomedia.Articles.Domain.Feeds;
 using Xunit;
 
 namespace Sociomedia.Articles.Tests.UnitTests

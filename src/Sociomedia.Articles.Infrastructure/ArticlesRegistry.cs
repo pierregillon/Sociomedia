@@ -7,6 +7,8 @@ using EventStore.ClientAPI.Common.Log;
 using Sociomedia.Articles.Application.Projections;
 using Sociomedia.Articles.Application.Queries;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Feeds;
+using Sociomedia.Articles.Domain.Keywords;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.CQRS;

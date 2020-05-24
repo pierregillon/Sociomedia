@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using CQRSlite.Domain;
+using Sociomedia.Articles.Domain.Feeds;
+using Sociomedia.Articles.Domain.Keywords;
 
-namespace Sociomedia.Articles.Domain
+namespace Sociomedia.Articles.Domain.Articles
 {
     public class Article : AggregateRoot
     {

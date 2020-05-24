@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CQRSlite.Events;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.EventStoring;
 using Sociomedia.Medias.Domain;

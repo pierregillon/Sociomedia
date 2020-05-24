@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Sociomedia.Articles.Domain.Keywords;
 
-namespace Sociomedia.Articles.Domain
+namespace Sociomedia.Articles.Domain.Articles
 {
     public class ArticleKeywordsDefined : ArticleEvent
     {

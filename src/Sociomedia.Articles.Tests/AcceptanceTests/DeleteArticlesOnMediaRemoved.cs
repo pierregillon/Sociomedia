@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CQRSlite.Events;
 using FluentAssertions;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Articles.Tests.UnitTests;
 using Sociomedia.Core.Domain;
 using Sociomedia.Medias.Domain;

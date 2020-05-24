@@ -1,7 +1,7 @@
 ﻿using System;
 using Sociomedia.Core.Domain;
 
-namespace Sociomedia.Articles.Domain
+namespace Sociomedia.Articles.Domain.Articles
 {
     public abstract class ArticleEvent : DomainEvent
     {

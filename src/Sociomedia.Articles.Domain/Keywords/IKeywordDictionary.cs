@@ -1,4 +1,4 @@
-﻿namespace Sociomedia.Articles.Domain
+﻿namespace Sociomedia.Articles.Domain.Keywords
 {
     public interface IKeywordDictionary
     {

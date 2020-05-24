@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
+using Sociomedia.Articles.Domain.Feeds;
+using Sociomedia.Articles.Domain.Keywords;
 using Sociomedia.Core.Domain;
 
-namespace Sociomedia.Articles.Domain
+namespace Sociomedia.Articles.Domain.Articles
 {
     public class ArticleFactory
     {

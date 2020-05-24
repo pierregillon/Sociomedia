@@ -6,6 +6,7 @@ using System.Text;
 using EventStore.ClientAPI.Common.Log;
 using FluentAssertions;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Feeds;
 using Sociomedia.Articles.Infrastructure;
 using Xunit;
 

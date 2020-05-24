@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using FluentAssertions;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Keywords;
 using Xunit;
 
 namespace Sociomedia.Articles.Tests.UnitTests

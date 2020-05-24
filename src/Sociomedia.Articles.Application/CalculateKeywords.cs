@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Sociomedia.Articles.Application.Commands.CalculateKeywords;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Infrastructure.CQRS;
 

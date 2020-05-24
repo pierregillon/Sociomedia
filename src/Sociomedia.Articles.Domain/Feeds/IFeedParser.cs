@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace Sociomedia.Articles.Domain
+namespace Sociomedia.Articles.Domain.Feeds
 {
     public interface IFeedParser
     {

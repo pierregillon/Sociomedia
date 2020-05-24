@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LinqToDB;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Domain;
 using Sociomedia.ReadModel.DataAccess;

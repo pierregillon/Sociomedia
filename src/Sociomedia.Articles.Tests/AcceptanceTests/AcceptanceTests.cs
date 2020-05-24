@@ -3,6 +3,7 @@ using CQRSlite.Events;
 using EventStore.ClientAPI;
 using NSubstitute;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Keywords;
 using Sociomedia.Articles.Infrastructure;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.CQRS;
