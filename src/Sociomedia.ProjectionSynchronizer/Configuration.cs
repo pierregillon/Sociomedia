@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Sociomedia.Core.Infrastructure.EventStoring;
 using Sociomedia.ProjectionSynchronizer.Application;
 using Sociomedia.ReadModel.DataAccess;
 
@@ -11,14 +11,5 @@ namespace Sociomedia.ProjectionSynchronizer
         public SqlDatabaseConfiguration SqlDatabase { get; set; } = new SqlDatabaseConfiguration();
 
         public ProjectionSynchronizationConfiguration ProjectionSynchronization { get; set; } = new ProjectionSynchronizationConfiguration();
-    }
-
-    public class EventStoreConfiguration
-    {
-        public string Server { get; set; }
-        public int Port { get; set; }
-        public string Login { get; set; }
-        public string Password { get; set; }
-        public Uri Uri => new Uri($"tcp://{Login}:{Password}@{Server}:{Port}");
     }
 }
