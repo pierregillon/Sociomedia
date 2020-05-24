@@ -27,7 +27,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
         {
             var mediaId = Guid.NewGuid();
 
-            await EventStore.Save(new IEvent[] {
+            await EventStore.StoreAndPublish(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left)
             });
 
@@ -54,7 +54,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
                     }
                 });
 
-            await EventStore.Save(new IEvent[] {
+            await EventStore.StoreAndPublish(new IEvent[] {
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml"),
             });
 

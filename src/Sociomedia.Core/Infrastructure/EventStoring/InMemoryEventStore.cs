@@ -13,6 +13,7 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
     {
         private readonly IEventPublisher _eventPublisher;
         private readonly Dictionary<Guid, List<IEvent>> _domainEventsPerGuid = new Dictionary<Guid, List<IEvent>>();
+        private readonly List<IEvent> _allEvents = new List<IEvent>();
         private DateTimeOffset _now;
 
         public InMemoryEventStore(IEventPublisher eventPublisher)
@@ -30,12 +31,25 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
                 .ToArray();
         }
 
-        public async Task Save(IEnumerable<IEvent> events, CancellationToken cancellationToken = new CancellationToken())
+        public async Task StoreAndPublish(IEnumerable<IEvent> events, CancellationToken cancellationToken = new CancellationToken())
         {
             foreach (var @event in events) {
                 Add(@event);
                 await _eventPublisher.Publish(@event, cancellationToken);
             }
+        }
+
+        public Task Store(IEnumerable<IEvent> events, CancellationToken cancellationToken = new CancellationToken())
+        {
+            foreach (var @event in events) {
+                Add(@event);
+            }
+            return Task.CompletedTask;
+        }
+
+        Task IEventStore.Save(IEnumerable<IEvent> events, CancellationToken cancellationToken = new CancellationToken())
+        {
+            return Store(events, cancellationToken);
         }
 
         public async Task<IEnumerable<IEvent>> Get(Guid aggregateId, int fromVersion, CancellationToken cancellationToken = new CancellationToken())
@@ -56,6 +70,8 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
             else {
                 _domainEventsPerGuid.Add(@event.Id, new List<IEvent> { @event });
             }
+
+            _allEvents.Add(@event);
         }
 
         public void CommitEvents()
@@ -63,9 +79,18 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
             _now = DateTimeOffset.Now;
         }
 
-        public IAsyncEnumerable<IEvent> GetAllEventsBetween(Position startPosition, Position endPosition, IReadOnlyCollection<Type> eventTypes)
+        public async IAsyncEnumerable<IEvent> GetAllEventsBetween(Position startPosition, Position endPosition, IReadOnlyCollection<Type> eventTypes)
         {
-            throw new NotImplementedException();
+            await Task.Delay(0);
+
+            var events = _allEvents
+                .Skip((int) startPosition.CommitPosition)
+                .Where((x, i) => i < endPosition.CommitPosition)
+                .ToArray();
+
+            foreach (var @event in events) {
+                yield return @event;
+            }
         }
 
         public Task<long> GetCurrentGlobalStreamPosition()
