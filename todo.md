@@ -35,5 +35,8 @@
   * keep only nouns ? 
 * analyse word that starts with a capital letter : important words (location, personnality, ...)
 
+# Themes
+* display 3 main themes on article card
+
 # Features ?
 * Show indication about free / paid articles
