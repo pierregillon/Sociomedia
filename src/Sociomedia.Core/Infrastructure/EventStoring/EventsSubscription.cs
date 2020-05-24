@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
@@ -63,7 +64,7 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
             );
         }
 
-        public void Stop()
+        public void Unsubscribe()
         {
             _subscription?.Stop();
             _subscription = null;
@@ -73,7 +74,8 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 
         private void ConnectionOnClosed(object sender, ClientClosedEventArgs e)
         {
-            Stop();
+            Unsubscribe();
+            _currentConnection.Closed -= ConnectionOnClosed;
             _currentConnection = null;
         }
 
@@ -85,21 +87,28 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 
         private async Task EventAppeared(EventStoreCatchUpSubscription subscription, ResolvedEvent resolvedEvent)
         {
-            if (resolvedEvent.OriginalStreamId.StartsWith("$") || !TryConvertToDomainEvent(resolvedEvent, out var @event)) {
-                _lastPosition = resolvedEvent.OriginalPosition;
-                return;
-            }
+            try {
+                if (resolvedEvent.OriginalStreamId.StartsWith("$") || !TryConvertToDomainEvent(resolvedEvent, out var @event)) {
+                    _lastPosition = resolvedEvent.OriginalPosition;
+                    return;
+                }
 
-            Debug($"Event received : stream: {resolvedEvent.OriginalStreamId}, date: {resolvedEvent.Event.Created:g} type: {@event.GetType().Name}");
-            await _domainEventReceived.Invoke(@event, resolvedEvent.OriginalPosition.GetValueOrDefault().CommitPosition);
-            _lastPosition = resolvedEvent.OriginalPosition;
+                Debug($"Event received : stream: {resolvedEvent.OriginalStreamId}, date: {resolvedEvent.Event.Created:g}, type: {@event.GetType().Name}");
+                await _domainEventReceived.Invoke(@event, resolvedEvent.OriginalPosition.GetValueOrDefault().CommitPosition);
+                _lastPosition = resolvedEvent.OriginalPosition;
+            }
+            catch (Exception ex) {
+                Error(ex);
+                Environment.Exit(-10);
+            }
         }
 
         private void SubscriptionDropped(EventStoreCatchUpSubscription _, SubscriptionDropReason reason, Exception error)
         {
-            Stop();
+            Unsubscribe();
             Debug("Subscription dropped. Reason: " + reason);
             Error(error);
+            Thread.Sleep(5000);
             Subscribe();
         }
 
@@ -124,11 +133,12 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 
         private void Debug(string message)
         {
-            _logger.Debug("[EVENTS_SUBSCRIPTION] " + message);
+            _logger.Debug($"[{GetType().DisplayableName()}] {message}");
         }
+
         private void Error(Exception ex)
         {
-            _logger.Error(ex, "[EVENTS_SUBSCRIPTION]");
+            _logger.Error(ex, $"[{GetType().DisplayableName()}] Unhandled exception");
         }
     }
 }

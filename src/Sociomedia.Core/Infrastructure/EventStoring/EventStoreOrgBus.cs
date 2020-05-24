@@ -38,7 +38,7 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
         public void Stop()
         {
             foreach (var subscription in _subscriptions) {
-                subscription.Stop();
+                subscription.Unsubscribe();
             }
             _subscriptions.Clear();
             _connection?.Close();
