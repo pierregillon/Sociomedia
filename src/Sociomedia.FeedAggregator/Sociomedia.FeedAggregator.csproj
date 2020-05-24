@@ -14,9 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sociomedia.Application\Sociomedia.Application.csproj" />
-    <ProjectReference Include="..\Sociomedia.Domain\Sociomedia.Domain.csproj" />
-    <ProjectReference Include="..\Sociomedia.Infrastructure\Sociomedia.Infrastructure.csproj" />
+    <ProjectReference Include="..\Sociomedia.Articles.Application\Sociomedia.Articles.Application.csproj" />
+    <ProjectReference Include="..\Sociomedia.Articles.Infrastructure\Sociomedia.Articles.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +30,9 @@
     <None Update="App.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>App.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

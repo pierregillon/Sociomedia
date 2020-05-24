@@ -1,7 +1,8 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using LinqToDB;
-using Sociomedia.Domain.Medias;
+using Sociomedia.Core.Application;
+using Sociomedia.Medias.Domain;
 using Sociomedia.ReadModel.DataAccess;
 
 namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
@@ -71,15 +72,6 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
                 .DeleteAsync();
 
             await _dbConnection.MediaFeeds
-                .Where(x => x.MediaId == @event.Id)
-                .DeleteAsync();
-
-            await _dbConnection.Keywords
-                .Join(_dbConnection.Articles, keyword => keyword.FK_Article, article => article.Id, (keyword, article) => new { keyword, article })
-                .Where(@t => @t.article.MediaId == @event.Id)
-                .DeleteAsync();
-
-            await _dbConnection.Articles
                 .Where(x => x.MediaId == @event.Id)
                 .DeleteAsync();
         }

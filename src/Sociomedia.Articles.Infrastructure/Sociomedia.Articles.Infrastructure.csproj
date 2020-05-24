@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CodeHollow.FeedReader" Version="1.2.1" />
+    <PackageReference Include="CqrsLite" Version="1.31.1" />
+    <PackageReference Include="EventStore.Client" Version="5.0.8" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.23" />
+    <PackageReference Include="StructureMap" Version="4.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sociomedia.Articles.Application\Sociomedia.Articles.Application.csproj" />
+    <ProjectReference Include="..\Sociomedia.Articles.Domain\Sociomedia.Articles.Domain.csproj" />
+    <ProjectReference Include="..\Sociomedia.Core\Sociomedia.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Dictionaries\french.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -81,6 +81,7 @@ else
         {
             _currentKeyword = Keyword;
             _articles = Array.Empty<ArticleListItem>();
+            _noMoreArticles = false;
             await LoadPage(0);
         }
     }
@@ -103,12 +104,8 @@ else
             _isLoadingMorePages = true;
             _totalArticleCount = await ArticleFinder.Count(MediaId, _currentKeyword);
             var newArticles = await ArticleFinder.List(page, PAGE_SIZE, MediaId, _currentKeyword);
-            if (newArticles.Any())
-            {
-                _articles = _articles.Concat(newArticles).ToArray();
-            }
-            else
-            {
+            _articles = _articles.Concat(newArticles).ToArray();
+            if (newArticles.Count < PAGE_SIZE) {
                 _noMoreArticles = true;
             }
         }

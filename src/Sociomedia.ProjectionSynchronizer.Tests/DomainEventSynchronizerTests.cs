@@ -6,8 +6,10 @@ using EventStore.ClientAPI;
 using FluentAssertions;
 using LinqToDB;
 using LinqToDB.Data;
-using Sociomedia.Domain.Articles;
-using Sociomedia.Domain.Medias;
+using Sociomedia.Articles.Domain.Articles;
+using Sociomedia.Articles.Domain.Keywords;
+using Sociomedia.Core.Infrastructure.EventStoring;
+using Sociomedia.Medias.Domain;
 using Sociomedia.ProjectionSynchronizer.Application;
 using Sociomedia.ReadModel.DataAccess;
 using Sociomedia.ReadModel.DataAccess.Tables;
@@ -81,7 +83,8 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
                         Url = articleSynchronized.Url,
                         Summary = articleSynchronized.Summary,
                         PublishDate = articleSynchronized.PublishDate,
-                        MediaId = articleSynchronized.MediaId
+                        MediaId = articleSynchronized.MediaId,
+                        Keywords = ""
                     }
                 });
         }
@@ -131,7 +134,8 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
                         Url = articleUpdated.Url,
                         Summary = articleUpdated.Summary,
                         PublishDate = articleUpdated.PublishDate,
-                        MediaId = articleSynchronized.MediaId
+                        MediaId = articleSynchronized.MediaId,
+                        Keywords = ""
                     }
                 });
         }
@@ -142,20 +146,37 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
             await _synchronizer.StartSynchronization();
 
             // Acts
-            var articleSynchronized = SomeArticleSynchronized(new[] { "coronavirus", "france", "pandemic" });
+            var articleSynchronized = SomeArticleImported(keywords: new[] { "coronavirus", "france", "pandémic" });
 
             await _inMemoryBus.Push(1, articleSynchronized);
 
             // Asserts
-            var keywords = await _dbConnection.Keywords.ToArrayAsync();
-
-            keywords
+            (await _dbConnection.Articles.SingleAsync(x => x.Id == articleSynchronized.Id))
+                .Keywords
                 .Should()
-                .BeEquivalentTo(new[] {
-                    new { FK_Article = articleSynchronized.Id, Value = "coronavirus" },
-                    new { FK_Article = articleSynchronized.Id, Value = "france" },
-                    new { FK_Article = articleSynchronized.Id, Value = "pandemic" },
-                });
+                .Be("coronavirus france pandemic");
+        }
+
+        [Fact]
+        public async Task Update_keywords_when_receiving_article_keywords_defined()
+        {
+            await _synchronizer.StartSynchronization();
+
+            // Acts
+            var articleId = Guid.NewGuid();
+
+            await _inMemoryBus.Push(1, SomeArticleImported(articleId));
+            await _inMemoryBus.Push(2, new ArticleKeywordsDefined(articleId, new[] {
+                new Keyword("france", 6),
+                new Keyword("pandémic", 2),
+                new Keyword("coronavirus", 2),
+            }));
+
+            // Asserts
+            (await _dbConnection.Articles.SingleAsync(x => x.Id == articleId))
+                .Keywords
+                .Should()
+                .Be("france pandemic coronavirus");
         }
 
         [Fact]
@@ -248,17 +269,16 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
         }
 
         [Fact]
-        public async Task Delete_articles_and_keywords_when_receiving_media_deleted()
+        public async Task Delete_articles_when_receiving_article_deleted()
         {
             await _synchronizer.StartSynchronization();
 
             // Acts
+            var articleId = Guid.NewGuid();
             var mediaId = Guid.NewGuid();
 
-            await _inMemoryBus.Push(1, new MediaAdded(mediaId, "Liberation", "test", PoliticalOrientation.Center));
-            await _inMemoryBus.Push(2, new MediaFeedAdded(mediaId, "https://test/myfeed.xml"));
-            await _inMemoryBus.Push(3, new ArticleImported(
-                Guid.NewGuid(),
+            await _inMemoryBus.Push(1, new ArticleImported(
+                articleId,
                 "My title",
                 "This is a simple summary",
                 new DateTimeOffset(2020, 05, 06, 10, 0, 0, TimeSpan.FromHours(2)),
@@ -268,14 +288,14 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
                 Array.Empty<string>(),
                 mediaId
             ));
-            await _inMemoryBus.Push(3, new MediaDeleted(mediaId));
+            await _inMemoryBus.Push(2, new ArticleKeywordsDefined(articleId, new[] {
+                new Keyword("test", 2),
+                new Keyword("john", 6),
+            }));
+            await _inMemoryBus.Push(3, new ArticleDeleted(articleId));
 
             // Asserts
-
             (await _dbConnection.Articles.ToArrayAsync())
-                .Should()
-                .BeEmpty();
-            (await _dbConnection.Keywords.ToArrayAsync())
                 .Should()
                 .BeEmpty();
         }
@@ -285,9 +305,9 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
         {
             await _synchronizer.StartSynchronization();
 
-            await _inMemoryBus.Push(1, SomeArticleSynchronized());
-            await _inMemoryBus.Push(2, SomeArticleSynchronized());
-            await _inMemoryBus.Push(3, SomeArticleSynchronized());
+            await _inMemoryBus.Push(1, SomeArticleImported());
+            await _inMemoryBus.Push(2, SomeArticleImported());
+            await _inMemoryBus.Push(3, SomeArticleImported());
 
             _dbConnection.SynchronizationInformation
                 .Single()
@@ -301,27 +321,16 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
                 .GetValueOrDefault()
                 .Date
                 .Should()
-                .Be(DateTime.UtcNow.Date);
+                .Be(DateTime.Now.Date);
         }
 
-        [Fact]
-        public async Task Restart_connection_on_connection_lost()
-        {
-            await _synchronizer.StartSynchronization();
-
-            await _inMemoryBus.SimulateConnectionLost();
-
-            _inMemoryBus.IsListening
-                .Should()
-                .Be(true);
-        }
 
         // ----- Internal logic
 
-        private static ArticleImported SomeArticleSynchronized(string[] keywords = null)
+        private static ArticleImported SomeArticleImported(Guid? id = null, string[] keywords = null)
         {
             return new ArticleImported(
-                Guid.NewGuid(),
+                id ?? Guid.NewGuid(),
                 "My title",
                 "This is a simple summary",
                 new DateTimeOffset(2020, 05, 06, 10, 0, 0, TimeSpan.FromHours(2)),

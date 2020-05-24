@@ -1,15 +1,20 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LinqToDB;
-using LinqToDB.Data;
-using Sociomedia.Domain.Articles;
+using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Articles;
+using Sociomedia.Core.Application;
+using Sociomedia.Core.Domain;
 using Sociomedia.ReadModel.DataAccess;
-using Sociomedia.ReadModel.DataAccess.Tables;
 
 namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
 {
-    public class ArticleTableSynchronizer : IEventListener<ArticleImported>, IEventListener<ArticleUpdated>
+    public class ArticleTableSynchronizer :
+        IEventListener<ArticleImported>,
+        IEventListener<ArticleUpdated>,
+        IEventListener<ArticleKeywordsDefined>,
+        IEventListener<ArticleDeleted>
     {
         private readonly DbConnectionReadModel _dbConnection;
 
@@ -28,22 +33,8 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
                 .Value(x => x.ImageUrl, @event.ImageUrl)
                 .Value(x => x.PublishDate, @event.PublishDate)
                 .Value(x => x.MediaId, @event.MediaId)
+                .Value(x => x.Keywords, ToKeywordBlock(@event.Keywords))
                 .InsertAsync();
-
-            if (@event.Keywords.Count > 10) {
-                _dbConnection.BulkCopy(@event.Keywords.Select(x => new KeywordTable {
-                    FK_Article = @event.Id,
-                    Value = x.Substring(0, Math.Min(x.Length, 50))
-                }));
-            }
-            else {
-                foreach (var keyword in @event.Keywords) {
-                    await _dbConnection.Keywords
-                        .Value(x => x.FK_Article, @event.Id)
-                        .Value(x => x.Value, keyword.Substring(0, Math.Min(keyword.Length, 50)))
-                        .InsertAsync();
-                }
-            }
         }
 
         public async Task On(ArticleUpdated @event)
@@ -56,6 +47,26 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
                 .Set(x => x.ImageUrl, @event.ImageUrl)
                 .Set(x => x.PublishDate, @event.PublishDate)
                 .UpdateAsync();
+        }
+
+        public async Task On(ArticleKeywordsDefined @event)
+        {
+            await _dbConnection.Articles
+                .Where(x => x.Id == @event.Id)
+                .Set(x => x.Keywords, ToKeywordBlock(@event.Keywords.Select(x => x.Value)))
+                .UpdateAsync();
+        }
+
+        public async Task On(ArticleDeleted @event)
+        {
+            await _dbConnection.Articles
+                .Where(x => x.Id == @event.Id)
+                .DeleteAsync();
+        }
+
+        private static string ToKeywordBlock(IEnumerable<string> keywords)
+        {
+            return keywords.ConcatWords().ToLower().RemoveDiacritics();
         }
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using BlazorStyled;
 using LinqToDB.Data;
 using Microsoft.AspNetCore.Builder;
@@ -7,10 +6,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Sociomedia.Application;
+using Sociomedia.Core.Infrastructure.EventStoring;
 using Sociomedia.Front.Data;
-using Sociomedia.Infrastructure;
-using Sociomedia.Infrastructure.CQRS;
+using Sociomedia.Medias.Infrastructure;
 using Sociomedia.ReadModel.DataAccess;
 using Sotsera.Blazor.Toaster.Core.Models;
 using StructureMap;
@@ -43,7 +41,7 @@ namespace Sociomedia.Front
         {
             services.For<ArticleFinder>();
             services.For<MediaFinder>();
-            services.IncludeRegistry(new SociomediaRegistry(Configuration.GetSection("EventStore").Get<EventStoreConfiguration>()));
+            services.IncludeRegistry(new MediasRegistry(Configuration.GetSection("EventStore").Get<EventStoreConfiguration>()));
 
             DataConnection.DefaultSettings = new DbSettings(Configuration.GetSection("sqldatabase").Get<SqlDatabaseConfiguration>());
         }

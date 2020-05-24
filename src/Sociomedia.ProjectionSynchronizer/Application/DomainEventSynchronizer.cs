@@ -1,6 +1,13 @@
-﻿using System.Threading;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Sociomedia.Domain;
+using CQRSlite.Events;
+using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Articles;
+using Sociomedia.Core.Domain;
+using Sociomedia.Core.Infrastructure.EventStoring;
+using Sociomedia.Medias.Domain;
 
 namespace Sociomedia.ProjectionSynchronizer.Application
 {
@@ -26,25 +33,31 @@ namespace Sociomedia.ProjectionSynchronizer.Application
         public async Task StartSynchronization()
         {
             var lastPosition = await _streamPositionRepository.GetLastPosition();
-            await _eventBus.StartListeningEvents(lastPosition, DomainEventReceived, Disconnected);
+            await _eventBus.SubscribeToEvents(lastPosition, GetEventTypes(), DomainEventReceived);
         }
 
-        private async Task DomainEventReceived(long position, DomainEvent @event)
+        private static IEnumerable<Type> GetEventTypes()
+        {
+            var articlesEvents = typeof(ArticleImported).Assembly.GetTypes()
+                .Where(x => x.IsDomainEvent())
+                .ToArray();
+
+            var mediaEvents = typeof(MediaAdded).Assembly.GetTypes()
+                .Where(x => x.IsDomainEvent())
+                .ToArray();
+
+            return articlesEvents.Union(mediaEvents).ToArray();
+        }
+
+        private async Task DomainEventReceived(IEvent @event, long position)
         {
             await _eventPublisher.Publish(@event);
             await _streamPositionRepository.Save(position);
         }
 
-        private async Task Disconnected()
-        {
-            StopSynchronization();
-            Thread.Sleep(_configuration.ReconnectionDelayMs);
-            await StartSynchronization();
-        }
-
         public void StopSynchronization()
         {
-            _eventBus.StopListeningEvents();
+            _eventBus.Stop();
         }
     }
 }

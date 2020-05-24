@@ -1,12 +1,12 @@
 ﻿@page "/medias/new"
 @page "/medias/{MediaId:guid}/edit"
-@using Sociomedia.Application.Commands.AddMedia
-@using Sociomedia.Application.Commands.DeleteMedia
-@using Sociomedia.Application.Commands.EditMedia
-@using Sociomedia.Domain.Medias
+@using Sociomedia.Core.Infrastructure.CQRS
 @using Sociomedia.Front.Data
 @using Sociomedia.Front.Models
-@using Sociomedia.Infrastructure.CQRS
+@using Sociomedia.Medias.Application.Commands.AddMedia
+@using Sociomedia.Medias.Application.Commands.DeleteMedia
+@using Sociomedia.Medias.Application.Commands.EditMedia
+@using Sociomedia.Medias.Domain
 
 
 @if (MediaId.HasValue)

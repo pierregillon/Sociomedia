@@ -11,17 +11,17 @@ Sociomedia is a media aggregator and a community that challenges information by 
 - [X] Define one or more RSS / ATOM feeds per media
 - [X] Centralize articles from several sources in the same web page
 - [X] Import all new articles on the flow
-- [X] Allow a user to filter articles on a specific subject (keywords search)
+- [X] Allow a user to search articles on a specific subjects (keywords search)
 
 Show [**current version**](https://github.com/pierregillon/sociomedia/releases)
 
 # Roadmap
 ## Features
-- [ ] Display article content insite Sociomedia app
+- [ ] Show themes or trending that group articles by same subject
+- [ ] Display article content inside Sociomedia app (iframe)
 - [ ] Define more information about a media : founding, creation date, political orientation, ...
 - [ ] Allow users to rank an article
 - [ ] Order articles with highest rank
-- [ ] Show themes or trending that group articles by same subject
 - [ ] Make medias edition for admin only
 
 ## Tech
