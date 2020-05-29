@@ -102,8 +102,8 @@ namespace Sociomedia.Articles.Tests.UnitTests
             _keywordsParser.Parse(text)
                 .Should()
                 .Contain(new Keyword("john wick", 2))
-                .And.Contain(new Keyword("john", 1))
-                .And.Contain(new Keyword("wick", 1));
+                .And.Contain(new Keyword("john", 2))
+                .And.Contain(new Keyword("wick", 2));
         }
 
         [Theory]

@@ -1,39 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using CQRSlite.Domain;
 
 namespace Sociomedia.Themes.Domain
 {
-    public class Theme
+    public class Theme : AggregateRoot
     {
-        private readonly HashSet<ThemeArticle> _articles;
+        private Theme() { }
 
-        public Theme(Guid id, IReadOnlyCollection<string> keywords, IEnumerable<ThemeArticle> articles)
+        public Theme(IReadOnlyCollection<Keyword2> keywords, IReadOnlyCollection<Guid> articles)
         {
-            Id = id;
-            Keywords = keywords;
-            _articles = articles.ToHashSet();
+            ApplyChange(new ThemeAdded(Guid.NewGuid(), keywords, articles));
         }
 
-        public Guid Id { get; }
-
-        public IReadOnlyCollection<string> Keywords { get; }
-
-        public IReadOnlyCollection<ThemeArticle> Articles => _articles;
-
-        public void AddArticle(ThemeArticle article)
+        public void AddArticle(Article article)
         {
-            _articles.Add(article);
+            ApplyChange(new ArticleAddedToTheme(Id, article.Id));
         }
 
-        public bool Contains(ThemeArticle article)
+        private void Apply(ThemeAdded @event)
         {
-            return _articles.Contains(article);
-        }
-
-        public IReadOnlyCollection<string> ContainsKeywords(ThemeArticle article)
-        {
-            return Keywords.Intersect(article.Keywords).ToArray();
+            Id = @event.Id;
         }
     }
 }

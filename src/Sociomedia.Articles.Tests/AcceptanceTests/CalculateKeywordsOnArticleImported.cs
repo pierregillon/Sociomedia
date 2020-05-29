@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using CQRSlite.Events;
 using FluentAssertions;
 using NSubstitute;
-using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Articles.Domain.Keywords;
 using Sociomedia.Articles.Tests.UnitTests;
@@ -43,7 +42,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
                         default,
                         new[] {
                             new Keyword("some", 3),
-                            new Keyword("summary", 3),
+                            new Keyword("summary", 2),
                         }),
                 }, x => x.ExcludeDomainEventTechnicalFields());
         }

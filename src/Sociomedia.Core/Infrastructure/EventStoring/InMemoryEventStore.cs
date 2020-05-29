@@ -15,6 +15,7 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
         private readonly Dictionary<Guid, List<IEvent>> _domainEventsPerGuid = new Dictionary<Guid, List<IEvent>>();
         private readonly List<IEvent> _allEvents = new List<IEvent>();
         private DateTimeOffset _now;
+        private bool _republish;
 
         public InMemoryEventStore(IEventPublisher eventPublisher)
         {
@@ -49,7 +50,12 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 
         Task IEventStore.Save(IEnumerable<IEvent> events, CancellationToken cancellationToken = new CancellationToken())
         {
-            return Store(events, cancellationToken);
+            if (_republish) {
+                return StoreAndPublish(events, cancellationToken);
+            }
+            else {
+                return Store(events, cancellationToken);
+            }
         }
 
         public async Task<IEnumerable<IEvent>> Get(Guid aggregateId, int fromVersion, CancellationToken cancellationToken = new CancellationToken())
@@ -96,6 +102,11 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
         public Task<long> GetCurrentGlobalStreamPosition()
         {
             throw new NotImplementedException();
+        }
+
+        public void EnableRepublish()
+        {
+            _republish = true;
         }
     }
 }

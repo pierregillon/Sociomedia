@@ -21,6 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Sociomedia.Themes.Application\Sociomedia.Themes.Application.csproj" />
+    <ProjectReference Include="..\Sociomedia.Themes.Infrastructure\Sociomedia.Themes.Infrastructure.csproj" />
     <ProjectReference Include="..\Sociomedia.Themes\Sociomedia.Themes.Domain.csproj" />
   </ItemGroup>
 

@@ -56,7 +56,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.Medias.Applicati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.Core", "Sociomedia.Core\Sociomedia.Core.csproj", "{FD729AE1-DB35-4F03-92D0-B2625972FAFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sociomedia.FeedAggregator.Tests", "Sociomedia.FeedAggregator.Tests\Sociomedia.FeedAggregator.Tests.csproj", "{CFDC9982-B99C-4F78-A6BF-028F1D9DD5B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.FeedAggregator.Tests", "Sociomedia.FeedAggregator.Tests\Sociomedia.FeedAggregator.Tests.csproj", "{CFDC9982-B99C-4F78-A6BF-028F1D9DD5B6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.Themes.Application", "Sociomedia.Themes.Application\Sociomedia.Themes.Application.csproj", "{A8E10842-68F4-4742-A48B-04262E73B6A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sociomedia.Themes.Infrastructure", "Sociomedia.Themes.Infrastructure\Sociomedia.Themes.Infrastructure.csproj", "{5BCBC270-29EE-4E35-821F-3DC13B07CDC5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -132,6 +136,14 @@ Global
 		{CFDC9982-B99C-4F78-A6BF-028F1D9DD5B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFDC9982-B99C-4F78-A6BF-028F1D9DD5B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFDC9982-B99C-4F78-A6BF-028F1D9DD5B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8E10842-68F4-4742-A48B-04262E73B6A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8E10842-68F4-4742-A48B-04262E73B6A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8E10842-68F4-4742-A48B-04262E73B6A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8E10842-68F4-4742-A48B-04262E73B6A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BCBC270-29EE-4E35-821F-3DC13B07CDC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BCBC270-29EE-4E35-821F-3DC13B07CDC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BCBC270-29EE-4E35-821F-3DC13B07CDC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BCBC270-29EE-4E35-821F-3DC13B07CDC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -153,6 +165,8 @@ Global
 		{EDFE7F88-F754-4AA8-A843-EAE5B44A886A} = {C83B53DD-DF10-46E8-8B83-7EDC2EDC51B8}
 		{8D109AF4-AA47-41BD-B8C5-2A46EB6F5BC6} = {68132BB5-583C-413E-A5DE-CF69D6D0EAED}
 		{FD729AE1-DB35-4F03-92D0-B2625972FAFA} = {583C2FDE-B1FD-41A7-B20D-F9237F365C1B}
+		{A8E10842-68F4-4742-A48B-04262E73B6A9} = {3201B74D-41C3-4F26-A000-982900B34036}
+		{5BCBC270-29EE-4E35-821F-3DC13B07CDC5} = {3201B74D-41C3-4F26-A000-982900B34036}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B56ACA9-E22E-44E6-9319-99F16930E4F7}

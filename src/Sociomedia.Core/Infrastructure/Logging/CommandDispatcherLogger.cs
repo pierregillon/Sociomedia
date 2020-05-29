@@ -29,6 +29,12 @@ namespace Sociomedia.Core.Infrastructure.Logging
             return await _commandDispatcher.Dispatch<T, TResult>(command);
         }
 
+        public async Task DispatchGeneric(ICommand command)
+        {
+            Log(command);
+            await _commandDispatcher.DispatchGeneric(command);
+        }
+
         private void Log(object command)
         {
             var json = JsonConvert.SerializeObject(command, Formatting.None);
