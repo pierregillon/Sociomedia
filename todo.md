@@ -1,6 +1,8 @@
 * try to reimport "leparisien"
 * test if an article is present in 2 rss feeds (lemonde)
 * theme projection must be updated as soon theme event updated !
+* theme domain logics process ocurrence, not in theme management => command vs events ?
+* add article to theme => update theme keywords and occurence
 
 # Tech
 * display current assembly version for all programs on execution (FeedAggregator, ProjectionSynchronizer, Front)
