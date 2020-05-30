@@ -98,39 +98,39 @@ namespace Sociomedia.Tests
                 });
         }
 
-        [Fact]
-        public void Adding_article_in_an_existing_theme_that_match_keywords()
-        {
-            var article1 = Guid.NewGuid();
-            var article2 = Guid.NewGuid();
-            var article3 = Guid.NewGuid();
-            var theme1 = Guid.NewGuid();
+        //[Fact]
+        //public void Adding_article_in_an_existing_theme_that_match_keywords()
+        //{
+        //    var article1 = Guid.NewGuid();
+        //    var article2 = Guid.NewGuid();
+        //    var article3 = Guid.NewGuid();
+        //    var theme1 = Guid.NewGuid();
 
-            _projection.AddArticle(new ArticleKeywordsDefined(article1, new[] {
-                new Keyword("coronavirus", 2),
-                new Keyword("italie", 2),
-            }));
-            _projection.AddArticle(new ArticleKeywordsDefined(article2, new[] {
-                new Keyword("coronavirus", 3),
-                new Keyword("china", 3),
-            }));
-            _projection.AddTheme(new ThemeAdded(theme1, new[] {
-                new Keyword2("coronavirus", 5)
-            }, new[] { article1, article2 }));
+        //    _projection.AddArticle(new ArticleKeywordsDefined(article1, new[] {
+        //        new Keyword("coronavirus", 2),
+        //        new Keyword("italie", 2),
+        //    }));
+        //    _projection.AddArticle(new ArticleKeywordsDefined(article2, new[] {
+        //        new Keyword("coronavirus", 3),
+        //        new Keyword("china", 3),
+        //    }));
+        //    _projection.AddTheme(new ThemeAdded(theme1, new[] {
+        //        new Keyword2("coronavirus", 5)
+        //    }, new[] { article1, article2 }));
 
-            var newArticle = new Article(article3, new[] {
-                new Keyword2("coronavirus", 3),
-                new Keyword2("france", 3),
-            });
+        //    var newArticle = new Article(article3, new[] {
+        //        new Keyword2("coronavirus", 3),
+        //        new Keyword2("france", 3),
+        //    });
 
-            var commands = _themeManager2.Add(newArticle);
+        //    var commands = _themeManager2.Add(newArticle);
 
-            commands
-                .Should()
-                .BeEquivalentTo(new[] {
-                    new AddArticleToThemeCommand(theme1, newArticle)
-                });
-        }
+        //    commands
+        //        .Should()
+        //        .BeEquivalentTo(new[] {
+        //            new AddArticleToThemeCommand(theme1, newArticle)
+        //        });
+        //}
 
         //[Fact]
         //public void Three_articles_in_the_same_theme()

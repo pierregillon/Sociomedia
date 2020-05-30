@@ -5,10 +5,11 @@ using Sociomedia.Themes.Domain;
 
 namespace Sociomedia.Themes.Application.Projections
 {
-    public class ThemeProjectionFinder :
-        IEventListener<ArticleKeywordsDefined>,
-        IEventListener<ThemeAdded>,
-        IEventListener<ArticleAddedToTheme>
+    public class ThemeProjectionFinder 
+        //: IEventListener<ArticleKeywordsDefined>
+        //,
+        //IEventListener<ThemeAdded>,
+        //IEventListener<ArticleAddedToTheme>
     {
         public readonly ThemeProjection _projection;
 

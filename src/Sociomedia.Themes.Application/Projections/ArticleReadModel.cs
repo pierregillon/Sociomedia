@@ -19,15 +19,20 @@ namespace Sociomedia.Themes.Application.Projections
 
         public Keywords2 CommonKeywords(Article article)
         {
-            return Keywords
+            return new Keywords2(Keywords
                 .Join(article.Keywords, x => x.Value, y => y.Value, (x, y) => x + y)
                 .ToArray()
-                .Pipe(x => new Keywords2(x));
+                .Pipe(x => x));
         }
 
         public bool ContainsKeywords(IReadOnlyCollection<Keyword2> keywords)
         {
             return keywords.All(Keywords.Contains);
+        }
+
+        public override string ToString()
+        {
+            return string.Join(" | ", Keywords.Select(x => x.ToString()).ToArray());
         }
     }
 
@@ -49,12 +54,22 @@ namespace Sociomedia.Themes.Application.Projections
 
         public bool ContainsAllWords(IReadOnlyCollection<Keyword2> keywords)
         {
-            return _keywords.All(keyword => keywords.Select(x => x.Value).Any(y => keyword.Value == y));
+            return keywords.All(keyword => _keywords.Select(x => x.Value).Any(y => keyword.Value == y));
         }
 
         public IReadOnlyCollection<Keyword2> ToArray()
         {
             return _keywords;
+        }
+
+        public bool SequenceEquals(IReadOnlyCollection<Keyword2> keywords)
+        {
+            return _keywords.Select(x => x.Value).Intersect(keywords.Select(x => x.Value)).Count() == keywords.Count;
+        }
+
+        public override string ToString()
+        {
+            return string.Join(" | ", _keywords.Select(x => x.ToString()).ToArray());
         }
     }
 }

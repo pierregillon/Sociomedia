@@ -24,5 +24,10 @@ namespace Sociomedia.Themes.Domain
         {
             return keywords.All(Keywords.Contains);
         }
+
+        public override string ToString()
+        {
+            return string.Join(" | ", Keywords.Select(x => x.ToString()).ToArray());
+        }
     }
 }

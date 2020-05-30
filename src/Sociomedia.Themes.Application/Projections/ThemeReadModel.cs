@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sociomedia.Core.Domain;
 using Sociomedia.Themes.Domain;
 
 namespace Sociomedia.Themes.Application.Projections
@@ -35,6 +36,14 @@ namespace Sociomedia.Themes.Application.Projections
         public bool Contains(Article article)
         {
             return _articles.Select(x => x.Id).Contains(article.Id);
+        }
+
+        public Keywords2 CommonKeywords(Article article)
+        {
+            return Keywords
+                .Join(article.Keywords, x => x.Value, y => y.Value, (x, y) => x + y)
+                .ToArray()
+                .Pipe(x => new Keywords2(x));
         }
     }
 }

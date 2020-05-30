@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sociomedia.Core.Application;
 using Sociomedia.Themes.Application.Commands.AddArticleToTheme;
-using Sociomedia.Themes.Application.Commands.CreateNewTheme;
+using Sociomedia.Themes.Application.Projections;
 using Sociomedia.Themes.Domain;
 
 namespace Sociomedia.Themes.Application
@@ -19,35 +18,51 @@ namespace Sociomedia.Themes.Application
             _themeProjection = themeProjection;
         }
 
-        public IEnumerable<ICommand> Add(Article article)
+        public IEnumerable<ThemeEvent> Add(Article article)
         {
-            foreach (var existingArticle in _themeProjection.Articles) {
-                var keywordIntersection = existingArticle.CommonKeywords(article);
+            foreach (var theme in _themeProjection.Themes.ToList()) {
+                var keywordIntersection = theme.CommonKeywords(article);
                 if (!keywordIntersection.Any()) {
                     continue;
                 }
-                var matchingThemes = _themeProjection.Themes.Where(theme => keywordIntersection.ContainsAllWords(theme.Keywords)).ToList();
+                var existingTheme = _themeProjection.Themes.FirstOrDefault(x => keywordIntersection.SequenceEquals(x.Keywords));
+                if (existingTheme == null) {
+                    yield return AddTheme(keywordIntersection.ToArray(), theme.Articles.Select(x=>x.Id).Append(article.Id).ToArray());
+                }
+                else if (!existingTheme.Contains(article)) {
+                    yield return AddArticleToTheme(existingTheme, article);
+                }
+            }
+
+            foreach (var existingArticle in _themeProjection.Articles.Where(x => x.Id != article.Id)) {
+                var keywordIntersection1 = existingArticle.CommonKeywords(article);
+                if (!keywordIntersection1.Any()) {
+                    continue;
+                }
+                var matchingThemes = _themeProjection.Themes.Where(theme => keywordIntersection1.ContainsAllWords(theme.Keywords)).ToList();
                 if (matchingThemes.Any()) {
                     foreach (var matchingTheme in matchingThemes.Where(matchingTheme => !matchingTheme.Contains(article))) {
-                        if (AddArticleToTheme(matchingTheme.Id, article, out var command)) {
-                            yield return command;
-                        }
+                        yield return AddArticleToTheme(matchingTheme, article);
                     }
                 }
-                if (!matchingThemes.Any() || matchingThemes.All(x => x.Keywords.Count != keywordIntersection.Count)) {
-                    yield return new CreateNewThemeCommand(keywordIntersection.ToArray(), new[] { article.Id, existingArticle.Id });
+                if (!matchingThemes.Any() || matchingThemes.All(x => x.Keywords.Count != keywordIntersection1.Count)) {
+                    yield return AddTheme(keywordIntersection1.ToArray(), new[] { article.Id, existingArticle.Id });
                 }
             }
         }
 
-        private bool AddArticleToTheme(Guid themeId, Article article, out AddArticleToThemeCommand command)
+        private ThemeAdded AddTheme(IReadOnlyCollection<Keyword2> keywords, IReadOnlyCollection<Guid> articles)
         {
-            command = new AddArticleToThemeCommand(themeId, article);
-            if (!_commands.Any(x => x.Article.Id == article.Id && x.ThemeId == themeId)) {
-                _commands.Add(command);
-                return true;
-            }
-            return false;
+            var @event = new ThemeAdded(Guid.NewGuid(), keywords, articles);
+            _themeProjection.AddTheme(@event);
+            return @event;
+        }
+
+        private ArticleAddedToTheme AddArticleToTheme(ThemeReadModel theme, Article article)
+        {
+            var @event = new ArticleAddedToTheme(theme.Id, article.Id);
+            _themeProjection.AddArticleToTheme(@event);
+            return @event;
         }
     }
 }

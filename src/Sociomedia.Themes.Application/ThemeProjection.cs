@@ -40,5 +40,26 @@ namespace Sociomedia.Themes.Application
                 throw new InvalidOperationException("theme already added !");
             }
         }
+
+        public void AddArticleToTheme(ArticleAddedToTheme @event)
+        {
+            var article = _articles.Single(x => x.Id == @event.ArticleId);
+            var theme = _themes.Single(x => x.Id == @event.Id);
+            theme.AddArticle(article);
+        }
+
+        public void Apply(IEnumerable<ThemeEvent> events)
+        {
+            foreach (var themeEvent in events) {
+                switch (themeEvent) {
+                    case ThemeAdded themeAdded:
+                        AddTheme(themeAdded);
+                        break;
+                    case ArticleAddedToTheme addedToTheme:
+                        AddArticleToTheme(addedToTheme);
+                        break;
+                }
+            }
+        }
     }
 }
