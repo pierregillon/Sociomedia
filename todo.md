@@ -24,9 +24,13 @@
   => add linux CI
 * Update article not only on different publish date but also when title or summary changed a little bit : introduce % accuracy
 * Show indication about free / paid articles
+* If date is in future (rare but happend) filter it in front query : Date < now 
 
 # Theme domain
 * display 3 main themes on article card
+
+# Keywords
+- OMS, OMG => 3 letters but uppercase => should be included in keywords
 
 # Front
 * Infinite scroll

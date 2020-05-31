@@ -35,7 +35,7 @@ namespace Sociomedia.Themes.Application
 
             var @events = themeManager.Add(new Article(@event.Id, @event.Keywords.Select(x => new Keyword2(x.Value, x.Occurence)).ToArray())).ToArray();
 
-            //themeProjection.Apply(events);
+            themeProjection.Apply(events);
 
             foreach (var group in @events.GroupBy(x => x.Id)) {
                 var existingTheme = await GetTheme(@group);

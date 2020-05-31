@@ -71,5 +71,24 @@ namespace Sociomedia.Themes.Application.Projections
         {
             return string.Join(" | ", _keywords.Select(x => x.ToString()).ToArray());
         }
+
+        public override int GetHashCode()
+        {
+            unchecked {
+                var hash = 19;
+                foreach (var keyword in _keywords) {
+                    hash = hash * 31 + keyword.Value.GetHashCode();
+                }
+                return hash;
+            }
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is Keywords2 other) {
+                return other.SequenceEquals(_keywords);
+            }
+            return false;
+        }
     }
 }
