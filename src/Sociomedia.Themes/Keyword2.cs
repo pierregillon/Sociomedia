@@ -26,7 +26,7 @@ namespace Sociomedia.Themes.Domain
         public bool Equals(Keyword2 other)
         {
             if (other == null) throw new ArgumentNullException(nameof(other));
-            return Equals(Value, other.Value);
+            return Equals(Value, other.Value) && Equals(Occurence, other.Occurence);
         }
 
         public override bool Equals(object obj)

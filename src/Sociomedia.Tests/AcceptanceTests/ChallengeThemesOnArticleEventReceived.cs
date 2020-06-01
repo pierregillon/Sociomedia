@@ -46,7 +46,8 @@ namespace Sociomedia.Tests.AcceptanceTests
                 .Should()
                 .BeEquivalentTo(new DomainEvent[] {
                     new ThemeAdded(default, new[] { new Keyword2("coronavirus", 5) }, new[] { article1Id, article2Id }),
-                    new ArticleAddedToTheme(default, article3Id)
+                    new ArticleAddedToTheme(default, article3Id),
+                    new ThemeKeywordsUpdated(default, new []{ new Keyword2("coronavirus", 8) })
                 }, x => x.ExcludeDomainEventTechnicalFields());
         }
 

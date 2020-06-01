@@ -6,11 +6,11 @@ namespace Sociomedia.Tests {
     public class KeywordTests
     {
         [Fact]
-        public void Two_keywords_with_different_occurence_but_same_word_are_equals()
+        public void Two_keywords_with_different_occurence_are_not_equals()
         {
             new Keyword2("Test", 10)
                 .Should()
-                .Be(new Keyword2("Test", 11));
+                .NotBe(new Keyword2("Test", 11));
         }
     }
 }
