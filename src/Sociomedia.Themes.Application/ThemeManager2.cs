@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sociomedia.Core.Application;
 using Sociomedia.Themes.Application.Commands.AddArticleToTheme;
+using Sociomedia.Themes.Application.Commands.CreateNewTheme;
 using Sociomedia.Themes.Application.Projections;
 using Sociomedia.Themes.Domain;
 
@@ -18,12 +20,12 @@ namespace Sociomedia.Themes.Application
             _themeProjection = themeProjection;
         }
 
-        public IEnumerable<ThemeEvent> Add(Article article)
+        public IEnumerable<ICommand> Add(Article article)
         {
             return ChallengeExistingThemes(article).Union(ChallengeExistingArticles(article)).Distinct();
         }
 
-        private IEnumerable<ThemeEvent> ChallengeExistingThemes(Article article)
+        private IEnumerable<ICommand> ChallengeExistingThemes(Article article)
         {
             var keywordIntersectedThemes = _themeProjection.Themes
                 .Select(x => new { Theme = x, KeywordIntersection = x.CommonKeywords(article) })
@@ -41,7 +43,7 @@ namespace Sociomedia.Themes.Application
             }
         }
 
-        private IEnumerable<ThemeEvent> ChallengeExistingArticles(Article article)
+        private IEnumerable<ICommand> ChallengeExistingArticles(Article article)
         {
             var keywordIntersectedArticles = _themeProjection.Articles
                 .Where(x => x.Id != article.Id)
@@ -58,18 +60,18 @@ namespace Sociomedia.Themes.Application
             }
         }
 
-        private ThemeAdded AddTheme(IReadOnlyCollection<Keyword2> keywords, IReadOnlyCollection<Guid> articles)
+        private ICommand AddTheme(IReadOnlyCollection<Keyword2> keywords, IReadOnlyCollection<Guid> articles)
         {
-            var @event = new ThemeAdded(Guid.NewGuid(), keywords, articles);
+            //var @event = new ThemeAdded(Guid.NewGuid(), keywords, articles);
             //_themeProjection.AddTheme(@event);
-            return @event;
+            return new CreateNewThemeCommand(keywords, articles);
         }
 
-        private ArticleAddedToTheme AddArticleToTheme(ThemeReadModel theme, Article article)
+        private ICommand AddArticleToTheme(ThemeReadModel theme, Article article)
         {
-            var @event = new ArticleAddedToTheme(theme.Id, article.Id);
+            //var @event = new ArticleAddedToTheme(theme.Id, article.Id);
             //_themeProjection.AddArticleToTheme(@event);
-            return @event;
+            return new AddArticleToThemeCommand(theme.Id, article);
         }
     }
 }

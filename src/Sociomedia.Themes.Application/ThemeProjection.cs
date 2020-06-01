@@ -47,19 +47,5 @@ namespace Sociomedia.Themes.Application
             var theme = _themes.Single(x => x.Id == @event.Id);
             theme.AddArticle(article);
         }
-
-        public void Apply(IEnumerable<ThemeEvent> events)
-        {
-            foreach (var themeEvent in events) {
-                switch (themeEvent) {
-                    case ThemeAdded themeAdded:
-                        AddTheme(themeAdded);
-                        break;
-                    case ArticleAddedToTheme addedToTheme:
-                        AddArticleToTheme(addedToTheme);
-                        break;
-                }
-            }
-        }
     }
 }
