@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Sociomedia.Themes.Domain;
 
 namespace Sociomedia.Themes.Application.Projections
 {
     public class KeywordIntersection
     {
-        private readonly IReadOnlyCollection<Keyword2> _keywords;
+        private readonly IReadOnlyCollection<string> _keywords;
 
-        public KeywordIntersection(IReadOnlyCollection<Keyword2> keywords)
+        public KeywordIntersection(IReadOnlyCollection<string> keywords)
         {
             _keywords = keywords;
         }
@@ -20,24 +19,24 @@ namespace Sociomedia.Themes.Application.Projections
             return _keywords.Any();
         }
 
-        public bool ContainsAllWords(IReadOnlyCollection<Keyword2> keywords)
+        public bool ContainsAllWords(IReadOnlyCollection<string> keywords)
         {
-            return keywords.All(keyword => _keywords.Select(x => x.Value).Any(y => keyword.Value == y));
+            return !keywords.Except(_keywords).Any();
         }
 
-        public IReadOnlyCollection<Keyword2> ToArray()
+        public IReadOnlyCollection<string> ToArray()
         {
             return _keywords;
         }
 
-        public bool SequenceEquals(IReadOnlyCollection<Keyword2> keywords)
+        public bool SequenceEquals(IReadOnlyCollection<string> keywords)
         {
-            return _keywords.Select(x => x.Value).Intersect(keywords.Select(x => x.Value)).Count() == keywords.Count;
+            return _keywords.SequenceEqual(keywords);
         }
 
         public override string ToString()
         {
-            return string.Join(" | ", _keywords.Select(x => x.ToString()).ToArray());
+            return string.Join(" | ", _keywords);
         }
 
         public override int GetHashCode()
@@ -45,7 +44,7 @@ namespace Sociomedia.Themes.Application.Projections
             unchecked {
                 var hash = 19;
                 foreach (var keyword in _keywords) {
-                    hash = hash * 31 + keyword.Value.GetHashCode();
+                    hash = hash * 31 + keyword.GetHashCode();
                 }
                 return hash;
             }

@@ -1,21 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Sociomedia.Themes.Domain
 {
     public class Keyword2 : IEquatable<Keyword2>
     {
-        private readonly IReadOnlyCollection<string> _words;
-
         public int Occurence { get; }
-        public int WordCount => _words.Count;
         public string Value { get; }
 
         public Keyword2(string value, int occurence)
         {
             Value = value;
-            _words = value.Split(' ');
             Occurence = occurence;
         }
 
@@ -32,7 +26,7 @@ namespace Sociomedia.Themes.Domain
         public bool Equals(Keyword2 other)
         {
             if (other == null) throw new ArgumentNullException(nameof(other));
-            return _words.SequenceEqual(other._words) && Occurence == other.Occurence;
+            return Equals(Value, other.Value);
         }
 
         public override bool Equals(object obj)
@@ -43,10 +37,7 @@ namespace Sociomedia.Themes.Domain
             return Equals((Keyword2) obj);
         }
 
-        public override int GetHashCode()
-        {
-            return Value.GetHashCode();
-        }
+        public override int GetHashCode() => Value.GetHashCode();
 
         public static Keyword2 operator +(Keyword2 x, Keyword2 y)
         {

@@ -12,7 +12,6 @@ namespace Sociomedia.Themes.Application
     public class ThemeManager2
     {
         private readonly ThemeProjection _themeProjection;
-        private readonly List<AddArticleToThemeCommand> _commands = new List<AddArticleToThemeCommand>();
 
 
         public ThemeManager2(ThemeProjection themeProjection)
@@ -35,7 +34,7 @@ namespace Sociomedia.Themes.Application
             foreach (var theme in keywordIntersectedThemes) {
                 var existingTheme = _themeProjection.Themes.FirstOrDefault(x => theme.KeywordIntersection.SequenceEquals(x.Keywords));
                 if (existingTheme == null) {
-                    yield return AddTheme(theme.KeywordIntersection.ToArray(), theme.Theme.Articles.Select(x => x.Id).Append(article.Id).ToArray());
+                    yield return AddTheme(theme.Theme.Articles.Select(x => x.ToDomain()).Append(article).ToArray());
                 }
                 else if (!existingTheme.Contains(article)) {
                     yield return AddArticleToTheme(existingTheme, article);
@@ -55,19 +54,19 @@ namespace Sociomedia.Themes.Application
             foreach (var value in keywordIntersectedArticles) {
                 var matchingThemes = _themeProjection.Themes.Where(theme => value.Key.ContainsAllWords(theme.Keywords)).ToList();
                 if (!matchingThemes.Any() || matchingThemes.All(x => x.Keywords.Count != value.Key.Count)) {
-                    yield return AddTheme(value.Key.ToArray(), value.Select(x => x.Article.Id).Append(article.Id).ToArray());
+                    yield return AddTheme(value.Select(x => x.Article.ToDomain()).Append(article).ToArray());
                 }
             }
         }
 
-        private ICommand AddTheme(IReadOnlyCollection<Keyword2> keywords, IReadOnlyCollection<Guid> articles)
+        private static ICommand AddTheme(IReadOnlyCollection<Article> articles)
         {
             //var @event = new ThemeAdded(Guid.NewGuid(), keywords, articles);
             //_themeProjection.AddTheme(@event);
-            return new CreateNewThemeCommand(keywords, articles);
+            return new CreateNewThemeCommand(articles);
         }
 
-        private ICommand AddArticleToTheme(ThemeReadModel theme, Article article)
+        private static ICommand AddArticleToTheme(ThemeReadModel theme, Article article)
         {
             //var @event = new ArticleAddedToTheme(theme.Id, article.Id);
             //_themeProjection.AddArticleToTheme(@event);

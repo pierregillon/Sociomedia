@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using FluentAssertions;
 using Sociomedia.Themes.Application.Projections;
-using Sociomedia.Themes.Domain;
 using Xunit;
 
 namespace Sociomedia.Tests.AcceptanceTests
@@ -11,8 +10,8 @@ namespace Sociomedia.Tests.AcceptanceTests
         [Fact]
         public void Two_same_intersections_are_equals()
         {
-            var firstIntersection = new KeywordIntersection(new[] { new Keyword2("test", 2) });
-            var secondIntersection = new KeywordIntersection(new[] { new Keyword2("test", 5) });
+            var firstIntersection = new KeywordIntersection(new[] { "test" });
+            var secondIntersection = new KeywordIntersection(new[] { "test" });
 
             firstIntersection.Should().Be(secondIntersection);
 

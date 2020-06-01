@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Sociomedia.Core.Application;
 using Sociomedia.Themes.Domain;
@@ -8,18 +7,16 @@ namespace Sociomedia.Themes.Application.Commands.CreateNewTheme
 {
     public class CreateNewThemeCommand : ICommand
     {
-        public IReadOnlyCollection<Keyword2> Keywords { get; }
-        public IReadOnlyCollection<Guid> Articles { get; }
+        public IReadOnlyCollection<Article> Articles { get; }
 
-        public CreateNewThemeCommand(IReadOnlyCollection<Keyword2> keywords, IReadOnlyCollection<Guid> articles)
+        public CreateNewThemeCommand(IReadOnlyCollection<Article> articles)
         {
-            Keywords = keywords;
             Articles = articles;
         }
 
         protected bool Equals(CreateNewThemeCommand other)
         {
-            return Keywords.Select(x => x.Value).SequenceEqual(other.Keywords.Select(x => x.Value)) && Articles.SequenceEqual(other.Articles);
+            return Articles.Select(x => x.Id).SequenceEqual(other.Articles.Select(x => x.Id));
         }
 
         public override bool Equals(object obj)
@@ -34,9 +31,6 @@ namespace Sociomedia.Themes.Application.Commands.CreateNewTheme
         {
             unchecked {
                 var hash = 19;
-                foreach (var keyword in Keywords) {
-                    hash = hash * 31 + keyword.Value.GetHashCode();
-                }
                 foreach (var article in Articles) {
                     hash = hash * 31 + article.GetHashCode();
                 }

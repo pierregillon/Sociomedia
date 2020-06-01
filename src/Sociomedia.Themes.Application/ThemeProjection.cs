@@ -19,11 +19,11 @@ namespace Sociomedia.Themes.Application
         {
             var article = _articles.SingleOrDefault(x => x.Id == @event.Id);
             if (article == null) {
-                article = new ArticleReadModel(@event.Id, @event.Keywords.Select(x => new Keyword2(x.Value, x.Occurence)).ToArray());
-                _articles.Add(article);
+                _articles.Add(new ArticleReadModel(@event.Id, @event.Keywords.Select(x => new Keyword2(x.Value, x.Occurence)).ToArray()));
             }
             else {
-                article.Keywords = @event.Keywords.Select(x => new Keyword2(x.Value, x.Occurence)).ToArray();
+                _articles.Remove(article);
+                _articles.Add(new ArticleReadModel(@event.Id, @event.Keywords.Select(x => new Keyword2(x.Value, x.Occurence)).ToArray()));
             }
         }
 
@@ -33,7 +33,7 @@ namespace Sociomedia.Themes.Application
 
             var theme = _themes.SingleOrDefault(x => x.Id == @event.Id);
             if (theme == null) {
-                theme = new ThemeReadModel(@event.Id, @event.Keywords.Select(x => new Keyword2(x.Value, x.Occurence)).ToArray(), articles);
+                theme = new ThemeReadModel(@event.Id, @event.Keywords.Select(x => x.Value).ToArray(), articles);
                 _themes.Add(theme);
             }
             else {

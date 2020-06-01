@@ -8,31 +8,33 @@ namespace Sociomedia.Themes.Application.Projections
 {
     public class ArticleReadModel
     {
+        private readonly IReadOnlyCollection<Keyword2> _keywordsAndOccurence;
         public Guid Id { get; set; }
-        public IReadOnlyCollection<Keyword2> Keywords { get; set; }
+        public IReadOnlyCollection<string> Keywords { get; }
 
         public ArticleReadModel(Guid id, IReadOnlyCollection<Keyword2> keywords)
         {
             Id = id;
-            Keywords = keywords;
+            Keywords = keywords.Select(x => x.Value).ToArray();
+            _keywordsAndOccurence = keywords;
         }
 
         public KeywordIntersection CommonKeywords(Article article)
         {
             return new KeywordIntersection(Keywords
-                .Join(article.Keywords, x => x.Value, y => y.Value, (x, y) => x + y)
+                .Intersect(article.Keywords.Select(x => x.Value))
                 .ToArray()
                 .Pipe(x => x));
-        }
-
-        public bool ContainsKeywords(IReadOnlyCollection<Keyword2> keywords)
-        {
-            return keywords.All(Keywords.Contains);
         }
 
         public override string ToString()
         {
             return string.Join(" | ", Keywords.Select(x => x.ToString()).ToArray());
+        }
+
+        public Article ToDomain()
+        {
+            return new Article(Id, _keywordsAndOccurence);
         }
     }
 }

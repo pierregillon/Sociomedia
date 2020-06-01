@@ -10,7 +10,7 @@ namespace Sociomedia.Themes.Application.Projections
     {
         private readonly HashSet<ArticleReadModel> _articles;
 
-        public ThemeReadModel(Guid id, IReadOnlyCollection<Keyword2> keywords, IEnumerable<ArticleReadModel> articles)
+        public ThemeReadModel(Guid id, IReadOnlyCollection<string> keywords, IEnumerable<ArticleReadModel> articles)
         {
             Id = id;
             Keywords = keywords;
@@ -19,7 +19,7 @@ namespace Sociomedia.Themes.Application.Projections
 
         public Guid Id { get; }
 
-        public IReadOnlyCollection<Keyword2> Keywords { get; }
+        public IReadOnlyCollection<string> Keywords { get; }
 
         public IReadOnlyCollection<ArticleReadModel> Articles => _articles;
 
@@ -41,7 +41,7 @@ namespace Sociomedia.Themes.Application.Projections
         public KeywordIntersection CommonKeywords(Article article)
         {
             return Keywords
-                .Join(article.Keywords, x => x.Value, y => y.Value, (x, y) => x + y)
+                .Intersect(article.Keywords.Select(x => x.Value))
                 .ToArray()
                 .Pipe(x => new KeywordIntersection(x));
         }

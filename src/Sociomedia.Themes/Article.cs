@@ -12,22 +12,36 @@ namespace Sociomedia.Themes.Domain
         public Article(Guid id, IReadOnlyCollection<Keyword2> keywords)
         {
             Id = id;
-            Keywords = keywords;
-        }
-
-        public IReadOnlyCollection<Keyword2> CommonKeywords(Article article)
-        {
-            return Keywords.Join(article.Keywords, x => x.Value, y => y.Value, (x, y) => x + y).ToArray();
-        }
-
-        public bool ContainsKeywords(IReadOnlyCollection<Keyword2> keywords)
-        {
-            return keywords.All(Keywords.Contains);
+            Keywords = keywords ?? throw new ArgumentNullException(nameof(keywords));
         }
 
         public override string ToString()
         {
             return string.Join(" | ", Keywords.Select(x => x.ToString()).ToArray());
+        }
+
+        protected bool Equals(Article other)
+        {
+            return Id.Equals(other.Id) && Keywords.SequenceEqual(other.Keywords);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((Article) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked {
+                var hash = 19;
+                foreach (var keyword in Keywords) {
+                    hash = hash * 31 + keyword.GetHashCode();
+                }
+                return hash;
+            }
         }
     }
 }
