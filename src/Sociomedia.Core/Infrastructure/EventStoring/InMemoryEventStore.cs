@@ -22,13 +22,18 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
             _eventPublisher = eventPublisher;
         }
 
-        public async Task<IReadOnlyCollection<IEvent>> GetNewEvents()
+        public Task<IEnumerable<IEvent>> GetNewEvents()
+        {
+            return GetNewEventsAfter(_now);
+        }
+
+        public async Task<IEnumerable<IEvent>> GetNewEventsAfter(DateTimeOffset date)
         {
             await Task.Delay(0);
 
             return _domainEventsPerGuid
                 .SelectMany(x => x.Value)
-                .Where(x => x.TimeStamp > _now)
+                .Where(x => x.TimeStamp > date)
                 .ToArray();
         }
 

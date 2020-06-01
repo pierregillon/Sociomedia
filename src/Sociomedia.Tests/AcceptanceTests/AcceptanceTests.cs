@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
 using Sociomedia.Core.Domain;
@@ -14,6 +16,7 @@ namespace Sociomedia.Tests.AcceptanceTests
         protected readonly ICommandDispatcher CommandDispatcher;
         protected readonly Container Container;
         protected readonly InMemoryEventStore EventStore;
+        protected readonly IEventPublisher EventPublisher;
 
         protected AcceptanceTests()
         {
@@ -29,7 +32,27 @@ namespace Sociomedia.Tests.AcceptanceTests
             CommandDispatcher = Container.GetInstance<ICommandDispatcher>();
 
             EventStore = Container.GetInstance<InMemoryEventStore>();
+            EventPublisher = Container.GetInstance<IEventPublisher>();
         }
+
+        protected async Task PublishEventAndNewInducedEvents(DomainEvent @event)
+        {
+            var now = DateTimeOffset.Now;
+
+            await EventPublisher.Publish(@event);
+
+            foreach (var newEvent in await EventStore.GetNewEventsAfter(now)) {
+                await EventPublisher.Publish(newEvent);
+            }
+        }
+
+        protected async Task PublishEventAndNewInducedEvents(IEnumerable<DomainEvent> events)
+        {
+            foreach (var @event in events) {
+                await PublishEventAndNewInducedEvents(@event);
+            }
+        }
+
 
         private class EmptyLogger : ILogger
         {

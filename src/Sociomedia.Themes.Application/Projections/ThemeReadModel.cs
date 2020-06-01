@@ -38,12 +38,12 @@ namespace Sociomedia.Themes.Application.Projections
             return _articles.Select(x => x.Id).Contains(article.Id);
         }
 
-        public Keywords2 CommonKeywords(Article article)
+        public KeywordIntersection CommonKeywords(Article article)
         {
             return Keywords
                 .Join(article.Keywords, x => x.Value, y => y.Value, (x, y) => x + y)
                 .ToArray()
-                .Pipe(x => new Keywords2(x));
+                .Pipe(x => new KeywordIntersection(x));
         }
     }
 }

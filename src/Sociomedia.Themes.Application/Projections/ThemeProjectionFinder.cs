@@ -5,11 +5,10 @@ using Sociomedia.Themes.Domain;
 
 namespace Sociomedia.Themes.Application.Projections
 {
-    public class ThemeProjectionFinder 
-        //: IEventListener<ArticleKeywordsDefined>
-        //,
-        //IEventListener<ThemeAdded>,
-        //IEventListener<ArticleAddedToTheme>
+    public class ThemeProjectionFinder :
+        IEventListener<ArticleKeywordsDefined>,
+        IEventListener<ThemeAdded>,
+        IEventListener<ArticleAddedToTheme>
     {
         public readonly ThemeProjection _projection;
 
@@ -39,8 +38,8 @@ namespace Sociomedia.Themes.Application.Projections
 
         public Task On(ArticleAddedToTheme @event)
         {
+            _projection.AddArticleToTheme(@event);
             return Task.CompletedTask;
-            //throw new System.NotImplementedException();
         }
     }
 }
