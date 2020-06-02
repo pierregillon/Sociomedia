@@ -38,6 +38,9 @@ namespace Sociomedia.Themes.Infrastructure
             For<IEventStore>().Use<EventStoreOrg>().Singleton();
             For<IEventStoreExtended>().Use(x => x.GetInstance<EventStoreOrg>());
             For<EventStoreConfiguration>().Use(eventStoreConfiguration).Singleton();
+
+            For<IEventPublisher>().DecorateAllWith<ChainedEventPublisherDecorator>();
+            For<IEventStore>().DecorateAllWith<EventStorePublisherDecorator>();
         }
 
         private class AllInterfacesConvention : IRegistrationConvention

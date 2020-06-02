@@ -22,15 +22,13 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
 
             WebPageDownloader.Download(Arg.Any<string>()).Returns("<html>some content with summary</html>");
 
-            await EventStore.StoreAndPublish(new IEvent[] {
+            await StoreAndPublish(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 }
             });
 
-            EventStore.CommitEvents();
-
             // Act
-            await EventStore.StoreAndPublish(new IEvent[] {
+            await StoreAndPublish(new IEvent[] {
                 new ArticleImported(Guid.NewGuid(), "some title", "some summary", new DateTime(2020, 04, 01), "https://test/article", "", "articleExternalId", new string[0], mediaId) { Version = 1 }
             });
 

@@ -5,6 +5,7 @@ using FluentAssertions;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Articles.Domain.Keywords;
 using Sociomedia.Core.Domain;
+using Sociomedia.Core.Infrastructure.CQRS;
 using Sociomedia.Themes.Domain;
 using Xunit;
 
@@ -18,7 +19,7 @@ namespace Sociomedia.Tests.AcceptanceTests
             var article1Id = Guid.NewGuid();
             var article2Id = Guid.NewGuid();
 
-            await PublishEvents(new[] {
+            await EventPublisher.Publish(new [] {
                 new ArticleKeywordsDefined(article1Id, new[] { new Keyword("coronavirus", 2), new Keyword("france", 2) }),
                 new ArticleKeywordsDefined(article2Id, new[] { new Keyword("coronavirus", 3), new Keyword("chine", 2) }),
             });
@@ -37,7 +38,7 @@ namespace Sociomedia.Tests.AcceptanceTests
             var article2Id = Guid.NewGuid();
             var article3Id = Guid.NewGuid();
 
-            await PublishEvents(new[] {
+            await EventPublisher.Publish(new[] {
                 new ArticleKeywordsDefined(article1Id, new[] { new Keyword("coronavirus", 2), new Keyword("france", 2) }),
                 new ArticleKeywordsDefined(article2Id, new[] { new Keyword("coronavirus", 3), new Keyword("chine", 2) }),
                 new ArticleKeywordsDefined(article3Id, new[] { new Keyword("coronavirus", 3), new Keyword("italie", 3) })
@@ -59,7 +60,7 @@ namespace Sociomedia.Tests.AcceptanceTests
             var article2Id = Guid.NewGuid();
             var article3Id = Guid.NewGuid();
 
-            await PublishEvents(new[] {
+            await EventPublisher.Publish(new[] {
                 new ArticleKeywordsDefined(article1Id, new[] { new Keyword("coronavirus", 2), new Keyword("france", 2) }),
                 new ArticleKeywordsDefined(article2Id, new[] { new Keyword("opera", 3), new Keyword("chine", 2) }),
                 new ArticleKeywordsDefined(article3Id, new[] { new Keyword("coronavirus", 5), new Keyword("chine", 3) }),
@@ -80,7 +81,7 @@ namespace Sociomedia.Tests.AcceptanceTests
             var article2Id = Guid.NewGuid();
             var article3Id = Guid.NewGuid();
 
-            await PublishEvents(new[] {
+            await EventPublisher.Publish(new[] {
                 new ArticleKeywordsDefined(article1Id, new[] { new Keyword("coronavirus", 2), new Keyword("france", 2) }),
                 new ArticleKeywordsDefined(article2Id, new[] { new Keyword("coronavirus", 3), new Keyword("france", 3) }),
                 new ArticleKeywordsDefined(article3Id, new[] { new Keyword("coronavirus", 5), new Keyword("chine", 3) }),
@@ -107,7 +108,7 @@ namespace Sociomedia.Tests.AcceptanceTests
                 new ArticleKeywordsDefined(Guid.NewGuid(), new[] { new Keyword("coronavirus", 5) }),
             };
 
-            await PublishEvents(events);
+            await EventPublisher.Publish(events);
 
             (await EventStore.GetNewEvents())
                 .Should()

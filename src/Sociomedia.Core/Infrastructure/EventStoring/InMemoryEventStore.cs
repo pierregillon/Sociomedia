@@ -11,16 +11,9 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 {
     public class InMemoryEventStore : IEventStore, IEventStoreExtended
     {
-        private readonly IEventPublisher _eventPublisher;
         private readonly Dictionary<Guid, List<IEvent>> _domainEventsPerGuid = new Dictionary<Guid, List<IEvent>>();
         private readonly List<IEvent> _allEvents = new List<IEvent>();
         private DateTimeOffset _now;
-        private bool _republish;
-
-        public InMemoryEventStore(IEventPublisher eventPublisher)
-        {
-            _eventPublisher = eventPublisher;
-        }
 
         public Task<IEnumerable<IEvent>> GetNewEvents()
         {
@@ -36,15 +29,7 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
                 .ToArray();
         }
 
-        public async Task StoreAndPublish(IEnumerable<IEvent> events, CancellationToken cancellationToken = new CancellationToken())
-        {
-            foreach (var @event in events) {
-                Add(@event);
-                await _eventPublisher.Publish(@event, cancellationToken);
-            }
-        }
-
-        public Task Store(IEnumerable<IEvent> events, CancellationToken cancellationToken = new CancellationToken())
+        public Task Store(IEnumerable<IEvent> events)
         {
             foreach (var @event in events) {
                 Add(@event);
@@ -52,14 +37,9 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
             return Task.CompletedTask;
         }
 
-        Task IEventStore.Save(IEnumerable<IEvent> events, CancellationToken cancellationToken = new CancellationToken())
+        Task IEventStore.Save(IEnumerable<IEvent> events, CancellationToken cancellationToken)
         {
-            if (_republish) {
-                return StoreAndPublish(events, cancellationToken);
-            }
-            else {
-                return Store(events, cancellationToken);
-            }
+            return Store(events);
         }
 
         public async Task<IEnumerable<IEvent>> Get(Guid aggregateId, int fromVersion, CancellationToken cancellationToken = new CancellationToken())
@@ -106,11 +86,6 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
         public Task<long> GetCurrentGlobalStreamPosition()
         {
             throw new NotImplementedException();
-        }
-
-        public void EnableRepublish()
-        {
-            _republish = true;
         }
     }
 }

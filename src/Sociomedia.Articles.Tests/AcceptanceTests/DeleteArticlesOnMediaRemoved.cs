@@ -21,7 +21,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             var articleId1 = Guid.NewGuid();
             var articleId2 = Guid.NewGuid();
 
-            await EventStore.StoreAndPublish(new IEvent[] {
+            await StoreAndPublish(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 },
                 new ArticleImported(articleId1, "some title", "some summary", DateTimeOffset.Now, "http://test.com", "http://test.jpg", "somexternalarticle", new string[0], mediaId) { Version = 1 },
@@ -30,7 +30,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
 
             EventStore.CommitEvents();
 
-            await EventStore.StoreAndPublish(new IEvent[] {
+            await StoreAndPublish(new IEvent[] {
                 new MediaDeleted(mediaId)
             });
 

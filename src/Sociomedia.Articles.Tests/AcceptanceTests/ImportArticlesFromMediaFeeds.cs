@@ -51,7 +51,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
         [Fact]
         public async Task Do_not_create_any_articles_when_no_new_rss_external_articles()
         {
-            await EventStore.StoreAndPublish(new IEvent[] {
+            await StoreAndPublish(new IEvent[] {
                 new MediaAdded(Guid.Empty, "test", null, PoliticalOrientation.Left),
                 new MediaFeedAdded(Guid.Empty, "https://www.test.com/rss.xml")
             });
@@ -68,13 +68,12 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
         {
             var mediaId = Guid.NewGuid();
 
-            await EventStore.StoreAndPublish(new IEvent[] {
+            await StoreAndPublish(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 },
                 new MediaFeedRemoved(mediaId, "https://www.test.com/rss.xml") { Version = 3 },
             });
 
-            EventStore.CommitEvents();
             _feedReader.ClearReceivedCalls();
             
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
@@ -89,7 +88,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
         {
             var mediaId = Guid.NewGuid();
 
-            await EventStore.StoreAndPublish(new IEvent[] {
+            await StoreAndPublish(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left),
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml"),
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss2.xml"),
@@ -110,12 +109,10 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             // Arrange
             var mediaId = Guid.NewGuid();
 
-            await EventStore.StoreAndPublish(new IEvent[] {
+            await StoreAndPublish(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 }
             });
-
-            EventStore.CommitEvents();
 
             _feedReader
                 .Read("https://www.test.com/rss.xml")
@@ -136,7 +133,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             // Assert
             (await EventStore.GetNewEvents())
                 .Should()
-                .BeEquivalentTo(new DomainEvent[] {
+                .ContainEquivalentOf<DomainEvent>(
                     new ArticleImported(
                         default,
                         "some title",
@@ -147,7 +144,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
                         "someExternalId",
                         Array.Empty<string>(), mediaId
                     )
-                }, x => x.ExcludeDomainEventTechnicalFields());
+                , x => x.ExcludeDomainEventTechnicalFields());
         }
 
         [Fact]
@@ -156,13 +153,11 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             // Arrange
             var mediaId = Guid.NewGuid();
 
-            await EventStore.StoreAndPublish(new IEvent[] {
+            await StoreAndPublish(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 },
                 new ArticleImported(Guid.NewGuid(), "test", "test", new DateTime(2020, 04, 01), "https://test/article", null, "articleExternalId", new string[0], mediaId) { Version = 1 },
             });
-
-            EventStore.CommitEvents();
 
             _feedReader
                 .Read("https://www.test.com/rss.xml")
@@ -202,13 +197,11 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             // Arrange
             var mediaId = Guid.NewGuid();
 
-            await EventStore.StoreAndPublish(new IEvent[] {
+            await StoreAndPublish(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 },
                 new ArticleImported(Guid.NewGuid(), "test", "test", new DateTime(2020, 04, 01), "https://test/article", "", "articleExternalId", new string[0], mediaId) { Version = 1 },
             });
-
-            EventStore.CommitEvents();
 
             _feedReader
                 .Read("https://www.test.com/rss.xml")
@@ -240,14 +233,12 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             var mediaId = Guid.NewGuid();
             var articleId = Guid.NewGuid();
 
-            await EventStore.StoreAndPublish(new IEvent[] {
+            await StoreAndPublish(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 },
                 new ArticleImported(articleId, "test", "test", new DateTime(2020, 04, 01), "https://test/article", "", "articleExternalId", new string[0], mediaId) { Version = 1 },
                 new ArticleUpdated(articleId, "test", "test", new DateTime(2020, 04, 02), "https://test/article", "") { Version = 2 },
             });
-
-            EventStore.CommitEvents();
 
             _feedReader
                 .Read("https://www.test.com/rss.xml")
@@ -282,12 +273,10 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             // Arrange
             var mediaId = Guid.NewGuid();
 
-            await EventStore.StoreAndPublish(new IEvent[] {
+            await StoreAndPublish(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 }
             });
-
-            EventStore.CommitEvents();
 
             // Act
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
@@ -304,12 +293,11 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             // Arrange
             var mediaId = Guid.NewGuid();
 
-            await EventStore.StoreAndPublish(new IEvent[] {
+            await StoreAndPublish(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
                 new MediaFeedAdded(mediaId, "") { Version = 2 }
             });
 
-            EventStore.CommitEvents();
             _feedReader.ClearReceivedCalls();
 
             // Act
@@ -331,14 +319,13 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             // Arrange
             var mediaId = Guid.NewGuid();
 
-            await EventStore.StoreAndPublish(new IEvent[] {
+            await StoreAndPublish(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 },
                 new ArticleImported(Guid.NewGuid(), "test", "test", new DateTime(2020, 04, 01), "https://test/article", "", "articleExternalId", new string[0], mediaId) { Version = 1 },
                 new MediaDeleted(mediaId) { Version = 2 },
             });
 
-            EventStore.CommitEvents();
             _feedReader.ClearReceivedCalls();
 
             // Act

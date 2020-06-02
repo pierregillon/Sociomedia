@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
 using NSubstitute;
@@ -18,6 +20,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
         protected readonly InMemoryEventStore EventStore;
         protected readonly Container Container;
         protected readonly IWebPageDownloader WebPageDownloader;
+        protected readonly IEventPublisher EventPublisher;
 
         protected AcceptanceTests()
         {
@@ -40,11 +43,19 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
 
             CommandDispatcher = Container.GetInstance<ICommandDispatcher>();
             WebPageDownloader = Container.GetInstance<IWebPageDownloader>();
-            EventStore = (InMemoryEventStore) Container.GetInstance<IEventStore>();
+            EventStore = Container.GetInstance<InMemoryEventStore>();
+            EventPublisher = Container.GetInstance<IEventPublisher>();
 
             WebPageDownloader
                 .Download(Arg.Any<string>())
                 .Returns("<html></html>");
+        }
+
+        protected async Task StoreAndPublish(IReadOnlyCollection<IEvent> events)
+        {
+            await EventStore.Store(events);
+            EventStore.CommitEvents();
+            await EventPublisher.Publish(events);
         }
 
         private class EmptyLogger : ILogger

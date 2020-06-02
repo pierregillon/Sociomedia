@@ -3,6 +3,7 @@ using FluentAssertions;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Articles.Domain.Keywords;
 using Sociomedia.Themes.Application;
+using Sociomedia.Themes.Application.Commands.AddArticleToTheme;
 using Sociomedia.Themes.Application.Commands.CreateNewTheme;
 using Sociomedia.Themes.Domain;
 using Xunit;
@@ -12,8 +13,8 @@ namespace Sociomedia.Tests
 {
     public class ThemeManagerTests
     {
-        private ThemeProjection _projection;
-        private ThemeManager2 _themeManager2;
+        private readonly ThemeProjection _projection;
+        private readonly ThemeManager2 _themeManager2;
 
         public ThemeManagerTests()
         {
