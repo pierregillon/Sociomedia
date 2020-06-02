@@ -31,8 +31,7 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
         {
             await Task.Delay(0);
 
-            return _domainEventsPerGuid
-                .SelectMany(x => x.Value)
+            return _allEvents
                 .Where(x => x.TimeStamp > date)
                 .ToArray();
         }

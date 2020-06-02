@@ -31,6 +31,11 @@ namespace Sociomedia.Themes.Domain
             _keywords = @event.Keywords;
         }
 
+        private void Apply(ThemeKeywordsUpdated @event)
+        {
+            _keywords = @event.Keywords;
+        }
+
         private static IReadOnlyCollection<Keyword2> IntersectKeywords(IReadOnlyCollection<IEnumerable<Keyword2>> keywordsList)
         {
             var keywordValues = keywordsList.Select(x => x.Select(a => a.Value)).IntersectAll();
