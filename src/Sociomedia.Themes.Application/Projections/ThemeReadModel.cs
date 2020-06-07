@@ -25,6 +25,9 @@ namespace Sociomedia.Themes.Application.Projections
 
         public void AddArticle(ArticleReadModel article)
         {
+            if (_articles.Any(x => x.Id == article.Id)) {
+                throw new Exception("conflict");
+            }
             _articles.Add(article);
         }
 

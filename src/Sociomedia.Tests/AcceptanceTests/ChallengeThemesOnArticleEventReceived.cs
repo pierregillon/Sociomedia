@@ -155,6 +155,30 @@ namespace Sociomedia.Tests.AcceptanceTests
                 }, x => x.ExcludeDomainEventTechnicalFields2());
         }
 
+        [Fact]
+        public async Task Several_themes_have_the_same_intersection_with_an_articles()
+        {
+            var articleEvents = new[] {
+                KeywordDefined("a", "b", "1"),
+                KeywordDefined("a", "b", "1"),
+                KeywordDefined("a", "b", "2"),
+                KeywordDefined("a", "b"),
+            };
+
+            await EventPublisher.Publish(articleEvents);
+
+            var newEvents = await EventStore.GetNewEvents().Pipe(x => x.ToArray());
+
+            newEvents
+                .Should()
+                .BeEquivalentTo(new DomainEvent[] {
+                    new ThemeAdded(newEvents.ElementAt(0).Id, new[] { new Keyword("a", 4), new Keyword("b", 4), new Keyword("1", 2), }, new[] { articleEvents.ElementAt(0).Id, articleEvents.ElementAt(1).Id }),
+                    new ThemeAdded(newEvents.ElementAt(1).Id, new[] { new Keyword("a", 6), new Keyword("b", 6)}, new[] { articleEvents.ElementAt(0).Id, articleEvents.ElementAt(1).Id, articleEvents.ElementAt(2).Id }),
+                    new ArticleAddedToTheme(newEvents.ElementAt(1).Id, articleEvents.ElementAt(3).Id),
+                    new ThemeKeywordsUpdated(newEvents.ElementAt(1).Id, new[] { new Keyword("a", 8), new Keyword("b", 8)}),
+                }, x => x.ExcludeDomainEventTechnicalFields2());
+        }
+
         private static ArticleKeywordsDefined KeywordDefined(params string[] keywords)
         {
             return new ArticleKeywordsDefined(Guid.NewGuid(), keywords.Select(x => AKeyword(x, 2)).ToArray());

@@ -4,7 +4,6 @@ using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Infrastructure;
 using Sociomedia.Themes.Application;
 using Sociomedia.Themes.Application.Commands.AddArticleToTheme;
-using Sociomedia.Themes.Application.Commands.CreateNewTheme;
 using Sociomedia.Themes.Application.Projections;
 using Sociomedia.Themes.Domain;
 using Xunit;
@@ -21,7 +20,7 @@ namespace Sociomedia.Tests
         public ThemeManagerTests()
         {
             _projection = new ThemeProjection(new InMemoryDatabase());
-            _themeManager = new ThemeManager(_projection);
+            _themeManager = new ThemeManager(_projection, new AcceptanceTests.AcceptanceTests.EmptyLogger());
         }
 
         [Fact]

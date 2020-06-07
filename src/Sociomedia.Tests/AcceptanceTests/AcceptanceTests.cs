@@ -35,7 +35,7 @@ namespace Sociomedia.Tests.AcceptanceTests
             EventPublisher = Container.GetInstance<IEventPublisher>();
         }
 
-        private class EmptyLogger : ILogger
+        public class EmptyLogger : ILogger
         {
             public void Error(string format, params object[] args) { }
 

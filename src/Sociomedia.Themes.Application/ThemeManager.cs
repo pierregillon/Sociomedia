@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using EventStore.ClientAPI;
 using Sociomedia.Core.Application;
 using Sociomedia.Themes.Application.Commands.AddArticleToTheme;
 using Sociomedia.Themes.Application.Commands.CreateNewTheme;
@@ -11,11 +12,13 @@ namespace Sociomedia.Themes.Application
     public class ThemeManager
     {
         private readonly ThemeProjection _themeProjection;
+        private readonly ILogger _logger;
 
 
-        public ThemeManager(ThemeProjection themeProjection)
+        public ThemeManager(ThemeProjection themeProjection, ILogger logger)
         {
             _themeProjection = themeProjection;
+            _logger = logger;
         }
 
         public IEnumerable<ICommand> Add(Article article)
@@ -28,12 +31,17 @@ namespace Sociomedia.Themes.Application
             var keywordIntersectedThemes = _themeProjection.Themes
                 .Select(x => new { Theme = x, KeywordIntersection = x.CommonKeywords(article) })
                 .Where(x => x.KeywordIntersection.Any())
+                .GroupBy(x => x.KeywordIntersection)
                 .ToArray();
 
             foreach (var intersectedTheme in keywordIntersectedThemes) {
-                var existingTheme = _themeProjection.Themes.FirstOrDefault(x => intersectedTheme.KeywordIntersection.SequenceEquals(x.Keywords));
+                var existingThemes = _themeProjection.Themes.Where(x => intersectedTheme.Key.SequenceEquals(x.Keywords)).ToArray();
+                if (existingThemes.Length > 1) {
+                    _logger.Info("2 themes have the same keyword intersections !");
+                }
+                var existingTheme = existingThemes.FirstOrDefault();
                 if (existingTheme == null) {
-                    yield return AddTheme(intersectedTheme.KeywordIntersection, intersectedTheme.Theme.Articles.Select(x => x.ToDomain()).Append(article).ToArray());
+                    yield return AddTheme(intersectedTheme.Key, intersectedTheme.SelectMany(x => x.Theme.Articles).Select(x => x.ToDomain()).Append(article).ToArray());
                 }
                 else if (!existingTheme.Contains(article)) {
                     yield return AddArticleToTheme(existingTheme, article);
@@ -52,7 +60,7 @@ namespace Sociomedia.Themes.Application
 
             foreach (var value in keywordIntersectedArticles) {
                 var matchingThemes = _themeProjection.Themes.Where(theme => value.Key.ContainsAllWords(theme.Keywords)).ToList();
-                if (!matchingThemes.Any() || matchingThemes.All(x => x.Keywords.Count != value.Key.Count)) {
+                if (!matchingThemes.Any()) {
                     yield return AddTheme(value.Key, value.Select(x => x.Article.ToDomain()).Append(article).ToArray());
                 }
             }
