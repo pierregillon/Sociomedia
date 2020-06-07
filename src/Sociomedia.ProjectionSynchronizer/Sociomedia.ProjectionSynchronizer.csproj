@@ -15,6 +15,7 @@
     <ProjectReference Include="..\Sociomedia.Core\Sociomedia.Core.csproj" />
     <ProjectReference Include="..\Sociomedia.Medias.Domain\Sociomedia.Medias.Domain.csproj" />
     <ProjectReference Include="..\Sociomedia.ReadModel.DataAccess\Sociomedia.ReadModel.DataAccess.csproj" />
+    <ProjectReference Include="..\Sociomedia.Themes\Sociomedia.Themes.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

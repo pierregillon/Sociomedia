@@ -11,6 +11,7 @@ namespace Sociomedia.ReadModel.DataAccess
         public ITable<SynchronizationInformationTable> SynchronizationInformation => GetTable<SynchronizationInformationTable>();
         public ITable<MediaTable> Medias => GetTable<MediaTable>();
         public ITable<MediaFeedTable> MediaFeeds => GetTable<MediaFeedTable>();
+        public ITable<ThemeTable> Themes => GetTable<ThemeTable>();
+        public ITable<ThemedArticleTable> ThemedArticles => GetTable<ThemedArticleTable>();
     }
-
 }

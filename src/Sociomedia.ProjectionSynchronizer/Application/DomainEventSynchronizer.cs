@@ -8,6 +8,7 @@ using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.EventStoring;
 using Sociomedia.Medias.Domain;
+using Sociomedia.Themes.Domain;
 
 namespace Sociomedia.ProjectionSynchronizer.Application
 {
@@ -38,15 +39,19 @@ namespace Sociomedia.ProjectionSynchronizer.Application
 
         private static IEnumerable<Type> GetEventTypes()
         {
-            var articlesEvents = typeof(ArticleImported).Assembly.GetTypes()
+            var articlesEvents = typeof(ArticleEvent).Assembly.GetTypes()
                 .Where(x => x.IsDomainEvent())
                 .ToArray();
 
-            var mediaEvents = typeof(MediaAdded).Assembly.GetTypes()
+            var mediaEvents = typeof(MediaEvent).Assembly.GetTypes()
                 .Where(x => x.IsDomainEvent())
                 .ToArray();
 
-            return articlesEvents.Union(mediaEvents).ToArray();
+            var themeEvents = typeof(ThemeEvent).Assembly.GetTypes()
+                .Where(x => x.IsDomainEvent())
+                .ToArray();
+
+            return articlesEvents.Concat(mediaEvents).Concat(themeEvents).ToArray();
         }
 
         private async Task DomainEventReceived(IEvent @event, long position)
