@@ -7,9 +7,9 @@ namespace Sociomedia.Themes.Domain
     public class Article
     {
         public Guid Id { get; }
-        public IReadOnlyCollection<Keyword2> Keywords { get; }
+        public IReadOnlyCollection<Keyword> Keywords { get; }
 
-        public Article(Guid id, IReadOnlyCollection<Keyword2> keywords)
+        public Article(Guid id, IReadOnlyCollection<Keyword> keywords)
         {
             Id = id;
             Keywords = keywords ?? throw new ArgumentNullException(nameof(keywords));

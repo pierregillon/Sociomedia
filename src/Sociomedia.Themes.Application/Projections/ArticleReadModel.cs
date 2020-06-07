@@ -8,11 +8,11 @@ namespace Sociomedia.Themes.Application.Projections
 {
     public class ArticleReadModel
     {
-        private readonly IReadOnlyCollection<Keyword2> _keywordsAndOccurence;
+        private readonly IReadOnlyCollection<Keyword> _keywordsAndOccurence;
         public Guid Id { get; set; }
         public IReadOnlyCollection<string> Keywords { get; }
 
-        public ArticleReadModel(Guid id, IReadOnlyCollection<Keyword2> keywords)
+        public ArticleReadModel(Guid id, IReadOnlyCollection<Keyword> keywords)
         {
             Id = id;
             Keywords = keywords.Select(x => x.Value).ToArray();

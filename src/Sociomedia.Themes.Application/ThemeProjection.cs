@@ -19,11 +19,11 @@ namespace Sociomedia.Themes.Application
         {
             var article = _articles.SingleOrDefault(x => x.Id == @event.Id);
             if (article == null) {
-                _articles.Add(new ArticleReadModel(@event.Id, @event.Keywords.Select(x => new Keyword2(x.Value, x.Occurence)).ToArray()));
+                _articles.Add(new ArticleReadModel(@event.Id, @event.Keywords.Select(x => new Keyword(x.Value, x.Occurence)).ToArray()));
             }
             else {
                 _articles.Remove(article);
-                _articles.Add(new ArticleReadModel(@event.Id, @event.Keywords.Select(x => new Keyword2(x.Value, x.Occurence)).ToArray()));
+                _articles.Add(new ArticleReadModel(@event.Id, @event.Keywords.Select(x => new Keyword(x.Value, x.Occurence)).ToArray()));
             }
         }
 

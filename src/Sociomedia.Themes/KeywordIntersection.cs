@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Sociomedia.Themes.Application.Projections
+namespace Sociomedia.Themes.Domain
 {
     public class KeywordIntersection
     {
@@ -22,11 +22,6 @@ namespace Sociomedia.Themes.Application.Projections
         public bool ContainsAllWords(IReadOnlyCollection<string> keywords)
         {
             return !keywords.Except(_keywords).Any();
-        }
-
-        public IReadOnlyCollection<string> ToArray()
-        {
-            return _keywords;
         }
 
         public bool SequenceEquals(IReadOnlyCollection<string> keywords)

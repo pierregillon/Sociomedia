@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using FluentAssertions;
 using Sociomedia.Themes.Application.Projections;
+using Sociomedia.Themes.Domain;
 using Xunit;
 
 namespace Sociomedia.Tests.AcceptanceTests

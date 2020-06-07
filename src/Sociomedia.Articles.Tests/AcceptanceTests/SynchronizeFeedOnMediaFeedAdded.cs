@@ -1,11 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CQRSlite.Events;
 using FluentAssertions;
 using NSubstitute;
-using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Articles.Domain.Feeds;
 using Sociomedia.Articles.Tests.UnitTests;

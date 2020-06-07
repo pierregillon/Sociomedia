@@ -28,11 +28,6 @@ namespace Sociomedia.Themes.Application.Projections
             _articles.Add(article);
         }
 
-        public bool Contains(ArticleReadModel article)
-        {
-            return _articles.Select(x => x.Id).Contains(article.Id);
-        }
-
         public bool Contains(Article article)
         {
             return _articles.Select(x => x.Id).Contains(article.Id);

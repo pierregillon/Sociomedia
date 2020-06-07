@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
-using Sociomedia.Articles.Application.Queries;
-using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Application;
+using Sociomedia.Core.Application.Projections;
+using Sociomedia.Core.Infrastructure;
 
 namespace Sociomedia.Articles.Application.Projections
 {

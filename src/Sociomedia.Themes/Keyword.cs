@@ -2,20 +2,20 @@
 
 namespace Sociomedia.Themes.Domain
 {
-    public class Keyword2 : IEquatable<Keyword2>
+    public class Keyword : IEquatable<Keyword>
     {
         public int Occurence { get; }
         public string Value { get; }
 
-        public Keyword2(string value, int occurence)
+        public Keyword(string value, int occurence)
         {
             Value = value;
             Occurence = occurence;
         }
 
-        public bool Contains(Keyword2 keyword2)
+        public bool Contains(Keyword keyword)
         {
-            return Value.Contains(keyword2.Value);
+            return Value.Contains(keyword.Value);
         }
 
         public override string ToString()
@@ -23,7 +23,7 @@ namespace Sociomedia.Themes.Domain
             return Value + $" ({Occurence})";
         }
 
-        public bool Equals(Keyword2 other)
+        public bool Equals(Keyword other)
         {
             if (other == null) throw new ArgumentNullException(nameof(other));
             return Equals(Value, other.Value) && Equals(Occurence, other.Occurence);
@@ -34,17 +34,17 @@ namespace Sociomedia.Themes.Domain
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((Keyword2) obj);
+            return Equals((Keyword) obj);
         }
 
         public override int GetHashCode() => Value.GetHashCode();
 
-        public static Keyword2 operator +(Keyword2 x, Keyword2 y)
+        public static Keyword operator +(Keyword x, Keyword y)
         {
             if (x.Value != y.Value) {
                 throw new InvalidOperationException("Keywords are different, unable to add them");
             }
-            return new Keyword2(x.Value, x.Occurence + y.Occurence);
+            return new Keyword(x.Value, x.Occurence + y.Occurence);
         }
     }
 }

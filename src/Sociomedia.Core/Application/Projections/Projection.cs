@@ -5,11 +5,9 @@ using System.Reflection;
 using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
-using Sociomedia.Articles.Application.Queries;
-using Sociomedia.Articles.Domain;
-using Sociomedia.Core;
+using Sociomedia.Core.Infrastructure;
 
-namespace Sociomedia.Articles.Application.Projections
+namespace Sociomedia.Core.Application.Projections
 {
     public abstract class Projection<T> : IProjection
     {

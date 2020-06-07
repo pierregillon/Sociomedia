@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sociomedia.Articles.Application.Queries
+namespace Sociomedia.Core.Infrastructure
 {
     public class InMemoryDatabase
     {

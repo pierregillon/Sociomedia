@@ -8,6 +8,7 @@ using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Keywords;
 using Sociomedia.Articles.Infrastructure;
 using Sociomedia.Core.Domain;
+using Sociomedia.Core.Infrastructure;
 using Sociomedia.Core.Infrastructure.CQRS;
 using Sociomedia.Core.Infrastructure.EventStoring;
 using StructureMap;
@@ -25,10 +26,10 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
         protected AcceptanceTests()
         {
             Container = new Container(x => {
-                x.AddRegistry(new ArticlesRegistry(new EventStoreConfiguration()));
+                x.AddRegistry(new CoreRegistry(new EventStoreConfiguration()));
+                x.AddRegistry<ArticlesRegistry>();
                 x.For<InMemoryEventStore>().Singleton();
             });
-
 
             Container.Inject(Substitute.For<IWebPageDownloader>());
             Container.Inject(Substitute.For<IKeywordDictionary>());

@@ -3,7 +3,6 @@ using CQRSlite.Events;
 using EventStore.ClientAPI;
 using EventStore.ClientAPI.Common.Log;
 using Sociomedia.Core.Application;
-using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.CQRS;
 using Sociomedia.Core.Infrastructure.EventStoring;
 using Sociomedia.Core.Infrastructure.Logging;
@@ -16,11 +15,8 @@ namespace Sociomedia.Themes.Infrastructure
 {
     public class ThemesRegistry : Registry
     {
-        public ThemesRegistry(EventStoreConfiguration eventStoreConfiguration)
+        public ThemesRegistry()
         {
-            For<ICommandDispatcher>().Use<StructureMapCommandDispatcher>();
-            For<IEventPublisher>().Use<StructureMapEventPublisher>();
-
             Scan(scanner => {
                 scanner.Assembly("Sociomedia.Themes.Application");
                 scanner.Convention<AllInterfacesConvention>();
@@ -28,19 +24,7 @@ namespace Sociomedia.Themes.Infrastructure
                 scanner.AddAllTypesOf(typeof(ICommandHandler<>));
             });
 
-            For<ICommandDispatcher>().DecorateAllWith<CommandDispatcherLogger>();
-
-            For<ILogger>().Use<ConsoleLogger>();
-
             For<ThemeProjection>().Singleton();
-
-            For<IRepository>().Use(context => new Repository(context.GetInstance<IEventStore>()));
-            For<IEventStore>().Use<EventStoreOrg>().Singleton();
-            For<IEventStoreExtended>().Use(x => x.GetInstance<EventStoreOrg>());
-            For<EventStoreConfiguration>().Use(eventStoreConfiguration).Singleton();
-
-            For<IEventPublisher>().DecorateAllWith<ChainedEventPublisherDecorator>();
-            For<IEventStore>().DecorateAllWith<EventStorePublisherDecorator>();
         }
 
         private class AllInterfacesConvention : IRegistrationConvention

@@ -4,12 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
-using Sociomedia.Articles.Domain;
-using Sociomedia.Core;
-using Sociomedia.Core.Application;
 using Sociomedia.Core.Domain;
 
-namespace Sociomedia.Articles.Application.Projections
+namespace Sociomedia.Core.Application.Projections
 {
     public class ProjectionsBootstrapper
     {

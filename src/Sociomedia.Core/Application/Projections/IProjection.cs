@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using CQRSlite.Events;
 
-namespace Sociomedia.Articles.Application.Projections
+namespace Sociomedia.Core.Application.Projections
 {
     public interface IProjection
     {

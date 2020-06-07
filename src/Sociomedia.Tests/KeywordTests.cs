@@ -8,9 +8,9 @@ namespace Sociomedia.Tests {
         [Fact]
         public void Two_keywords_with_different_occurence_are_not_equals()
         {
-            new Keyword2("Test", 10)
+            new Keyword("Test", 10)
                 .Should()
-                .NotBe(new Keyword2("Test", 11));
+                .NotBe(new Keyword("Test", 11));
         }
     }
 }

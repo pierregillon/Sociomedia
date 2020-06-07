@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
 using Sociomedia.Core.Domain;
+using Sociomedia.Core.Infrastructure;
 using Sociomedia.Core.Infrastructure.CQRS;
 using Sociomedia.Core.Infrastructure.EventStoring;
 using Sociomedia.Themes.Infrastructure;
@@ -21,14 +20,8 @@ namespace Sociomedia.Tests.AcceptanceTests
         protected AcceptanceTests()
         {
             Container = new Container(x => {
-                x.AddRegistry(new ThemesRegistry(new EventStoreConfiguration()));
-
-                //x.For<InMemoryEventStore>().Singleton();
-                //x.For<IEventStore>().ClearAll().Use(context => context.GetInstance<InMemoryEventStore>()).Singleton();
-                //x.For<IEventStoreExtended>().ClearAll().Use(context => context.GetInstance<InMemoryEventStore>()).Singleton();
-                //x.For<IEventPublisher>().DecorateAllWith<ChainedEventPublisherDecorator>();
-                //x.For<ILogger>().ClearAll().Use<EmptyLogger>();
-
+                x.AddRegistry(new CoreRegistry(new EventStoreConfiguration()));
+                x.AddRegistry<ThemesRegistry>();
                 x.For<InMemoryEventStore>().Singleton();
             });
 

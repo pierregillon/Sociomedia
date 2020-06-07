@@ -8,26 +8,27 @@ using Sociomedia.Themes.Application.Commands.CreateNewTheme;
 using Sociomedia.Themes.Domain;
 using Xunit;
 using Article = Sociomedia.Themes.Domain.Article;
+using Keyword = Sociomedia.Themes.Domain.Keyword;
 
 namespace Sociomedia.Tests
 {
     public class ThemeManagerTests
     {
         private readonly ThemeProjection _projection;
-        private readonly ThemeManager2 _themeManager2;
+        private readonly ThemeManager _themeManager;
 
         public ThemeManagerTests()
         {
             _projection = new ThemeProjection();
-            _themeManager2 = new ThemeManager2(_projection);
+            _themeManager = new ThemeManager(_projection);
         }
 
         [Fact]
         public void A_single_article_does_not_create_theme()
         {
-            var themeManager2 = new ThemeManager2(new ThemeProjection());
+            var themeManager2 = new ThemeManager(new ThemeProjection());
 
-            var article = new Article(Guid.NewGuid(), new[] { new Keyword2("test 1", 2), });
+            var article = new Article(Guid.NewGuid(), new[] { new Keyword("test 1", 2), });
 
             var commands = themeManager2.Add(article);
 
@@ -41,28 +42,28 @@ namespace Sociomedia.Tests
             var article2 = Guid.NewGuid();
 
             _projection.AddArticle(new ArticleKeywordsDefined(article1, new[] {
-                new Keyword("coronavirus", 2),
-                new Keyword("italie", 2),
+                new Articles.Domain.Keywords.Keyword("coronavirus", 2),
+                new Articles.Domain.Keywords.Keyword("italie", 2),
             }));
 
             var newArticle = new Article(article2, new[] {
-                new Keyword2("coronavirus", 3),
-                new Keyword2("china", 3),
+                new Keyword("coronavirus", 3),
+                new Keyword("china", 3),
             });
 
-            var commands = _themeManager2.Add(newArticle);
+            var commands = _themeManager.Add(newArticle);
 
             commands
                 .Should()
                 .BeEquivalentTo(new[] {
                     new CreateNewThemeCommand(new[] {
                         new Article(article1, new[] {
-                            new Keyword2("coronavirus", 2),
-                            new Keyword2("italie", 2),
+                            new Keyword("coronavirus", 2),
+                            new Keyword("italie", 2),
                         }),
                         new Article(article2, new[] {
-                            new Keyword2("coronavirus", 3),
-                            new Keyword2("china", 3),
+                            new Keyword("coronavirus", 3),
+                            new Keyword("china", 3),
                         }),
                     })
                 });
@@ -77,23 +78,23 @@ namespace Sociomedia.Tests
             var theme1 = Guid.NewGuid();
 
             _projection.AddArticle(new ArticleKeywordsDefined(article1, new[] {
-                new Keyword("coronavirus", 2),
-                new Keyword("italie", 2),
+                new Articles.Domain.Keywords.Keyword("coronavirus", 2),
+                new Articles.Domain.Keywords.Keyword("italie", 2),
             }));
             _projection.AddArticle(new ArticleKeywordsDefined(article2, new[] {
-                new Keyword("coronavirus", 3),
-                new Keyword("china", 3),
+                new Articles.Domain.Keywords.Keyword("coronavirus", 3),
+                new Articles.Domain.Keywords.Keyword("china", 3),
             }));
             _projection.AddTheme(new ThemeAdded(theme1, new[] {
-                new Keyword2("coronavirus", 5)
+                new Keyword("coronavirus", 5)
             }, new[] { article1, article2 }));
 
             var newArticle = new Article(article3, new[] {
-                new Keyword2("coronavirus", 3),
-                new Keyword2("france", 3),
+                new Keyword("coronavirus", 3),
+                new Keyword("france", 3),
             });
 
-            var commands = _themeManager2.Add(newArticle);
+            var commands = _themeManager.Add(newArticle);
 
             commands
                 .Should()

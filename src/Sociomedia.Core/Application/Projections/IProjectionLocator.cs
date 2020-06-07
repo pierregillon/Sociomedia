@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Sociomedia.Articles.Application.Projections
+namespace Sociomedia.Core.Application.Projections
 {
     public interface IProjectionLocator
     {

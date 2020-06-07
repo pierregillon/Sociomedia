@@ -12,8 +12,8 @@ namespace Sociomedia.Tests
         {
             var id = Guid.NewGuid();
 
-            var article1 = new Article(id, new[] { new Keyword2("Test", 10), });
-            var article2 = new Article(id, new[] { new Keyword2("Test", 10), });
+            var article1 = new Article(id, new[] { new Keyword("Test", 10), });
+            var article2 = new Article(id, new[] { new Keyword("Test", 10), });
 
             article1.Should().Be(article2);
         }

@@ -8,7 +8,7 @@ namespace Sociomedia.Themes.Domain
 {
     public class Theme : AggregateRoot
     {
-        private IReadOnlyCollection<Keyword2> _keywords;
+        private IReadOnlyCollection<Keyword> _keywords;
 
         private Theme() { }
 
@@ -36,7 +36,7 @@ namespace Sociomedia.Themes.Domain
             _keywords = @event.Keywords;
         }
 
-        private static IReadOnlyCollection<Keyword2> IntersectKeywords(IReadOnlyCollection<IEnumerable<Keyword2>> keywordsList)
+        private static IReadOnlyCollection<Keyword> IntersectKeywords(IReadOnlyCollection<IEnumerable<Keyword>> keywordsList)
         {
             var keywordValues = keywordsList.Select(x => x.Select(a => a.Value)).IntersectAll();
 

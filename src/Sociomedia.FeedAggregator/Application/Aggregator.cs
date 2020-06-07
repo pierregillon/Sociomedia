@@ -9,6 +9,7 @@ using Sociomedia.Articles.Application.Projections;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core;
+using Sociomedia.Core.Application.Projections;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.EventStoring;
 using Sociomedia.FeedAggregator.Infrastructure;

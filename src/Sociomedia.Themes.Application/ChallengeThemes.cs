@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Infrastructure.CQRS;
-using Sociomedia.Themes.Application.Projections;
 using Sociomedia.Themes.Domain;
 using Article = Sociomedia.Themes.Domain.Article;
 
@@ -12,21 +11,19 @@ namespace Sociomedia.Themes.Application
     public class ChallengeThemes : IEventListener<ArticleKeywordsDefined>
     {
         private readonly ICommandDispatcher _commandDispatcher;
-        private readonly ThemeProjectionFinder _themeProjectionFinder;
+        private readonly ThemeManager _themeManager;
 
-        public ChallengeThemes(ICommandDispatcher commandDispatcher, ThemeProjectionFinder themeProjectionFinder)
+        public ChallengeThemes(ICommandDispatcher commandDispatcher, ThemeManager themeManager)
         {
             _commandDispatcher = commandDispatcher;
-            _themeProjectionFinder = themeProjectionFinder;
+            _themeManager = themeManager;
         }
 
         public async Task On(ArticleKeywordsDefined @event)
         {
-            var themeProjection = await _themeProjectionFinder.GetProjection();
+            var article = new Article(@event.Id, @event.Keywords.Select(x => new Keyword(x.Value, x.Occurence)).ToArray());
 
-            var themeManager = new ThemeManager2(themeProjection);
-
-            var commands = themeManager.Add(new Article(@event.Id, @event.Keywords.Select(x => new Keyword2(x.Value, x.Occurence)).ToArray()));
+            var commands = _themeManager.Add(article);
 
             foreach (var command in commands) {
                 await _commandDispatcher.DispatchGeneric(command);
