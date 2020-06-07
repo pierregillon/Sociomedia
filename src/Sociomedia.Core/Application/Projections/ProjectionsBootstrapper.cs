@@ -25,7 +25,7 @@ namespace Sociomedia.Core.Application.Projections
         {
             Info($"Updating projections to {lastStreamPosition} event position ...");
 
-            IDictionary<Type, List<IProjection>> projectionsByType = new Dictionary<Type, List<IProjection>>();
+            IDictionary<Type, List<ProjectionInfo>> projectionsByType = new Dictionary<Type, List<ProjectionInfo>>();
             foreach (var projection in _projectionLocator.FindProjections()) {
                 AddProjectionEvents(projectionsByType, projection);
             }
@@ -40,7 +40,7 @@ namespace Sociomedia.Core.Application.Projections
             Info($"Projections up-to-date ({eventCount} events replayed).");
         }
 
-        private static async Task ApplyInProjections(IDictionary<Type, List<IProjection>> projectionsByEventType, IEvent @event)
+        private static async Task ApplyInProjections(IDictionary<Type, List<ProjectionInfo>> projectionsByEventType, IEvent @event)
         {
             if (projectionsByEventType.TryGetValue(@event.GetType(), out var projections)) {
                 foreach (var projection in projections) {
@@ -49,23 +49,23 @@ namespace Sociomedia.Core.Application.Projections
             }
         }
 
-        private static void AddProjectionEvents(IDictionary<Type, List<IProjection>> projectionsByEventType, IProjection projection)
+        private static void AddProjectionEvents(IDictionary<Type, List<ProjectionInfo>> projectionsByEventType, IProjection projection)
         {
             var interfaces = projection.GetType().GetInterfaces().Where(x => x.Name == typeof(IEventListener<>).Name);
             foreach (var @interface in interfaces) {
                 var eventType = @interface.GetGenericArguments()[0];
                 if (projectionsByEventType.TryGetValue(eventType, out var projections)) {
-                    projections.Add(projection);
+                    projections.Add(new ProjectionInfo(projection, eventType));
                 }
                 else {
-                    projectionsByEventType.Add(eventType, new List<IProjection> { projection });
+                    projectionsByEventType.Add(eventType, new List<ProjectionInfo> { new ProjectionInfo(projection, eventType) });
                 }
             }
         }
 
         private void Info(string message)
         {
-            _logger.Info($"[{this.GetType().DisplayableName()}] " + message);
+            _logger.Info($"[{GetType().DisplayableName()}] " + message);
         }
     }
 }

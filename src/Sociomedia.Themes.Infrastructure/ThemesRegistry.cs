@@ -1,12 +1,5 @@
-﻿using CQRSlite.Domain;
-using CQRSlite.Events;
-using EventStore.ClientAPI;
-using EventStore.ClientAPI.Common.Log;
-using Sociomedia.Core.Application;
-using Sociomedia.Core.Infrastructure.CQRS;
-using Sociomedia.Core.Infrastructure.EventStoring;
-using Sociomedia.Core.Infrastructure.Logging;
-using Sociomedia.Themes.Application;
+﻿using Sociomedia.Core.Application;
+using Sociomedia.Themes.Application.Projections;
 using StructureMap;
 using StructureMap.Graph;
 using StructureMap.Graph.Scanning;
