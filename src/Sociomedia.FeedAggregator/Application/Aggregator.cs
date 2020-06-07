@@ -5,8 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
-using Sociomedia.Articles.Application.Projections;
-using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core;
 using Sociomedia.Core.Application.Projections;

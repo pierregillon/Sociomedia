@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
@@ -14,7 +15,9 @@ using Sociomedia.Core.Infrastructure.EventStoring;
 using Sociomedia.FeedAggregator.Application;
 using Sociomedia.FeedAggregator.Infrastructure;
 using Sociomedia.Medias.Domain;
+using Sociomedia.Themes.Domain;
 using Xunit;
+using Keyword = Sociomedia.Articles.Domain.Keywords.Keyword;
 
 namespace Sociomedia.FeedAggregator.Tests
 {
@@ -58,28 +61,32 @@ namespace Sociomedia.FeedAggregator.Tests
 
             await _eventStore.Store(new DomainEvent[] {
                 new MediaFeedAdded(mediaId, "https://mysite/feed.xml") { Version = 1 },
-                new ArticleImported(articleId, "some title", "some summary", DateTimeOffset.Now.Date, "https://mysite/article.html", null, "someExternalId", new string[0], mediaId) { Version = 1 }
+                new ArticleImported(articleId, "some title", "some summary", DateTimeOffset.Now.Date.AddDays(-1), "https://mysite/article.html", null, "someExternalId", new string[0], mediaId) { Version = 1 }
             });
             _eventStore.CommitEvents();
             _eventPositionRepository.GetLastProcessedPosition().Returns(1);
             _feedReader.Read("https://mysite/feed.xml").Returns(new[] {
-                new FeedItem { Id = "someExternalId", Title = "some title", Summary = "some summary", PublishDate = DateTimeOffset.Now.Date, Link = "https://mysite/article.html", ImageUrl = null },
+                new FeedItem { Id = "someExternalId", Title = "some updated title", Summary = "some summary", PublishDate = DateTimeOffset.Now.Date, Link = "https://mysite/article.html", ImageUrl = null },
                 new FeedItem { Id = "someExternalId2", Title = "some title 2", Summary = "some summary 2", PublishDate = DateTimeOffset.Now.Date, Link = "https://mysite/article2.html", ImageUrl = "https://mysite/images/article2" },
             });
 
             // Act
             await _aggregator.StartAggregation(source.Token);
-            await _inMemoryBus.Push(2, new ArticleImported(articleId, "some title", "some summary", DateTimeOffset.Now.Date, "https://mysite/article.html", null, "someExternalId", new string[0], mediaId) { Version = 1 });
+            await _inMemoryBus.Push(2, new ArticleImported(articleId, "some title", "some summary", DateTimeOffset.Now.Date.AddDays(-1), "https://mysite/article.html", null, "someExternalId", new string[0], mediaId) { Version = 1 });
             _inMemoryBus.SwitchToLiveMode();
             await Task.Delay(200, source.Token);
 
             // Asserts
-            (await _eventStore.GetNewEvents())
+            var events = await _eventStore.GetNewEvents().Pipe(x => x.ToArray());
+
+            events
                 .Should()
                 .BeEquivalentTo(new DomainEvent[] {
                     new ArticleKeywordsDefined(default, new[] { new Keyword("some", 2) }),
+                    new ArticleUpdated(default, "some updated title", "some summary", DateTimeOffset.Now.Date, "https://mysite/article.html", null), 
                     new ArticleImported(default, "some title 2", "some summary 2", DateTimeOffset.Now.Date, "https://mysite/article2.html", "https://mysite/images/article2", "someExternalId2", new string[0], mediaId),
                     new ArticleKeywordsDefined(default, new[] { new Keyword("some", 2) }),
+                    new ThemeAdded(default, new []{new Themes.Domain.Keyword("some", 4)}, new[]{ articleId, events.ElementAt(2).Id })
                 }, x => x.ExcludeDomainEventTechnicalFields());
 
             await _eventPositionRepository.Received(1).Save(2);

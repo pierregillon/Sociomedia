@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Sociomedia.Articles.Application\Sociomedia.Articles.Application.csproj" />
     <ProjectReference Include="..\Sociomedia.Articles.Infrastructure\Sociomedia.Articles.Infrastructure.csproj" />
+    <ProjectReference Include="..\Sociomedia.Themes.Infrastructure\Sociomedia.Themes.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
