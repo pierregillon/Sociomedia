@@ -34,39 +34,39 @@ namespace Sociomedia.Tests
             commands.Should().BeEmpty();
         }
 
-        [Fact]
-        public void Two_articles_with_same_keywords_create_theme_with_keyword_intersection()
-        {
-            var article1 = Guid.NewGuid();
-            var article2 = Guid.NewGuid();
+        //[Fact]
+        //public void Two_articles_with_same_keywords_create_theme_with_keyword_intersection()
+        //{
+        //    var article1 = Guid.NewGuid();
+        //    var article2 = Guid.NewGuid();
 
-            _projection.On(new ArticleKeywordsDefined(article1, new[] {
-                new Articles.Domain.Keywords.Keyword("coronavirus", 2),
-                new Articles.Domain.Keywords.Keyword("italie", 2),
-            }));
+        //    _projection.On(new ArticleKeywordsDefined(article1, new[] {
+        //        new Articles.Domain.Keywords.Keyword("coronavirus", 2),
+        //        new Articles.Domain.Keywords.Keyword("italie", 2),
+        //    }));
 
-            var newArticle = new Article(article2, new[] {
-                new Keyword("coronavirus", 3),
-                new Keyword("china", 3),
-            });
+        //    var newArticle = new Article(article2, new[] {
+        //        new Keyword("coronavirus", 3),
+        //        new Keyword("china", 3),
+        //    });
 
-            var commands = _themeManager.Add(newArticle);
+        //    var commands = _themeManager.Add(newArticle);
 
-            commands
-                .Should()
-                .BeEquivalentTo(new[] {
-                    new CreateNewThemeCommand(new[] {
-                        new Article(article1, new[] {
-                            new Keyword("coronavirus", 2),
-                            new Keyword("italie", 2),
-                        }),
-                        new Article(article2, new[] {
-                            new Keyword("coronavirus", 3),
-                            new Keyword("china", 3),
-                        }),
-                    })
-                });
-        }
+        //    commands
+        //        .Should()
+        //        .BeEquivalentTo(new[] {
+        //            new CreateNewThemeCommand(new[] {
+        //                new Article(article1, new[] {
+        //                    new Keyword("coronavirus", 2),
+        //                    new Keyword("italie", 2),
+        //                }),
+        //                new Article(article2, new[] {
+        //                    new Keyword("coronavirus", 3),
+        //                    new Keyword("china", 3),
+        //                }),
+        //            })
+        //        });
+        //}
 
         [Fact]
         public void Adding_article_in_an_existing_theme_that_match_keywords()

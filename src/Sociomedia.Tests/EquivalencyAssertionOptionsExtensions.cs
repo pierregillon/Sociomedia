@@ -14,5 +14,14 @@ namespace Sociomedia.Tests
                 .Excluding(a => a.TimeStamp)
                 .Excluding(a => a.EventStream);
         }
+
+        public static EquivalencyAssertionOptions<DomainEvent> ExcludeDomainEventTechnicalFields2(this EquivalencyAssertionOptions<DomainEvent> options)
+        {
+            return options
+                .IncludingAllRuntimeProperties()
+                .Excluding(a => a.Version)
+                .Excluding(a => a.TimeStamp)
+                .Excluding(a => a.EventStream);
+        }
     }
 }

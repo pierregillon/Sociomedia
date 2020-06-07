@@ -30,10 +30,10 @@ namespace Sociomedia.Themes.Application
                 .Where(x => x.KeywordIntersection.Any())
                 .ToArray();
 
-            foreach (var theme in keywordIntersectedThemes) {
-                var existingTheme = _themeProjection.Themes.FirstOrDefault(x => theme.KeywordIntersection.SequenceEquals(x.Keywords));
+            foreach (var intersectedTheme in keywordIntersectedThemes) {
+                var existingTheme = _themeProjection.Themes.FirstOrDefault(x => intersectedTheme.KeywordIntersection.SequenceEquals(x.Keywords));
                 if (existingTheme == null) {
-                    yield return AddTheme(theme.Theme.Articles.Select(x => x.ToDomain()).Append(article).ToArray());
+                    yield return AddTheme(intersectedTheme.KeywordIntersection, intersectedTheme.Theme.Articles.Select(x => x.ToDomain()).Append(article).ToArray());
                 }
                 else if (!existingTheme.Contains(article)) {
                     yield return AddArticleToTheme(existingTheme, article);
@@ -53,16 +53,16 @@ namespace Sociomedia.Themes.Application
             foreach (var value in keywordIntersectedArticles) {
                 var matchingThemes = _themeProjection.Themes.Where(theme => value.Key.ContainsAllWords(theme.Keywords)).ToList();
                 if (!matchingThemes.Any() || matchingThemes.All(x => x.Keywords.Count != value.Key.Count)) {
-                    yield return AddTheme(value.Select(x => x.Article.ToDomain()).Append(article).ToArray());
+                    yield return AddTheme(value.Key, value.Select(x => x.Article.ToDomain()).Append(article).ToArray());
                 }
             }
         }
 
-        private static ICommand AddTheme(IReadOnlyCollection<Article> articles)
+        private static ICommand AddTheme(KeywordIntersection intersection, IReadOnlyCollection<Article> articles)
         {
             //var @event = new ThemeAdded(Guid.NewGuid(), keywords, articles);
             //_themeProjection.AddTheme(@event);
-            return new CreateNewThemeCommand(articles);
+            return new CreateNewThemeCommand(intersection, articles);
         }
 
         private static ICommand AddArticleToTheme(ThemeReadModel theme, Article article)

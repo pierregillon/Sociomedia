@@ -40,5 +40,10 @@ namespace Sociomedia.Themes.Application.Projections
                 .ToArray()
                 .Pipe(x => new KeywordIntersection(x));
         }
+
+        public override string ToString()
+        {
+            return string.Join(" | ", Keywords);
+        }
     }
 }

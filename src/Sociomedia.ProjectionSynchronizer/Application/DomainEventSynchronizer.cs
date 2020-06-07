@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.EventStoring;
@@ -17,18 +16,15 @@ namespace Sociomedia.ProjectionSynchronizer.Application
         private readonly IEventBus _eventBus;
         private readonly IEventPublisher _eventPublisher;
         private readonly IStreamPositionRepository _streamPositionRepository;
-        private readonly ProjectionSynchronizationConfiguration _configuration;
 
         public DomainEventSynchronizer(
             IEventBus eventBus,
             IEventPublisher eventPublisher,
-            IStreamPositionRepository streamPositionRepository,
-            ProjectionSynchronizationConfiguration configuration)
+            IStreamPositionRepository streamPositionRepository)
         {
             _eventBus = eventBus;
             _eventPublisher = eventPublisher;
             _streamPositionRepository = streamPositionRepository;
-            _configuration = configuration;
         }
 
         public async Task StartSynchronization()

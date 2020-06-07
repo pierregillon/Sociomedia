@@ -48,6 +48,7 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
         public Task On(ThemeKeywordsUpdated @event)
         {
             return _dbConnection.Themes
+                .Where(x=>x.Id == @event.Id)
                 .Set(x => x.Name, BuildName(@event.Keywords))
                 .Set(x => x.FullKeywords, JoinAllKeywords(@event.Keywords))
                 .UpdateAsync();

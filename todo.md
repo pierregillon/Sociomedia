@@ -5,6 +5,7 @@
 * add article to theme => update theme keywords and occurence
 * only subscribe to events outside from core domain
 * takerigth 100 max on json objet to avoid console to blow
+* remove the word "partager"
 
 # Tech
 * display current assembly version for all programs on execution (FeedAggregator, ProjectionSynchronizer, Front)
