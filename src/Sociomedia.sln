@@ -60,7 +60,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.FeedAggregator.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.Themes.Application", "Sociomedia.Themes.Application\Sociomedia.Themes.Application.csproj", "{A8E10842-68F4-4742-A48B-04262E73B6A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sociomedia.Themes.Infrastructure", "Sociomedia.Themes.Infrastructure\Sociomedia.Themes.Infrastructure.csproj", "{5BCBC270-29EE-4E35-821F-3DC13B07CDC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.Themes.Infrastructure", "Sociomedia.Themes.Infrastructure\Sociomedia.Themes.Infrastructure.csproj", "{5BCBC270-29EE-4E35-821F-3DC13B07CDC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sociomedia.ThemeCalculator", "Sociomedia.ThemeCalculator\Sociomedia.ThemeCalculator.csproj", "{E4C04596-AA8F-441D-870D-020F24DC75EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -144,6 +146,10 @@ Global
 		{5BCBC270-29EE-4E35-821F-3DC13B07CDC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BCBC270-29EE-4E35-821F-3DC13B07CDC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BCBC270-29EE-4E35-821F-3DC13B07CDC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4C04596-AA8F-441D-870D-020F24DC75EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4C04596-AA8F-441D-870D-020F24DC75EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4C04596-AA8F-441D-870D-020F24DC75EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4C04596-AA8F-441D-870D-020F24DC75EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

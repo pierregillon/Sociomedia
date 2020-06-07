@@ -5,16 +5,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
+using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Application.Projections;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.EventStoring;
-using Sociomedia.Medias.Domain;
 
-namespace Sociomedia.FeedAggregator.Application
+namespace Sociomedia.ThemeCalculator
 {
-    public class Aggregator
+    public class Calculator
     {
         private readonly IEventBus _eventBus;
         private readonly IEventStoreExtended _eventStore;
@@ -22,19 +22,16 @@ namespace Sociomedia.FeedAggregator.Application
         private readonly IEventPositionRepository _eventPositionRepository;
         private readonly ILogger _logger;
         private readonly ProjectionsBootstrapper _projectionsBootstrapper;
-        private readonly FeedsSynchronizer _feedsSynchronizer;
 
-        public Aggregator(
+        public Calculator(
             IEventBus eventBus,
             IEventStoreExtended eventStore,
             IEventPublisher eventPublisher,
             IEventPositionRepository eventPositionRepository,
             ILogger logger,
-            FeedsSynchronizer feedsSynchronizer,
             ProjectionsBootstrapper projectionsBootstrapper)
         {
             _eventBus = eventBus;
-            _feedsSynchronizer = feedsSynchronizer;
             _eventPublisher = eventPublisher;
             _logger = logger;
             _projectionsBootstrapper = projectionsBootstrapper;
@@ -44,13 +41,14 @@ namespace Sociomedia.FeedAggregator.Application
 
         // ----- Public methods
 
-        public async Task StartAggregation(CancellationToken token)
+        public async Task StartCalculation(CancellationToken token)
         {
             var lastStreamEventPosition = await GetLastStreamEventPosition();
-            await _projectionsBootstrapper.InitializeUntil(lastStreamEventPosition.Value);
-            await _eventBus.SubscribeToEvents(lastStreamEventPosition, GetEventTypes(), DomainEventReceived, () => {
-                StartFeedSynchronization(token);
-            });
+            if (lastStreamEventPosition.HasValue) {
+                await _projectionsBootstrapper.InitializeUntil(lastStreamEventPosition.Value);
+            }
+            await _eventBus.SubscribeToEvents(lastStreamEventPosition, GetEventTypes(), DomainEventReceived);
+            await Task.Delay(-1, token);
         }
 
         // ----- Call backs
@@ -61,41 +59,22 @@ namespace Sociomedia.FeedAggregator.Application
             await _eventPositionRepository.Save(position);
         }
 
-        private void StartFeedSynchronization(CancellationToken token)
-        {
-            Task.Factory.StartNew(async () => {
-                try {
-                    await _feedsSynchronizer.PeriodicallySynchronizeFeeds(token);
-                }
-                catch (Exception ex) {
-                    Error(ex);
-                }
-            }, token);
-        }
-
         // ----- Private
 
         private async Task<long?> GetLastStreamEventPosition()
         {
             var lastPosition = await _eventPositionRepository.GetLastProcessedPosition();
             if (!lastPosition.HasValue) {
-                lastPosition = await _eventStore.GetCurrentGlobalStreamPosition();
-                await _eventPositionRepository.Save(lastPosition.Value);
-                Info($"No last position found, initializing the last position to the current event store global stream position : {lastPosition}");
+                Info("No last position in stream found");
             }
             return lastPosition;
         }
 
         private static IEnumerable<Type> GetEventTypes()
         {
-            return typeof(MediaEvent).Assembly.GetTypes()
+            return typeof(ArticleEvent).Assembly.GetTypes()
                 .Where(x => x.IsDomainEvent())
                 .ToArray();
-        }
-
-        private void Error(Exception ex)
-        {
-            _logger.Error(ex, $"[{GetType().DisplayableName()}] Unhandled exception : ");
         }
 
         private void Info(string message)

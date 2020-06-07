@@ -1,12 +1,11 @@
-﻿using Sociomedia.Articles.Domain.Articles;
-using Sociomedia.Articles.Infrastructure;
-using Sociomedia.Core.Application;
+﻿using Sociomedia.Core.Application;
 using Sociomedia.Core.Infrastructure;
 using Sociomedia.Core.Infrastructure.EventStoring;
-using Sociomedia.FeedAggregator.Application;
+using Sociomedia.Themes.Domain;
+using Sociomedia.Themes.Infrastructure;
 using StructureMap;
 
-namespace Sociomedia.FeedAggregator
+namespace Sociomedia.ThemeCalculator
 {
     public class ContainerBuilder
     {
@@ -14,9 +13,9 @@ namespace Sociomedia.FeedAggregator
         {
             return new Container(registry => {
                 registry.IncludeRegistry(new CoreRegistry(configuration.EventStore));
-                registry.IncludeRegistry<ArticlesRegistry>();
-                registry.For<Aggregator>().Singleton();
-                registry.For<ITypeLocator>().Use<ReflectionTypeLocator<ArticleEvent>>();
+                registry.IncludeRegistry<ThemesRegistry>();
+                registry.For<Calculator>().Singleton();
+                registry.For<ITypeLocator>().Use<ReflectionTypeLocator<ThemeEvent>>().Singleton();
                 registry.For<IEventBus>().Use<EventStoreOrgBus>().Singleton();
                 registry.For<IEventPositionRepository>().Use<EventPositionRepository>();
                 registry.For<Configuration>().Use(configuration).Singleton();

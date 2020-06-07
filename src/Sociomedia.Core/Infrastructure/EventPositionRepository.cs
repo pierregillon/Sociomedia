@@ -2,9 +2,9 @@
 using System.IO;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
-using Sociomedia.Core;
+using Sociomedia.Core.Application;
 
-namespace Sociomedia.FeedAggregator.Infrastructure
+namespace Sociomedia.Core.Infrastructure
 {
     public class EventPositionRepository : IEventPositionRepository
     {

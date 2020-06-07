@@ -1,9 +1,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
+using Sociomedia.Core.Application;
 using Sociomedia.Core.Domain;
 using Sociomedia.FeedAggregator.Application;
-using Sociomedia.FeedAggregator.Infrastructure;
 using Xunit;
 
 namespace Sociomedia.FeedAggregator.Tests

@@ -10,12 +10,11 @@ using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Articles.Domain.Feeds;
 using Sociomedia.Articles.Domain.Keywords;
+using Sociomedia.Core.Application;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.EventStoring;
 using Sociomedia.FeedAggregator.Application;
-using Sociomedia.FeedAggregator.Infrastructure;
 using Sociomedia.Medias.Domain;
-using Sociomedia.Themes.Domain;
 using Xunit;
 using Keyword = Sociomedia.Articles.Domain.Keywords.Keyword;
 
@@ -86,7 +85,6 @@ namespace Sociomedia.FeedAggregator.Tests
                     new ArticleUpdated(default, "some updated title", "some summary", DateTimeOffset.Now.Date, "https://mysite/article.html", null), 
                     new ArticleImported(default, "some title 2", "some summary 2", DateTimeOffset.Now.Date, "https://mysite/article2.html", "https://mysite/images/article2", "someExternalId2", new string[0], mediaId),
                     new ArticleKeywordsDefined(default, new[] { new Keyword("some", 2) }),
-                    new ThemeAdded(default, new []{new Themes.Domain.Keyword("some", 4)}, new[]{ articleId, events.ElementAt(2).Id })
                 }, x => x.ExcludeDomainEventTechnicalFields());
 
             await _eventPositionRepository.Received(1).Save(2);

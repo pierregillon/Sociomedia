@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sociomedia.Articles.Domain;
-using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Domain;
-using Sociomedia.Core.Infrastructure.EventStoring;
 
-namespace Sociomedia.Articles.Infrastructure
+namespace Sociomedia.Core.Infrastructure.EventStoring
 {
-    public class ReflectionTypeLocator : ITypeLocator
+    public class ReflectionTypeLocator<T> : ITypeLocator
     {
-        private static readonly IDictionary<string, Type> Types = typeof(ArticleEvent)
+        private static readonly IDictionary<string, Type> Types = typeof(T)
             .Assembly
             .GetTypes()
             .Where(x => x.IsDomainEvent())

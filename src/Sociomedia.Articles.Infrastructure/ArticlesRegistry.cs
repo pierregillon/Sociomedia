@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Sociomedia.Articles.Domain;
+using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Articles.Domain.Feeds;
 using Sociomedia.Articles.Domain.Keywords;
 using Sociomedia.Core.Application;
@@ -32,8 +33,6 @@ namespace Sociomedia.Articles.Infrastructure
 
             For<IFeedReader>().Use<FeedReader>();
             For<IFeedParser>().Use<FeedParser>();
-            For<ITypeLocator>().Use<ReflectionTypeLocator>();
-
             For<IHtmlParser>().Use<HtmlParser>();
             For<IWebPageDownloader>().Use<WebPageDownloader>();
         }

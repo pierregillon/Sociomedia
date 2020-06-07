@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Sociomedia.FeedAggregator.Infrastructure
+namespace Sociomedia.Core.Application
 {
     public interface IEventPositionRepository
     {
