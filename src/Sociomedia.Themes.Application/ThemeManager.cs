@@ -2,6 +2,7 @@
 using System.Linq;
 using EventStore.ClientAPI;
 using Sociomedia.Core.Application;
+using Sociomedia.Core.Domain;
 using Sociomedia.Themes.Application.Commands.AddArticleToTheme;
 using Sociomedia.Themes.Application.Commands.CreateNewTheme;
 using Sociomedia.Themes.Application.Projections;
@@ -34,17 +35,19 @@ namespace Sociomedia.Themes.Application
                 .GroupBy(x => x.KeywordIntersection)
                 .ToArray();
 
-            foreach (var intersectedTheme in keywordIntersectedThemes) {
-                var existingThemes = _themeProjection.Themes.Where(x => intersectedTheme.Key.SequenceEquals(x.Keywords)).ToArray();
-                if (existingThemes.Length > 1) {
-                    _logger.Info("2 themes have the same keyword intersections !");
-                }
-                var existingTheme = existingThemes.FirstOrDefault();
+            foreach (var intersection in keywordIntersectedThemes) {
+                var existingTheme = FindTheme(intersection.Key);
                 if (existingTheme == null) {
-                    yield return AddTheme(intersectedTheme.Key, intersectedTheme.SelectMany(x => x.Theme.Articles).Select(x => x.ToDomain()).Append(article).ToArray());
+                    yield return intersection
+                        .SelectMany(x => x.Theme.Articles)
+                        .Select(x => x.ToDomain())
+                        .Distinct()
+                        .Append(article)
+                        .ToArray()
+                        .Pipe(x => new CreateNewThemeCommand(intersection.Key, x));
                 }
                 else if (!existingTheme.Contains(article)) {
-                    yield return AddArticleToTheme(existingTheme, article);
+                    yield return new AddArticleToThemeCommand(existingTheme.Id, article);
                 }
             }
         }
@@ -58,26 +61,25 @@ namespace Sociomedia.Themes.Application
                 .GroupBy(x => x.KeywordIntersection)
                 .ToArray();
 
-            foreach (var value in keywordIntersectedArticles) {
-                var matchingThemes = _themeProjection.Themes.Where(theme => value.Key.ContainsAllWords(theme.Keywords)).ToList();
+            foreach (var intersection in keywordIntersectedArticles) {
+                var matchingThemes = _themeProjection.Themes.Where(theme => intersection.Key.ContainsAllWords(theme.Keywords)).ToList();
                 if (!matchingThemes.Any()) {
-                    yield return AddTheme(value.Key, value.Select(x => x.Article.ToDomain()).Append(article).ToArray());
+                    yield return intersection
+                        .Select(x => x.Article.ToDomain())
+                        .Append(article)
+                        .ToArray()
+                        .Pipe(x => new CreateNewThemeCommand(intersection.Key, x));
                 }
             }
         }
 
-        private static ICommand AddTheme(KeywordIntersection intersection, IReadOnlyCollection<Article> articles)
+        private ThemeReadModel FindTheme(KeywordIntersection keywordIntersection)
         {
-            //var @event = new ThemeAdded(Guid.NewGuid(), keywords, articles);
-            //_themeProjection.AddTheme(@event);
-            return new CreateNewThemeCommand(intersection, articles);
-        }
-
-        private static ICommand AddArticleToTheme(ThemeReadModel theme, Article article)
-        {
-            //var @event = new ArticleAddedToTheme(theme.Id, article.Id);
-            //_themeProjection.AddArticleToTheme(@event);
-            return new AddArticleToThemeCommand(theme.Id, article);
+            var themes = _themeProjection.Themes.Where(x => keywordIntersection.SequenceEquals(x.Keywords)).ToArray();
+            if (themes.Length > 1) {
+                _logger.Info("2 themes have the same keyword intersections !");
+            }
+            return themes.FirstOrDefault();
         }
     }
 }

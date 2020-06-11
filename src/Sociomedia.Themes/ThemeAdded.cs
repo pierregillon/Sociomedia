@@ -11,6 +11,12 @@ namespace Sociomedia.Themes.Domain
 
         public ThemeAdded(Guid id, IReadOnlyCollection<Keyword> keywords, IReadOnlyCollection<Guid> articles) : base(id)
         {
+            if (articles.Count == 0) throw new ArgumentException("Value cannot be an empty collection.", nameof(articles));
+            if (articles.Count != articles.Distinct().Count()) {
+                throw new ArgumentException("Articles must be unique");
+            }
+
+
             Id = id;
             Keywords = keywords;
             Articles = articles;

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Sociomedia.Core.Application;
 using Sociomedia.Themes.Domain;
 
@@ -11,6 +13,10 @@ namespace Sociomedia.Themes.Application.Commands.CreateNewTheme
 
         public CreateNewThemeCommand(KeywordIntersection intersection, IReadOnlyCollection<Article> articles)
         {
+            if (articles.Count != articles.Distinct().Count()) {
+                throw new ArgumentException("A theme must not contains duplicated article");
+            }
+
             _intersection = intersection;
             Articles = articles;
         }

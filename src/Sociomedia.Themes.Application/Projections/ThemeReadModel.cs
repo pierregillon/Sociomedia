@@ -14,6 +14,12 @@ namespace Sociomedia.Themes.Application.Projections
         {
             Id = id;
             Keywords = keywords;
+
+            if (articles.Select(x=>x.Id).Distinct().Count() != articles.Count())
+            {
+                throw new Exception("conflict");
+            }
+
             _articles = articles.ToHashSet();
         }
 

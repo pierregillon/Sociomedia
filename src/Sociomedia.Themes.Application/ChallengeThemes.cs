@@ -21,13 +21,18 @@ namespace Sociomedia.Themes.Application
 
         public async Task On(ArticleKeywordsDefined @event)
         {
-            var article = new Article(@event.Id, @event.Keywords.Select(x => new Keyword(x.Value, x.Occurence)).ToArray());
+            var article = new Article(@event.Id, ExtractKeywordsToProcess(@event));
 
             var commands = _themeManager.Add(article);
 
             foreach (var command in commands) {
                 await _commandDispatcher.DispatchGeneric(command);
             }
+        }
+
+        private static Keyword[] ExtractKeywordsToProcess(ArticleKeywordsDefined @event)
+        {
+            return @event.Keywords.Select(x => new Keyword(x.Value, x.Occurence)).ToArray();
         }
     }
 }

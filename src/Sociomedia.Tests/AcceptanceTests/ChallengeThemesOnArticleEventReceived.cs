@@ -159,10 +159,11 @@ namespace Sociomedia.Tests.AcceptanceTests
         public async Task Several_themes_have_the_same_intersection_with_an_articles()
         {
             var articleEvents = new[] {
-                KeywordDefined("a", "b", "1"),
-                KeywordDefined("a", "b", "1"),
-                KeywordDefined("a", "b", "2"),
+                KeywordDefined("a", "b", "c"),
+                KeywordDefined("a", "b", "c"),
                 KeywordDefined("a", "b"),
+                KeywordDefined("a", "b"),
+                KeywordDefined("a"),
             };
 
             await EventPublisher.Publish(articleEvents);
@@ -172,10 +173,11 @@ namespace Sociomedia.Tests.AcceptanceTests
             newEvents
                 .Should()
                 .BeEquivalentTo(new DomainEvent[] {
-                    new ThemeAdded(newEvents.ElementAt(0).Id, new[] { new Keyword("a", 4), new Keyword("b", 4), new Keyword("1", 2), }, new[] { articleEvents.ElementAt(0).Id, articleEvents.ElementAt(1).Id }),
+                    new ThemeAdded(newEvents.ElementAt(0).Id, new[] { new Keyword("a", 4), new Keyword("b", 4), new Keyword("c", 2), }, new[] { articleEvents.ElementAt(0).Id, articleEvents.ElementAt(1).Id }),
                     new ThemeAdded(newEvents.ElementAt(1).Id, new[] { new Keyword("a", 6), new Keyword("b", 6)}, new[] { articleEvents.ElementAt(0).Id, articleEvents.ElementAt(1).Id, articleEvents.ElementAt(2).Id }),
                     new ArticleAddedToTheme(newEvents.ElementAt(1).Id, articleEvents.ElementAt(3).Id),
                     new ThemeKeywordsUpdated(newEvents.ElementAt(1).Id, new[] { new Keyword("a", 8), new Keyword("b", 8)}),
+                    new ThemeAdded(newEvents.ElementAt(2).Id, new[] { new Keyword("a", 10) }, articleEvents.Select(x=>x.Id).ToArray() ),
                 }, x => x.ExcludeDomainEventTechnicalFields2());
         }
 
