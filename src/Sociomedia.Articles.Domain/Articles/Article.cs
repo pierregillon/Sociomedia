@@ -13,11 +13,15 @@ namespace Sociomedia.Articles.Domain.Articles
 
         public Article(Guid mediaId, FeedItem feedItem) : this()
         {
+            if (!feedItem.PublishDate.HasValue) {
+                throw new ArgumentException("Publish date is mandatory");
+            }
+
             ApplyChange(new ArticleImported(
                 Guid.NewGuid(),
                 feedItem.Title,
                 feedItem.Summary,
-                feedItem.PublishDate,
+                feedItem.PublishDate.Value,
                 feedItem.Link,
                 feedItem.ImageUrl,
                 feedItem.Id,
@@ -36,11 +40,15 @@ namespace Sociomedia.Articles.Domain.Articles
 
         public void UpdateFromFeed(FeedItem feedItem)
         {
+            if (!feedItem.PublishDate.HasValue) {
+                throw new ArgumentException("Publish date is mandatory");
+            }
+
             ApplyChange(new ArticleUpdated(
                 Id,
                 feedItem.Title,
                 feedItem.Summary,
-                feedItem.PublishDate,
+                feedItem.PublishDate.Value,
                 feedItem.Link,
                 feedItem.ImageUrl ?? _imageUrl
             ));

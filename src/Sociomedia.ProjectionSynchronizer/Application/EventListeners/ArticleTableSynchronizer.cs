@@ -25,6 +25,10 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
 
         public async Task On(ArticleImported @event)
         {
+            if (string.IsNullOrWhiteSpace(@event.Title)) {
+                return;
+            }
+
             await _dbConnection.Articles
                 .Value(x => x.Id, @event.Id)
                 .Value(x => x.Title, @event.Title)
@@ -39,6 +43,10 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
 
         public async Task On(ArticleUpdated @event)
         {
+            if (string.IsNullOrWhiteSpace(@event.Title)) {
+                return;
+            }
+
             await _dbConnection.Articles
                 .Where(x => x.Id == @event.Id)
                 .Set(x => x.Title, @event.Title)
