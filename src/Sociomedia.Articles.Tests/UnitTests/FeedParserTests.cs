@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using EventStore.ClientAPI.Common.Log;
 using FluentAssertions;
-using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Feeds;
 using Sociomedia.Articles.Infrastructure;
 using Xunit;
@@ -20,27 +18,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
 
         public FeedParserTests()
         {
-            _parser = new FeedParser(new HtmlParser(), new ConsoleLogger());
-        }
-
-        [Fact]
-        public void Ignore_feed_with_no_publish_date()
-        {
-            const string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-                                 <rss version=""2.0"">
-                                   <channel>
-                                     <item>
-                                       <title>some title</title>
-                                       <link>http://www.test.com/article</link>
-                                     </item>
-                                   </channel>
-                                 </rss>";
-
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
-
-            var feedItems = _parser.Parse(stream);
-
-            feedItems.Should().BeEmpty();
+            _parser = new FeedParser(new HtmlParser());
         }
 
         [Fact]

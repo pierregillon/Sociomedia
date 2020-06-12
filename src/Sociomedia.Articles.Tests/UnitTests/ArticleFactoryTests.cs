@@ -47,7 +47,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
                         default,
                         feedItem.Title,
                         feedItem.Summary,
-                        feedItem.PublishDate,
+                        feedItem.PublishDate.Value,
                         feedItem.Link,
                         feedItem.ImageUrl,
                         feedItem.Id,

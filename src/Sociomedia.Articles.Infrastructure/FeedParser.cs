@@ -5,9 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using CodeHollow.FeedReader;
 using CodeHollow.FeedReader.Feeds;
-using EventStore.ClientAPI;
 using HtmlAgilityPack;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Feeds;
@@ -20,12 +18,10 @@ namespace Sociomedia.Articles.Infrastructure
     {
         private static readonly Regex RemoveDuplicatedSpacesRegex = new Regex(@"\s+", RegexOptions.Compiled);
         private readonly IHtmlParser _htmlParser;
-        private readonly ILogger _logger;
 
-        public FeedParser(IHtmlParser htmlParser, ILogger logger)
+        public FeedParser(IHtmlParser htmlParser)
         {
             _htmlParser = htmlParser;
-            _logger = logger;
         }
 
         public IReadOnlyCollection<FeedItem> Parse(Stream stream)
@@ -34,21 +30,9 @@ namespace Sociomedia.Articles.Infrastructure
             stream.CopyTo(ms);
 
             return CodeHollow.FeedReader.FeedReader.ReadFromByteArray(ms.ToArray())
-                .Pipe(GetFeedItems)
+                .Items
+                .Select(ConvertToRssItem)
                 .Pipe(x => x.ToArray());
-        }
-
-        private IEnumerable<FeedItem> GetFeedItems(Feed feed)
-        {
-            foreach (var feedItem in feed.Items) {
-                var rssItem = ConvertToRssItem(feedItem);
-                if (rssItem.PublishDate != default) {
-                    yield return rssItem;
-                }
-                else {
-                    _logger.Info($"[FEED_PARSER] Unable to import feed {rssItem.Link} : publish date was not defined.");
-                }
-            }
         }
 
         private FeedItem ConvertToRssItem(CodeHollow.FeedReader.FeedItem syndicationItem)

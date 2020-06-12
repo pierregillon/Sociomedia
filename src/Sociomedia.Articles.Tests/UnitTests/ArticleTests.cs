@@ -30,7 +30,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
                         article.Id,
                         newVersionOfExternalArticle.Title,
                         newVersionOfExternalArticle.Summary,
-                        newVersionOfExternalArticle.PublishDate,
+                        newVersionOfExternalArticle.PublishDate.Value,
                         newVersionOfExternalArticle.Link,
                         newVersionOfExternalArticle.ImageUrl),
                 });

@@ -74,7 +74,7 @@ namespace Sociomedia.Articles.Application.Commands.SynchronizeMediaFeeds
 
         private async Task SynchronizeArticles(Guid mediaId, IEnumerable<FeedItem> feedItems)
         {
-            foreach (var feedItem in feedItems) {
+            foreach (var feedItem in feedItems.Where(IsConsistentForSynchronization)) {
                 var articleInfo = await _synchronizationFinder.GetArticle(mediaId, feedItem.Id);
                 if (articleInfo == null) {
                     await AddNewArticle(mediaId, feedItem);
@@ -83,6 +83,27 @@ namespace Sociomedia.Articles.Application.Commands.SynchronizeMediaFeeds
                     await UpdateArticle(feedItem, articleInfo);
                 }
             }
+        }
+
+        private bool IsConsistentForSynchronization(FeedItem feedItem)
+        {
+            if (string.IsNullOrWhiteSpace(feedItem.Link)) {
+                Error($"Unable to import feed {feedItem.Id} : link was not defined.");
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(feedItem.Id)) {
+                Error($"Unable to import feed {feedItem.Link} : id was not defined.");
+                return false;
+            }
+            if (!feedItem.PublishDate.HasValue) {
+                Error($"Unable to import feed {feedItem.Link} : publish date was not defined.");
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(feedItem.Title)) {
+                Error($"Unable to import feed {feedItem.Link} : title was not defined.");
+                return false;
+            }
+            return true;
         }
 
         private async Task AddNewArticle(Guid mediaId, FeedItem feedItem)
@@ -111,6 +132,11 @@ namespace Sociomedia.Articles.Application.Commands.SynchronizeMediaFeeds
         private void Error(Exception ex, string error)
         {
             _logger.Error(ex, $"[{GetType().DisplayableName()}] {error}");
+        }
+
+        private void Error(string error)
+        {
+            _logger.Error($"[{GetType().DisplayableName()}] {error}");
         }
     }
 }

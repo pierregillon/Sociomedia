@@ -49,7 +49,48 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
         }
 
         [Fact]
-        public async Task Do_not_create_any_articles_when_no_new_rss_external_articles()
+        public async Task Do_not_create_any_articles_when_no_mandatory_fields_in_feed_item()
+        {
+            // Arrange
+            var mediaId = Guid.NewGuid();
+
+            await EventStore.StoreAndPublish(new IEvent[] {
+                new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
+                new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 }
+            });
+
+            EventStore.CommitEvents();
+
+            static FeedItem BuildNewFeedItem(string id = "someExternalId", string title = "some title", string link = "https://www.test.com/newpage.html", bool publishDateDefined = true) =>
+                new FeedItem {
+                    Id = id,
+                    Title = title,
+                    Summary = "some description",
+                    Link = link,
+                    PublishDate = publishDateDefined ? DateTimeOffset.Now : (DateTimeOffset?) null,
+                    ImageUrl = "https://test/image.jpg"
+                };
+
+            _feedReader
+                .Read("https://www.test.com/rss.xml")
+                .Returns(x => new[] {
+                    BuildNewFeedItem(""),
+                    BuildNewFeedItem(title: ""),
+                    BuildNewFeedItem(link: ""),
+                    BuildNewFeedItem(publishDateDefined: false),
+                });
+
+            // Act
+            await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
+
+            // Assert
+            (await EventStore.GetNewEvents())
+                .Should()
+                .BeEmpty();
+        }
+
+        [Fact]
+        public async Task Do_not_create_any_articles_when_no_new_feed_items()
         {
             await EventStore.StoreAndPublish(new IEvent[] {
                 new MediaAdded(Guid.Empty, "test", null, PoliticalOrientation.Left),
@@ -76,7 +117,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
 
             EventStore.CommitEvents();
             _feedReader.ClearReceivedCalls();
-            
+
             await CommandDispatcher.Dispatch(new SynchronizeAllMediaFeedsCommand());
 
             await _feedReader
