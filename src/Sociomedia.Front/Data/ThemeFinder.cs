@@ -10,10 +10,9 @@ namespace Sociomedia.Front.Data
     public class ThemeFinder
     {
         private static readonly TimeSpan TWO_WEEKS = TimeSpan.FromDays(14);
-        private static readonly int MINIMUM_KEYWORD_COUNT = 1;
-        private static readonly int MINIMUM_ARTICLE_COUNT = 5;
-        private static readonly int MAXIMUM_ARTICLE_COUNT = 50;
-
+        private const int MINIMUM_KEYWORD_COUNT = 1;
+        private const int MINIMUM_ARTICLE_COUNT = 5;
+        private const int MAXIMUM_ARTICLE_COUNT = 50;
 
         private readonly DbConnectionReadModel _dbConnection;
 
@@ -21,7 +20,6 @@ namespace Sociomedia.Front.Data
         {
             _dbConnection = dbConnection;
         }
-
         public async Task<IReadOnlyCollection<TrendingThemeListItem>> GetTrending()
         {
             var query =
@@ -67,13 +65,18 @@ namespace Sociomedia.Front.Data
                     })
                 }).ToArray();
         }
-    }
 
-    public class TrendingThemeListItem
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
+        public async Task<ThemeDetail> Details(Guid themeId)
+        {
+            var queryTheme =
+                from theme in _dbConnection.Themes
+                where theme.Id == themeId
+                select new ThemeDetail {
+                    Id = theme.Id,
+                    Name = theme.Name,
+                };
 
-        public IEnumerable<ArticleListItem> Articles { get; set; }
+            return await queryTheme.SingleAsync();
+        }
     }
 }

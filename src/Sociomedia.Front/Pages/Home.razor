@@ -1,4 +1,5 @@
 ﻿@page "/"
+@page "/themes"
 @using Sociomedia.Front.Data
 @inject ThemeFinder ThemeFinder
 
@@ -7,7 +8,9 @@
 @if (_themes.Any()) {
     <div>
         @foreach (var theme in _themes) {
-            <h3 class="theme-name">@theme.Name</h3>
+            <h3 class="theme-name">
+                <a href="@("/themes/" + theme.Id)">@theme.Name</a>
+            </h3>
             <div class="row articles justify-content-center">
                 @foreach (var article in theme.Articles) {
                     <div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
@@ -16,7 +19,7 @@
                 }
             </div>
             <div class="d-flex justify-content-center show-more">
-                <a class="btn btn-primary" href="@("/theme/" + theme.Id)" data-toggle="tooltip" data-placement="top" title="Voir tous les articles du même thème">
+                <a class="btn btn-primary" href="@("/themes/" + theme.Id)" data-toggle="tooltip" data-placement="top" title="Voir tous les articles du même thème">
                     @theme.Name : voir tous les articles
                 </a>
             </div>

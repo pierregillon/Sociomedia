@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LinqToDB;
+using LinqToDB.Tools;
 using Sociomedia.Core;
+using Sociomedia.Front.Models;
 using Sociomedia.ReadModel.DataAccess;
 
 namespace Sociomedia.Front.Data
@@ -17,9 +19,9 @@ namespace Sociomedia.Front.Data
             _dbConnection = dbConnection;
         }
 
-        public async Task<IReadOnlyCollection<ArticleListItem>> List(int page, int pageSize, Guid? mediaId = null, string keyword = default)
+        public async Task<IReadOnlyCollection<ArticleListItem>> List(int page, int pageSize, ArticleListFilters filters)
         {
-            var query = BuildArticlesQuery(mediaId, keyword);
+            var query = BuildArticlesQuery(filters);
 
             if (page > 0) {
                 query = query.Skip(page * pageSize);
@@ -30,12 +32,12 @@ namespace Sociomedia.Front.Data
             return await query.ToArrayAsync();
         }
 
-        public async Task<int> Count(Guid? mediaId, string keyword)
+        public async Task<int> Count(ArticleListFilters filters)
         {
-            return await BuildArticlesQuery(mediaId, keyword).CountAsync();
+            return await BuildArticlesQuery(filters).CountAsync();
         }
 
-        private IQueryable<ArticleListItem> BuildArticlesQuery(Guid? mediaId = null, string keyword = default)
+        private IQueryable<ArticleListItem> BuildArticlesQuery(ArticleListFilters filters)
         {
             var query =
                 from article in _dbConnection.Articles
@@ -53,8 +55,8 @@ namespace Sociomedia.Front.Data
                     MediaImageUrl = media.ImageUrl
                 };
 
-            if (!string.IsNullOrWhiteSpace(keyword)) {
-                var keywords = keyword
+            if (!string.IsNullOrWhiteSpace(filters.Search)) {
+                var keywords = filters.Search
                     .RemoveDiacritics()
                     .Split(' ', StringSplitOptions.RemoveEmptyEntries)
                     .Select(x => x.ToLower())
@@ -63,8 +65,18 @@ namespace Sociomedia.Front.Data
                 query = keywords.Aggregate(query, (current, k) => current.Where(x => x.Keywords.Contains(k)));
             }
 
-            if (mediaId.HasValue) {
-                query = query.Where(x => x.MediaId == mediaId.Value);
+            if (filters.MediaId.HasValue) {
+                query = query.Where(x => x.MediaId == filters.MediaId.Value);
+            }
+
+            if (filters.ThemeId.HasValue) {
+                var inThemeSubQuery =
+                    from theme in _dbConnection.Themes
+                    join themedArticle in _dbConnection.ThemedArticles on theme.Id equals themedArticle.ThemeId
+                    where theme.Id == filters.ThemeId.Value
+                    select themedArticle.ArticleId;
+
+                query = query.Where(x => x.Id.In(inThemeSubQuery));
             }
 
             return query.Select(x => new ArticleListItem {

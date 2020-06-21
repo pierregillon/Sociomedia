@@ -10,6 +10,7 @@
 * try to display article from different political orientation
 * order theme by newest first
 * isolate style
+* panel left : hot theme of the month
 
 # Tech
 * display current assembly version for all programs on execution (FeedAggregator, ProjectionSynchronizer, Front)

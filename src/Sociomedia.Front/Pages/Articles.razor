@@ -1,9 +1,10 @@
 ﻿@page "/articles"
+@using Sociomedia.Front.Models
 
 <div class="content">
     <div class="row justify-content-center">
         <div class="input-group mb-4 col-12 col-md-10">
-            <input @bind-value="@_research" @onkeyup="@KeyPressed" @onblur="@StartResearch"
+            <input @bind-value="@_search" @onkeyup="@KeyPressed" @onblur="@StartResearch"
                     type="text" maxlength="200" class="form-control search-articles"
                     placeholder="Rechercher un sujet"
                     aria-label="Username"
@@ -18,7 +19,7 @@
     </div>
 </div>
 
-<ArticleList Keyword="@_keyword"></ArticleList>
+<ArticleList Filters="@_filters"></ArticleList>
 
 <Styled>
     .search-articles {
@@ -29,7 +30,8 @@
 
 @code {
 
-    private string _research, _keyword;
+    private string _search;
+    private ArticleListFilters _filters = ArticleListFilters.None;
 
     private void KeyPressed(KeyboardEventArgs args)
     {
@@ -40,7 +42,9 @@
 
     private void StartResearch()
     {
-        _keyword = _research;
+        _filters = new ArticleListFilters {
+            Search = _search
+        };
     }
 
 }
