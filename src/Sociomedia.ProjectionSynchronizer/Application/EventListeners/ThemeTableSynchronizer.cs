@@ -27,6 +27,7 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
                 .Value(x => x.Id, @event.Id)
                 .Value(x => x.Name, BuildName(@event.Keywords))
                 .Value(x => x.FullKeywords, JoinAllKeywords(@event.Keywords))
+                .Value(x => x.KeywordCount, @event.Keywords.Count)
                 .InsertAsync();
 
             foreach (var articleId in @event.Articles) {
@@ -51,6 +52,7 @@ namespace Sociomedia.ProjectionSynchronizer.Application.EventListeners
                 .Where(x=>x.Id == @event.Id)
                 .Set(x => x.Name, BuildName(@event.Keywords))
                 .Set(x => x.FullKeywords, JoinAllKeywords(@event.Keywords))
+                .Set(x => x.KeywordCount, @event.Keywords.Count)
                 .UpdateAsync();
         }
 

@@ -9,5 +9,6 @@ namespace Sociomedia.ReadModel.DataAccess.Tables
         [PrimaryKey] public Guid Id { get; set; }
         [NotNull] [Column] public string Name { get; set; }
         [NotNull] [Column] public string FullKeywords { get; set; }
+        [NotNull] [Column] public int KeywordCount { get; set; }
     }
 }

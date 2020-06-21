@@ -50,7 +50,8 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
                     new ThemeTable {
                         Id = theme,
                         Name = "France, Coronavirus",
-                        FullKeywords = "coronavirus (10) ; france (12)"
+                        FullKeywords = "coronavirus (10) ; france (12)",
+                        KeywordCount = 2
                     },
                 });
 
@@ -87,7 +88,7 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
             (await _dbConnection.Themes.ToArrayAsync())
                 .Should()
                 .BeEquivalentTo(new[] {
-                    new ThemeTable {
+                    new {
                         Id = theme,
                         Name = "France, Coronavirus",
                         FullKeywords = "coronavirus (10) ; france (12)"
@@ -113,7 +114,7 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
         }
 
         [Fact]
-        public async Task Keep_only_four_first_keywords()
+        public async Task Name_keeps_only_four_first_keywords()
         {
             await _synchronizer.StartSynchronization();
 
@@ -121,7 +122,6 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
             var theme = Guid.NewGuid();
             var article1 = Guid.NewGuid();
             var article2 = Guid.NewGuid();
-            var article3 = Guid.NewGuid();
 
             await _inMemoryBus.Push(1, new ThemeAdded(theme, new[] {
                 new Keyword("coronavirus", 3),
@@ -154,7 +154,7 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
             var article2 = Guid.NewGuid();
 
             await _inMemoryBus.Push(1, new ThemeAdded(theme, new[] { new Keyword("coronavirus", 10), new Keyword("france", 12) }, new[] { article1, article2 }));
-            await _inMemoryBus.Push(1, new ThemeKeywordsUpdated(theme, new[] { new Keyword("coronavirus", 15), new Keyword("france", 14) }));
+            await _inMemoryBus.Push(1, new ThemeKeywordsUpdated(theme, new[] { new Keyword("coronavirus", 15), new Keyword("france", 14), new Keyword("bob", 2) }));
 
             // Asserts
 
@@ -163,8 +163,9 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
                 .BeEquivalentTo(new[] {
                     new ThemeTable {
                         Id = theme,
-                        Name = "Coronavirus, France",
-                        FullKeywords = "coronavirus (15) ; france (14)"
+                        Name = "Coronavirus, France, Bob",
+                        FullKeywords = "coronavirus (15) ; france (14) ; bob (2)",
+                        KeywordCount = 3
                     },
                 });
         }
