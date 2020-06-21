@@ -12,16 +12,11 @@ namespace Sociomedia.Front.Data
 {
     public class ArticleFinder
     {
-        private readonly DbConnectionReadModel _dbConnection;
-
-        public ArticleFinder(DbConnectionReadModel dbConnection)
-        {
-            _dbConnection = dbConnection;
-        }
-
         public async Task<IReadOnlyCollection<ArticleListItem>> List(int page, int pageSize, ArticleListFilters filters)
         {
-            var query = BuildArticlesQuery(filters);
+            await using var dbConnection = new DbConnectionReadModel();
+
+            var query = BuildArticlesQuery(dbConnection, filters);
 
             if (page > 0) {
                 query = query.Skip(page * pageSize);
@@ -34,14 +29,16 @@ namespace Sociomedia.Front.Data
 
         public async Task<int> Count(ArticleListFilters filters)
         {
-            return await BuildArticlesQuery(filters).CountAsync();
+            await using var dbConnection = new DbConnectionReadModel();
+            
+            return await BuildArticlesQuery(dbConnection, filters).CountAsync();
         }
 
-        private IQueryable<ArticleListItem> BuildArticlesQuery(ArticleListFilters filters)
+        private static IQueryable<ArticleListItem> BuildArticlesQuery(DbConnectionReadModel dbConnection, ArticleListFilters filters)
         {
             var query =
-                from article in _dbConnection.Articles
-                join media in _dbConnection.Medias on article.MediaId equals media.Id
+                from article in dbConnection.Articles
+                join media in dbConnection.Medias on article.MediaId equals media.Id
                 orderby article.PublishDate descending
                 select new {
                     Id = article.Id,
@@ -71,8 +68,8 @@ namespace Sociomedia.Front.Data
 
             if (filters.ThemeId.HasValue) {
                 var inThemeSubQuery =
-                    from theme in _dbConnection.Themes
-                    join themedArticle in _dbConnection.ThemedArticles on theme.Id equals themedArticle.ThemeId
+                    from theme in dbConnection.Themes
+                    join themedArticle in dbConnection.ThemedArticles on theme.Id equals themedArticle.ThemeId
                     where theme.Id == filters.ThemeId.Value
                     select themedArticle.ArticleId;
 
