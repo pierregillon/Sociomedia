@@ -1,4 +1,5 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿@using Sociomedia.Front.Data
+<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">Sociomedia</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
@@ -23,17 +24,42 @@
             </NavLink>
         </li>
     </ul>
-
+    <div class="nav flex-column month-trending">
+        <li class="nav-item px-3">
+            <a class="nav-link" href="themes">
+                <span class="oi oi-star" aria-hidden="true"></span> Thèmes du mois
+            </a>
+            <ul>
+                @foreach (var theme in _themes)
+                {
+                    <li>
+                        <a href="@("/themes/" + theme.Id)"> @theme.Name</a>
+                    </li>
+                }
+            </ul>
+        </li>
+    </div>
 </div>
 
-
 @code {
+
+    [Inject]
+    protected ThemeFinder ThemeFinder { get; set; }
+
     private bool _collapseNavMenu = true;
 
+    private IReadOnlyCollection<ThemeListItem> _themes = Array.Empty<ThemeListItem>();
+
     public string NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _themes = await ThemeFinder.GetMonthTrending();
+    }
 
     public void ToggleNavMenu()
     {
         _collapseNavMenu = !_collapseNavMenu;
     }
+
 }

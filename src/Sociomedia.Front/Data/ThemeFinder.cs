@@ -10,27 +10,48 @@ namespace Sociomedia.Front.Data
     public class ThemeFinder
     {
         private static readonly TimeSpan TWO_WEEKS = TimeSpan.FromDays(14);
+        private static readonly TimeSpan ONE_MONTH = TimeSpan.FromDays(30);
         private const int MINIMUM_KEYWORD_COUNT = 1;
         private const int MINIMUM_ARTICLE_COUNT = 5;
         private const int MAXIMUM_ARTICLE_COUNT = 50;
-        private const int THEME_COUNT = 10;
+        private const int MONTH_TRENDING_THEME_COUNT = 7;
 
-        private readonly DbConnectionReadModel _dbConnection;
-
-        public ThemeFinder(DbConnectionReadModel dbConnection)
+        public async Task<IReadOnlyCollection<ThemeListItem>> GetMonthTrending()
         {
-            _dbConnection = dbConnection;
+            await using var dbConnection = new DbConnectionReadModel();
+
+            var now = DateTimeOffset.Now;
+
+            return await (from theme in dbConnection.Themes
+                    join themedArticle in dbConnection.ThemedArticles on theme.Id equals themedArticle.ThemeId
+                    join article in dbConnection.Articles on themedArticle.ArticleId equals article.Id
+                    where article.PublishDate > now.Subtract(ONE_MONTH)
+                    orderby article.PublishDate descending
+                    select new {
+                        ThemeId = theme.Id,
+                        ThemeName = theme.Name
+                    })
+                .GroupBy(x => new { x.ThemeId, x.ThemeName })
+                .OrderByDescending(x => x.Count())
+                .Take(MONTH_TRENDING_THEME_COUNT)
+                .Select(x => new ThemeListItem {
+                    Id = x.Key.ThemeId,
+                    Name = x.Key.ThemeName
+                })
+                .ToArrayAsync();
         }
 
         public async Task<IReadOnlyCollection<TrendingThemeListItem>> GetTrending(int page, int pageSize)
         {
+            await using var dbConnection = new DbConnectionReadModel();
+            
             var now = DateTimeOffset.Now;
 
             var query =
-                (from theme in _dbConnection.Themes
-                    join themedArticle in _dbConnection.ThemedArticles on theme.Id equals themedArticle.ThemeId
-                    join article in _dbConnection.Articles on themedArticle.ArticleId equals article.Id
-                    join media in _dbConnection.Medias on article.MediaId equals media.Id
+                (from theme in dbConnection.Themes
+                    join themedArticle in dbConnection.ThemedArticles on theme.Id equals themedArticle.ThemeId
+                    join article in dbConnection.Articles on themedArticle.ArticleId equals article.Id
+                    join media in dbConnection.Medias on article.MediaId equals media.Id
                     where article.PublishDate > now.Subtract(TWO_WEEKS)
                     where theme.KeywordCount > MINIMUM_KEYWORD_COUNT
                     orderby article.PublishDate descending
@@ -72,8 +93,10 @@ namespace Sociomedia.Front.Data
 
         public async Task<ThemeDetail> Details(Guid themeId)
         {
+            await using var dbConnection = new DbConnectionReadModel();
+            
             var queryTheme =
-                from theme in _dbConnection.Themes
+                from theme in dbConnection.Themes
                 where theme.Id == themeId
                 select new ThemeDetail {
                     Id = theme.Id,
@@ -82,6 +105,12 @@ namespace Sociomedia.Front.Data
 
             return await queryTheme.SingleAsync();
         }
+    }
+
+    public class ThemeListItem
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
     }
 
     public class ThemeGroup

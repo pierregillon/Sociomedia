@@ -181,3 +181,15 @@ app {
         display: block;
     }
 }
+.month-trending {
+    padding-top: 0;
+    margin-top: -17px;
+}
+
+.month-trending a {
+    height: 2em !important;
+}
+
+.month-trending li {
+    color: white;
+}
