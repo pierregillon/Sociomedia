@@ -22,7 +22,7 @@ namespace Sociomedia.Front.Data
             _dbConnection = dbConnection;
         }
 
-        public async Task<IReadOnlyCollection<TrendingThemeListItem>> GetTrending()
+        public async Task<IReadOnlyCollection<TrendingThemeListItem>> GetTrending(int page, int pageSize)
         {
             var now = DateTimeOffset.Now;
 
@@ -45,12 +45,13 @@ namespace Sociomedia.Front.Data
                         article.PublishDate,
                         article.MediaId,
                         MediaImageUrl = media.ImageUrl,
-                        Score = (int)TWO_WEEKS.TotalDays - SqlExtensions.DayCountBetween(now, article.PublishDate)
+                        Score = (int) TWO_WEEKS.TotalDays - SqlExtensions.DayCountBetween(now, article.PublishDate)
                     })
                 .GroupBy(x => new { x.ThemeId, x.ThemeName })
                 .Where(x => x.Count().Between(MINIMUM_ARTICLE_COUNT, MAXIMUM_ARTICLE_COUNT))
                 .OrderByDescending(x => x.Sum(y => y.Score))
-                .Take(THEME_COUNT);
+                .Skip(page * pageSize)
+                .Take(pageSize);
 
             var results = await query.ToArrayAsync();
 
