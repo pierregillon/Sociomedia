@@ -6,6 +6,10 @@
 * only subscribe to events outside from core domain
 * takerigth 100 max on json objet to avoid console to blow
 * remove keywords "mais, selon, pour, être, promo, promotion, partage, partager, lire, connexion"
+* order articles in theme by date
+* try to display article from different political orientation
+* order theme by newest first
+* isolate style
 
 # Tech
 * display current assembly version for all programs on execution (FeedAggregator, ProjectionSynchronizer, Front)

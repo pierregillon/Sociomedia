@@ -62,7 +62,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.Themes.Applicati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.Themes.Infrastructure", "Sociomedia.Themes.Infrastructure\Sociomedia.Themes.Infrastructure.csproj", "{5BCBC270-29EE-4E35-821F-3DC13B07CDC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sociomedia.ThemeCalculator", "Sociomedia.ThemeCalculator\Sociomedia.ThemeCalculator.csproj", "{E4C04596-AA8F-441D-870D-020F24DC75EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sociomedia.ThemeCalculator", "Sociomedia.ThemeCalculator\Sociomedia.ThemeCalculator.csproj", "{E4C04596-AA8F-441D-870D-020F24DC75EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,51 @@
+﻿@page "/"
+@using Sociomedia.Front.Data
+@inject ThemeFinder ThemeFinder
+
+<h2>Actualité récente</h2>
+
+@if (_themes.Any()) {
+    <div>
+        @foreach (var theme in _themes) {
+            <h3 class="theme-name">@theme.Name</h3>
+            <div class="row articles justify-content-center">
+                @foreach (var article in theme.Articles) {
+                    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
+                        <Article @key="@article.Id" Value="@article"></Article>
+                    </div>
+                }
+            </div>
+            <div class="d-flex justify-content-center show-more">
+                <a class="btn btn-primary" href="@("/theme/" + theme.Id)" data-toggle="tooltip" data-placement="top" title="Voir tous les articles du même thème">
+                    @theme.Name : voir tous les articles
+                </a>
+            </div>
+        }
+    </div>
+}
+else {
+    <div class="d-flex justify-content-center">
+        Aucun résultat
+    </div>
+}
+
+<Styled>
+    .theme-name {
+        margin-top: 1em;
+    }
+
+    .articles {
+
+    }
+</Styled>
+
+@code {
+    private IReadOnlyCollection<TrendingThemeListItem> _themes = Array.Empty<TrendingThemeListItem>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _themes = await ThemeFinder.GetTrending();
+    }
+
+}
+

@@ -41,6 +41,7 @@ namespace Sociomedia.Front
         {
             services.For<ArticleFinder>();
             services.For<MediaFinder>();
+            services.For<ThemeFinder>();
             services.IncludeRegistry(new MediasRegistry(Configuration.GetSection("EventStore").Get<EventStoreConfiguration>()));
 
             DataConnection.DefaultSettings = new DbSettings(Configuration.GetSection("sqldatabase").Get<SqlDatabaseConfiguration>());
