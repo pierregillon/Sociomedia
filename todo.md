@@ -1,12 +1,7 @@
 * try to reimport "leparisien"
 * test if an article is present in 2 rss feeds (lemonde)
-* theme projection must be updated as soon theme event updated !
-* theme domain logics process ocurrence, not in theme management => command vs events ?
-* add article to theme => update theme keywords and occurence
-* only subscribe to events outside from core domain
 * takerigth 100 max on json objet to avoid console to blow
 * remove keywords "mais, selon, pour, être, promo, promotion, partage, partager, lire, connexion"
-* panel left : hot theme of the month
 
 # Tech
 * display current assembly version for all programs on execution (FeedAggregator, ProjectionSynchronizer, Front)
