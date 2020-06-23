@@ -1,6 +1,8 @@
 ﻿using System;
 using FluentAssertions;
+using NSubstitute;
 using Sociomedia.Articles.Domain.Articles;
+using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure;
 using Sociomedia.Themes.Application;
 using Sociomedia.Themes.Application.Commands.AddArticleToTheme;
@@ -16,11 +18,14 @@ namespace Sociomedia.Tests
     {
         private readonly ThemeProjection _projection;
         private readonly ThemeManager _themeManager;
+        private readonly TimeSpan _twoWeeks = TimeSpan.FromDays(15);
 
         public ThemeManagerTests()
         {
+            var clock = Substitute.For<IClock>();
+            clock.Now().Returns(DateTimeOffset.Now);
             _projection = new ThemeProjection(new InMemoryDatabase());
-            _themeManager = new ThemeManager(_projection, new AcceptanceTests.AcceptanceTests.EmptyLogger());
+            _themeManager = new ThemeManager(new ThemeDataFinder(_projection, _twoWeeks, clock, new AcceptanceTests.AcceptanceTests.EmptyLogger()));
         }
 
         [Fact]
@@ -33,40 +38,6 @@ namespace Sociomedia.Tests
             commands.Should().BeEmpty();
         }
 
-        //[Fact]
-        //public void Two_articles_with_same_keywords_create_theme_with_keyword_intersection()
-        //{
-        //    var article1 = Guid.NewGuid();
-        //    var article2 = Guid.NewGuid();
-
-        //    _projection.On(new ArticleKeywordsDefined(article1, new[] {
-        //        new Articles.Domain.Keywords.Keyword("coronavirus", 2),
-        //        new Articles.Domain.Keywords.Keyword("italie", 2),
-        //    }));
-
-        //    var newArticle = new Article(article2, new[] {
-        //        new Keyword("coronavirus", 3),
-        //        new Keyword("china", 3),
-        //    });
-
-        //    var commands = _themeManager.Add(newArticle);
-
-        //    commands
-        //        .Should()
-        //        .BeEquivalentTo(new[] {
-        //            new CreateNewThemeCommand(new[] {
-        //                new Article(article1, new[] {
-        //                    new Keyword("coronavirus", 2),
-        //                    new Keyword("italie", 2),
-        //                }),
-        //                new Article(article2, new[] {
-        //                    new Keyword("coronavirus", 3),
-        //                    new Keyword("china", 3),
-        //                }),
-        //            })
-        //        });
-        //}
-
         [Fact]
         public void Adding_article_in_an_existing_theme_that_match_keywords()
         {
@@ -75,10 +46,12 @@ namespace Sociomedia.Tests
             var article3 = Guid.NewGuid();
             var theme1 = Guid.NewGuid();
 
+            _projection.On(AnArticleImported(article1));
             _projection.On(new ArticleKeywordsDefined(article1, new[] {
                 new Articles.Domain.Keywords.Keyword("coronavirus", 2),
                 new Articles.Domain.Keywords.Keyword("italie", 2),
             }));
+            _projection.On(AnArticleImported(article2));
             _projection.On(new ArticleKeywordsDefined(article2, new[] {
                 new Articles.Domain.Keywords.Keyword("coronavirus", 3),
                 new Articles.Domain.Keywords.Keyword("china", 3),
@@ -99,6 +72,21 @@ namespace Sociomedia.Tests
                 .BeEquivalentTo(new[] {
                     new AddArticleToThemeCommand(theme1, newArticle)
                 });
+        }
+
+        private static ArticleImported AnArticleImported(Guid articleId, DateTimeOffset publishDate = default)
+        {
+            return new ArticleImported(
+                articleId,
+                "some title",
+                "some summary",
+                publishDate == default ? DateTimeOffset.Now : publishDate,
+                "some url",
+                "some image url",
+                "some external id",
+                Array.Empty<string>(),
+                Guid.NewGuid()
+            );
         }
     }
 }

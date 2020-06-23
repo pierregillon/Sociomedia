@@ -11,6 +11,7 @@ using Sociomedia.Themes.Domain;
 namespace Sociomedia.Themes.Application.Projections
 {
     public class ThemeProjection :
+        IEventListener<ArticleImported>,
         IEventListener<ArticleKeywordsDefined>,
         IEventListener<ThemeAdded>,
         IEventListener<ArticleAddedToTheme>,
@@ -26,16 +27,24 @@ namespace Sociomedia.Themes.Application.Projections
         public IReadOnlyCollection<ArticleReadModel> Articles => _inMemoryDatabase.List<ArticleReadModel>();
         public IReadOnlyCollection<ThemeReadModel> Themes => _inMemoryDatabase.List<ThemeReadModel>();
 
+        public Task On(ArticleImported @event)
+        {
+            if (Articles.Any(x => x.Id == @event.Id)) {
+                throw new InvalidOperationException($"The article {@event.Id} already exists in projection !");
+            }
+
+            _inMemoryDatabase.Add(new ArticleReadModel(@event.Id, @event.PublishDate));
+
+            return Task.CompletedTask;
+        }
+
         public Task On(ArticleKeywordsDefined @event)
         {
             var article = Articles.SingleOrDefault(x => x.Id == @event.Id);
             if (article == null) {
-                _inMemoryDatabase.Add(new ArticleReadModel(@event.Id, @event.Keywords.Select(x => new Keyword(x.Value, x.Occurence)).ToArray()));
+                throw new InvalidOperationException($"The article {@event.Id} does not exists in projection : unable to define keywords !");
             }
-            else {
-                _inMemoryDatabase.Remove(article);
-                _inMemoryDatabase.Add(new ArticleReadModel(@event.Id, @event.Keywords.Select(x => new Keyword(x.Value, x.Occurence)).ToArray()));
-            }
+            article.DefineKeywords(@event.Keywords.Select(x => new Keyword(x.Value, x.Occurence)).ToArray());
             return Task.CompletedTask;
         }
 

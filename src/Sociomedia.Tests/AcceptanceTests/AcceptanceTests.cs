@@ -21,7 +21,7 @@ namespace Sociomedia.Tests.AcceptanceTests
         {
             Container = new Container(x => {
                 x.AddRegistry(new CoreRegistry(new EventStoreConfiguration()));
-                x.AddRegistry<ThemesRegistry>();
+                x.AddRegistry(new ThemesRegistry(new ThemeCalculatorConfiguration { ArticleAggregationIntervalInDays = 15 }));
                 x.For<InMemoryEventStore>().Singleton();
             });
 

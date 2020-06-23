@@ -32,6 +32,7 @@ namespace Sociomedia.Core.Infrastructure
             For<IProjectionLocator>().Use<ProjectionLocator>();
 
             For<ILogger>().Use<ConsoleLogger>();
+            For<IClock>().Use<Clock>();
         }
     }
 }

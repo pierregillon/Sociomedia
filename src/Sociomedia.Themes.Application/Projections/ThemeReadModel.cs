@@ -10,13 +10,12 @@ namespace Sociomedia.Themes.Application.Projections
     {
         private readonly HashSet<ArticleReadModel> _articles;
 
-        public ThemeReadModel(Guid id, IReadOnlyCollection<string> keywords, IEnumerable<ArticleReadModel> articles)
+        public ThemeReadModel(Guid id, IReadOnlyCollection<string> keywords, IReadOnlyCollection<ArticleReadModel> articles)
         {
             Id = id;
             Keywords = keywords;
 
-            if (articles.Select(x=>x.Id).Distinct().Count() != articles.Count())
-            {
+            if (articles.Select(x => x.Id).Distinct().Count() != articles.Count) {
                 throw new Exception("conflict");
             }
 
@@ -53,6 +52,11 @@ namespace Sociomedia.Themes.Application.Projections
         public override string ToString()
         {
             return string.Join(" | ", Keywords);
+        }
+
+        public ThemeReadModel FilterRecentArticlesFrom(DateTimeOffset date)
+        {
+            return new ThemeReadModel(Id, Keywords, Articles.Where(x => x.PublishDate > date).ToArray());
         }
     }
 }

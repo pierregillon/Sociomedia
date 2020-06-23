@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using EventStore.ClientAPI;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Domain;
 using Sociomedia.Themes.Application.Commands.AddArticleToTheme;
@@ -12,14 +11,11 @@ namespace Sociomedia.Themes.Application
 {
     public class ThemeManager
     {
-        private readonly ThemeProjection _themeProjection;
-        private readonly ILogger _logger;
+        private readonly ThemeDataFinder _themeDataFinder;
 
-
-        public ThemeManager(ThemeProjection themeProjection, ILogger logger)
+        public ThemeManager(ThemeDataFinder themeDataFinder)
         {
-            _themeProjection = themeProjection;
-            _logger = logger;
+            _themeDataFinder = themeDataFinder;
         }
 
         public IEnumerable<ICommand> Add(Article article)
@@ -29,14 +25,14 @@ namespace Sociomedia.Themes.Application
 
         private IEnumerable<ICommand> ChallengeExistingThemes(Article article)
         {
-            var keywordIntersectedThemes = _themeProjection.Themes
+            var keywordIntersectedThemes = _themeDataFinder.GetThemesWithRecentlyArticleAdded()
                 .Select(x => new { Theme = x, KeywordIntersection = x.CommonKeywords(article) })
                 .Where(x => x.KeywordIntersection.Any())
                 .GroupBy(x => x.KeywordIntersection)
                 .ToArray();
 
             foreach (var intersection in keywordIntersectedThemes) {
-                var existingTheme = FindTheme(intersection.Key);
+                var existingTheme = _themeDataFinder.FindTheme(intersection.Key);
                 if (existingTheme == null) {
                     yield return intersection
                         .SelectMany(x => x.Theme.Articles)
@@ -54,7 +50,7 @@ namespace Sociomedia.Themes.Application
 
         private IEnumerable<ICommand> ChallengeExistingArticles(Article article)
         {
-            var keywordIntersectedArticles = _themeProjection.Articles
+            var keywordIntersectedArticles = _themeDataFinder.GetRecentArticles()
                 .Where(x => x.Id != article.Id)
                 .Select(x => new { Article = x, KeywordIntersection = x.CommonKeywords(article) })
                 .Where(x => x.KeywordIntersection.Any())
@@ -62,7 +58,7 @@ namespace Sociomedia.Themes.Application
                 .ToArray();
 
             foreach (var intersection in keywordIntersectedArticles) {
-                var matchingThemes = _themeProjection.Themes.Where(theme => intersection.Key.ContainsAllWords(theme.Keywords)).ToList();
+                var matchingThemes = _themeDataFinder.GetAllKeywordIncludedThemes(intersection.Key);
                 if (!matchingThemes.Any()) {
                     yield return intersection
                         .Select(x => x.Article.ToDomain())
@@ -71,15 +67,6 @@ namespace Sociomedia.Themes.Application
                         .Pipe(x => new CreateNewThemeCommand(intersection.Key, x));
                 }
             }
-        }
-
-        private ThemeReadModel FindTheme(KeywordIntersection keywordIntersection)
-        {
-            var themes = _themeProjection.Themes.Where(x => keywordIntersection.SequenceEquals(x.Keywords)).ToArray();
-            if (themes.Length > 1) {
-                _logger.Info("2 themes have the same keyword intersections !");
-            }
-            return themes.FirstOrDefault();
         }
     }
 }

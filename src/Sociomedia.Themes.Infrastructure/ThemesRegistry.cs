@@ -1,4 +1,5 @@
-﻿using Sociomedia.Core.Application;
+﻿using System;
+using Sociomedia.Core.Application;
 using Sociomedia.Themes.Application.Projections;
 using StructureMap;
 using StructureMap.Graph;
@@ -8,7 +9,7 @@ namespace Sociomedia.Themes.Infrastructure
 {
     public class ThemesRegistry : Registry
     {
-        public ThemesRegistry()
+        public ThemesRegistry(ThemeCalculatorConfiguration configuration)
         {
             Scan(scanner => {
                 scanner.Assembly("Sociomedia.Themes.Application");
@@ -18,6 +19,8 @@ namespace Sociomedia.Themes.Infrastructure
             });
 
             For<ThemeProjection>().Singleton();
+            For<ThemeCalculatorConfiguration>().Use(x => configuration).Singleton();
+            For<ThemeDataFinder>().Use<ThemeDataFinder>().Ctor<TimeSpan>().Is(TimeSpan.FromDays(configuration.ArticleAggregationIntervalInDays));
         }
 
         private class AllInterfacesConvention : IRegistrationConvention

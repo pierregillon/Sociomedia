@@ -8,15 +8,21 @@ namespace Sociomedia.Themes.Application.Projections
 {
     public class ArticleReadModel
     {
-        private readonly IReadOnlyCollection<Keyword> _keywordsAndOccurence;
-        public Guid Id { get; set; }
-        public IReadOnlyCollection<string> Keywords { get; }
+        private IReadOnlyCollection<Keyword> _keywordsAndOccurence;
+        public Guid Id { get;  }
+        public DateTimeOffset PublishDate { get; }
+        public IReadOnlyCollection<string> Keywords { get; private set; }
 
-        public ArticleReadModel(Guid id, IReadOnlyCollection<Keyword> keywords)
+        public ArticleReadModel(Guid id, DateTimeOffset publishDate)
         {
             Id = id;
+            PublishDate = publishDate;
+        }
+
+        public void DefineKeywords(IReadOnlyCollection<Keyword> keywords)
+        {
             Keywords = keywords.Select(x => x.Value).ToArray();
-            _keywordsAndOccurence = keywords;
+            _keywordsAndOccurence = keywords ?? throw new ArgumentNullException(nameof(keywords));
         }
 
         public KeywordIntersection CommonKeywords(Article article)

@@ -13,7 +13,7 @@ namespace Sociomedia.ThemeCalculator
         {
             return new Container(registry => {
                 registry.IncludeRegistry(new CoreRegistry(configuration.EventStore));
-                registry.IncludeRegistry<ThemesRegistry>();
+                registry.IncludeRegistry(new ThemesRegistry(configuration.ThemeCalculator));
                 registry.For<Calculator>().Singleton();
                 registry.For<ITypeLocator>().Use<ReflectionTypeLocator<ThemeEvent>>().Singleton();
                 registry.For<IEventBus>().Use<EventStoreOrgBus>().Singleton();

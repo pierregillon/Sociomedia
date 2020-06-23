@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Security.Principal;
 using Newtonsoft.Json;
 using Sociomedia.Core.Infrastructure.EventStoring;
+using Sociomedia.Themes.Infrastructure;
 
 namespace Sociomedia.ThemeCalculator
 {
@@ -21,5 +23,7 @@ namespace Sociomedia.ThemeCalculator
     public class Configuration
     {
         public EventStoreConfiguration EventStore { get; set; } = new EventStoreConfiguration();
+
+        public ThemeCalculatorConfiguration ThemeCalculator { get; set; } = new ThemeCalculatorConfiguration();
     }
 }
