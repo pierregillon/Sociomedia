@@ -182,11 +182,14 @@ app {
     }
 }
 .month-trending {
-    padding-top: 0;
-    margin-top: -17px;
+    margin-top: -10px;
 }
 
-.month-trending a {
+.month-trending .nav-item {
+    padding-top: 0 !important;
+}
+
+.month-trending li a {
     height: 2em !important;
 }
 

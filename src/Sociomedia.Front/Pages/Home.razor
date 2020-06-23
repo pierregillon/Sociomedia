@@ -3,7 +3,7 @@
 @using Sociomedia.Front.Data
 @inject ThemeFinder ThemeFinder
 
-<h2>Actualité récente</h2>
+<h1>Actualité récente</h1>
 
 @if (_themes.Any()) {
     <div class="themes">
@@ -11,7 +11,7 @@
             <h3 class="theme-name">
                 <a href="@("/themes/" + theme.Id)">@theme.Name</a>
             </h3>
-            <div class="row articles justify-content-center">
+            <div class="row justify-content-center">
                 @foreach (var article in theme.Articles) {
                     <div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
                         <Article @key="@article.Id" Value="@article"></Article>

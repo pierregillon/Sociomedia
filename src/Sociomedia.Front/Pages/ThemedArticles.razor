@@ -11,7 +11,7 @@
 }
 else
 {
-    <h1>@_themeDetail.Name</h1>
+    <h1>Thème : @_themeDetail.Name</h1>
     <hr />
     <ArticleList Filters="@_filters"></ArticleList>
 }
@@ -33,11 +33,6 @@ else
     protected override async Task OnParametersSetAsync()
     {
         await Reload();
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        //await Reload();
     }
 
     private async Task Reload()
