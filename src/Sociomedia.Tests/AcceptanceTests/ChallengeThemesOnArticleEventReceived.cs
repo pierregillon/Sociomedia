@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using NSubstitute;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.CQRS;
@@ -14,15 +13,6 @@ namespace Sociomedia.Tests.AcceptanceTests
 {
     public class ChallengeThemesOnArticleEventReceived : AcceptanceTests
     {
-        private readonly IClock _clock;
-
-        public ChallengeThemesOnArticleEventReceived()
-        {
-            _clock = Substitute.For<IClock>();
-            _clock.Now().Returns(DateTimeOffset.Now);
-            Container.Inject(_clock);
-        }
-
         [Fact]
         public async Task Create_new_theme_on_article_keywords_defined_with_common_keywords()
         {
@@ -220,8 +210,8 @@ namespace Sociomedia.Tests.AcceptanceTests
             var article2 = Guid.NewGuid();
 
             await EventPublisher.Publish(new[] {
-                AnArticleWithKeywordsAndDate(article1, _clock.Now().Subtract(TimeSpan.FromDays(daysFromToday)), AKeyword("coronavirus", 2), AKeyword("france", 2)),
-                AnArticleWithKeywordsAndDate(article2, _clock.Now(), AKeyword("coronavirus", 3), AKeyword("chine", 2)),
+                AnArticleWithKeywordsAndDate(article1, DateTimeOffset.Now.Subtract(TimeSpan.FromDays(daysFromToday)), AKeyword("coronavirus", 2), AKeyword("france", 2)),
+                AnArticleWithKeywordsAndDate(article2, DateTimeOffset.Now, AKeyword("coronavirus", 3), AKeyword("chine", 2)),
             }.SelectMany(x => x));
 
             (await EventStore.GetNewEvents())
@@ -238,23 +228,19 @@ namespace Sociomedia.Tests.AcceptanceTests
 
             await EventPublisher.Publish(AnArticleWithKeywordsAndDate(
                 article1,
-                _clock.Now(),
+                DateTimeOffset.Now.Subtract(TimeSpan.FromDays(20)),
                 AKeyword("coronavirus", 2), AKeyword("france", 2))
             );
-
-            _clock.Now().Returns(_clock.Now().Add(TimeSpan.FromDays(10)));
 
             await EventPublisher.Publish(AnArticleWithKeywordsAndDate(
                 article2,
-                _clock.Now(),
+                DateTimeOffset.Now.Subtract(TimeSpan.FromDays(10)),
                 AKeyword("coronavirus", 2), AKeyword("france", 2))
             );
 
-            _clock.Now().Returns(_clock.Now().Add(TimeSpan.FromDays(10)));
-
             await EventPublisher.Publish(AnArticleWithKeywordsAndDate(
                 article3,
-                _clock.Now(),
+                DateTimeOffset.Now,
                 AKeyword("coronavirus", 2), AKeyword("france", 2))
             );
 
@@ -285,7 +271,7 @@ namespace Sociomedia.Tests.AcceptanceTests
                 articleId,
                 "some title",
                 "some summary",
-                publishDate == default ? _clock.Now() : publishDate,
+                publishDate == default ? DateTimeOffset.Now : publishDate,
                 "some url",
                 "some image url",
                 "some external id",

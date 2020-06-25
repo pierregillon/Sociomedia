@@ -22,10 +22,10 @@ namespace Sociomedia.Themes.Application.Projections
         public void DefineKeywords(IReadOnlyCollection<Keyword> keywords)
         {
             Keywords = keywords.Select(x => x.Value).ToArray();
-            _keywordsAndOccurence = keywords ?? throw new ArgumentNullException(nameof(keywords));
+            _keywordsAndOccurence = keywords;
         }
 
-        public KeywordIntersection CommonKeywords(Article article)
+        public KeywordIntersection CommonKeywords(ArticleToChallenge article)
         {
             return new KeywordIntersection(Keywords
                 .Intersect(article.Keywords.Select(x => x.Value))

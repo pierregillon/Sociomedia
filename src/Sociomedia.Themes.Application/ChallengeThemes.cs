@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Infrastructure.CQRS;
+using Sociomedia.Themes.Application.Projections;
 using Sociomedia.Themes.Domain;
-using Article = Sociomedia.Themes.Domain.Article;
 
 namespace Sociomedia.Themes.Application
 {
@@ -12,22 +12,34 @@ namespace Sociomedia.Themes.Application
     {
         private readonly ICommandDispatcher _commandDispatcher;
         private readonly ThemeManager _themeManager;
+        private readonly ThemeDataFinder _themeDataFinder;
 
-        public ChallengeThemes(ICommandDispatcher commandDispatcher, ThemeManager themeManager)
+        public ChallengeThemes(ICommandDispatcher commandDispatcher, ThemeManager themeManager, ThemeDataFinder themeDataFinder)
         {
             _commandDispatcher = commandDispatcher;
             _themeManager = themeManager;
+            _themeDataFinder = themeDataFinder;
         }
 
         public async Task On(ArticleKeywordsDefined @event)
         {
-            var article = new Article(@event.Id, ExtractKeywordsToProcess(@event));
+            var articleToChallenge = GetArticleToChallenge(@event);
 
-            var commands = _themeManager.Add(article);
+            if (articleToChallenge == null) {
+                return;
+            }
+
+            var commands = _themeManager.Add(articleToChallenge);
 
             foreach (var command in commands) {
                 await _commandDispatcher.DispatchGeneric(command);
             }
+        }
+
+        private ArticleToChallenge GetArticleToChallenge(ArticleKeywordsDefined @event)
+        {
+            var articleReadModel = _themeDataFinder.GetArticle(@event.Id);
+            return articleReadModel == null ? null : new ArticleToChallenge(@event.Id, articleReadModel.PublishDate, ExtractKeywordsToProcess(@event));
         }
 
         private static Keyword[] ExtractKeywordsToProcess(ArticleKeywordsDefined @event)

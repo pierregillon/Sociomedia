@@ -36,12 +36,12 @@ namespace Sociomedia.Themes.Application.Projections
             _articles.Add(article);
         }
 
-        public bool Contains(Article article)
+        public bool Contains(ArticleToChallenge article)
         {
             return _articles.Select(x => x.Id).Contains(article.Id);
         }
 
-        public KeywordIntersection CommonKeywords(Article article)
+        public KeywordIntersection CommonKeywords(ArticleToChallenge article)
         {
             return Keywords
                 .Intersect(article.Keywords.Select(x => x.Value))

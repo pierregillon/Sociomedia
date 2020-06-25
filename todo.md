@@ -2,6 +2,7 @@
 * test if an article is present in 2 rss feeds (lemonde)
 * takerigth 100 max on json objet to avoid console to blow
 * remove keywords "mais, selon, pour, être, promo, promotion, partage, partager, lire, connexion"
+* theme challenge domain service ?
 
 # Tech
 * display current assembly version for all programs on execution (FeedAggregator, ProjectionSynchronizer, Front)
