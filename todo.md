@@ -2,6 +2,9 @@
 * test if an article is present in 2 rss feeds (lemonde)
 * takerigth 100 max on json objet to avoid console to blow
 * remove keywords "mais, selon, pour, être, promo, promotion, partage, partager, lire, connexion"
+- OMS, OMG => 3 letters but uppercase => should be included in keywords (same for L214)
+* add black list keyword for front to avoid
+* manage redondancy keywords : "macron", "emmanuel", "emmanuel macron"
 
 # Tech
 * display current assembly version for all programs on execution (FeedAggregator, ProjectionSynchronizer, Front)
@@ -27,9 +30,6 @@
 
 # Theme domain
 * display 3 main themes on article card
-
-# Keywords
-- OMS, OMG => 3 letters but uppercase => should be included in keywords
 
 # Front
 * Infinite scroll
