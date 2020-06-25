@@ -19,31 +19,32 @@ namespace Sociomedia.Themes.Application.Projections
             _logger = logger;
         }
 
-        public IReadOnlyCollection<ThemeReadModel> GetThemesContainingArticlesInSameTimeFrame(DateTimeOffset date)
+        public IReadOnlyCollection<ThemeReadModel> GetThemesContainingArticlesInSameTimeFrame(ArticleToChallenge article)
         {
             return _themeProjection.Themes
-                .Select(x => x.FilterRecentArticlesFrom(date.Subtract(_articleAggregationInterval)))
+                .Select(x => x.FilterRecentArticlesFrom(article.PublishDate.Subtract(_articleAggregationInterval)))
                 .Where(x => x.Articles.Any())
                 .ToArray();
         }
 
-        public IReadOnlyCollection<ArticleReadModel> GetArticlesInSameTimeFrame(DateTimeOffset date)
+        public IReadOnlyCollection<ArticleReadModel> GetArticlesInSameTimeFrame(ArticleToChallenge article)
         {
             return _themeProjection.Articles
-                .Where(x => x.PublishDate > date.Subtract(_articleAggregationInterval))
+                .Where(x => x.Id != article.Id)
+                .Where(x => x.PublishDate > article.PublishDate.Subtract(_articleAggregationInterval))
                 .ToArray();
         }
 
-        public IReadOnlyCollection<ThemeReadModel> GetThemesWithAllKeywordsIncluded(KeywordIntersection intersection, DateTimeOffset date)
+        public IReadOnlyCollection<ThemeReadModel> GetThemesWithAllKeywordsIncluded(Keywords intersection, ArticleToChallenge article)
         {
-            return GetThemesContainingArticlesInSameTimeFrame(date)
-                .Where(theme => intersection.ContainsAllWords(theme.Keywords))
+            return GetThemesContainingArticlesInSameTimeFrame(article)
+                .Where(theme => intersection.ContainsAll(theme.Keywords))
                 .ToList();
         }
 
-        public ThemeReadModel FindTheme(KeywordIntersection intersection)
+        public ThemeReadModel FindExistingTheme(Keywords intersection)
         {
-            var themes = _themeProjection.Themes.Where(x => intersection.SequenceEquals(x.Keywords)).ToArray();
+            var themes = _themeProjection.Themes.Where(x => intersection.SequenceEqual(x.Keywords)).ToArray();
             if (themes.Length > 1) {
                 _logger.Info("2 themes have the same keyword intersections !");
             }

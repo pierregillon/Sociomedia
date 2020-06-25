@@ -13,13 +13,13 @@ namespace Sociomedia.Tests
     public class ThemeManagerTests
     {
         private readonly ThemeProjection _projection;
-        private readonly ThemeManager _themeManager;
+        private readonly ThemeChallenger _themeChallenger;
         private readonly TimeSpan _twoWeeks = TimeSpan.FromDays(15);
 
         public ThemeManagerTests()
         {
             _projection = new ThemeProjection(new InMemoryDatabase());
-            _themeManager = new ThemeManager(new ThemeDataFinder(_projection, _twoWeeks, new AcceptanceTests.AcceptanceTests.EmptyLogger()));
+            _themeChallenger = new ThemeChallenger(new ThemeDataFinder(_projection, _twoWeeks, new AcceptanceTests.AcceptanceTests.EmptyLogger()));
         }
 
         [Fact]
@@ -27,7 +27,7 @@ namespace Sociomedia.Tests
         {
             var article = new ArticleToChallenge(Guid.NewGuid(), DateTimeOffset.Now, new[] { new Keyword("test 1", 2), });
 
-            var commands = _themeManager.Add(article);
+            var commands = _themeChallenger.Challenge(article);
 
             commands.Should().BeEmpty();
         }
@@ -59,7 +59,7 @@ namespace Sociomedia.Tests
                 new Keyword("france", 3),
             });
 
-            var commands = _themeManager.Add(articleToChallenge);
+            var commands = _themeChallenger.Challenge(articleToChallenge);
 
             commands
                 .Should()

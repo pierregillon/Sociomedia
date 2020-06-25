@@ -37,7 +37,7 @@ namespace Sociomedia.Themes.Domain
             return Equals((Keyword) obj);
         }
 
-        public override int GetHashCode() => Value.GetHashCode();
+        public override int GetHashCode() => HashCode.Combine(Value, Occurence);
 
         public static Keyword operator +(Keyword x, Keyword y)
         {

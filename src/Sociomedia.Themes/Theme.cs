@@ -38,13 +38,18 @@ namespace Sociomedia.Themes.Domain
 
         private static IReadOnlyCollection<Keyword> IntersectKeywords(IReadOnlyCollection<IEnumerable<Keyword>> keywordsList)
         {
-            var keywordValues = keywordsList.Select(x => x.Select(a => a.Value)).IntersectAll();
+            var commonKeywords = keywordsList
+                .Select(x => x.Select(a => a.Value))
+                .IntersectAll()
+                .ToArray();
 
             return keywordsList
                 .SelectMany(x => x)
-                .Where(x => keywordValues.Contains(x.Value))
+                .Where(x => commonKeywords.Contains(x.Value))
                 .GroupBy(x => x.Value)
                 .Select(g => g.Aggregate((x, y) => x + y))
+                .OrderByDescending(x => x.Occurence)
+                .ThenBy(x => x.Value)
                 .ToArray();
         }
     }

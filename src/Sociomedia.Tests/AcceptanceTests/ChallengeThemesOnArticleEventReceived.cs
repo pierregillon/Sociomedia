@@ -54,6 +54,30 @@ namespace Sociomedia.Tests.AcceptanceTests
         }
 
         [Fact]
+        public async Task Add_article_to_existing_theme_keywords_order()
+        {
+            var article1 = Guid.NewGuid();
+            var article2 = Guid.NewGuid();
+            var article3 = Guid.NewGuid();
+
+            var events = new[] {
+                AnArticleWithKeywords(article1, KeywordDefined("b", "a", "1")),
+                AnArticleWithKeywords(article2, KeywordDefined("a", "b", "2")),
+                AnArticleWithKeywords(article3, KeywordDefined("b", "a")),
+            }.SelectMany(x => x);
+
+            await EventPublisher.Publish(events);
+
+            (await EventStore.GetNewEvents())
+                .Should()
+                .BeEquivalentTo(new DomainEvent[] {
+                    new ThemeAdded(default, new[] { new Keyword("a", 4), new Keyword("b", 4) }, new[] { article1, article2 }),
+                    new ArticleAddedToTheme(default, article3),
+                    new ThemeKeywordsUpdated(default, new[] { new Keyword("a", 6), new Keyword("b", 6) })
+                }, x => x.ExcludeDomainEventTechnicalFields());
+        }
+
+        [Fact]
         public async Task Create_2_themes_on_article_keywords_defined()
         {
             var article1Id = Guid.NewGuid();

@@ -11,13 +11,13 @@ namespace Sociomedia.Themes.Application
     public class ChallengeThemes : IEventListener<ArticleKeywordsDefined>
     {
         private readonly ICommandDispatcher _commandDispatcher;
-        private readonly ThemeManager _themeManager;
+        private readonly ThemeChallenger _themeChallenger;
         private readonly ThemeDataFinder _themeDataFinder;
 
-        public ChallengeThemes(ICommandDispatcher commandDispatcher, ThemeManager themeManager, ThemeDataFinder themeDataFinder)
+        public ChallengeThemes(ICommandDispatcher commandDispatcher, ThemeChallenger themeChallenger, ThemeDataFinder themeDataFinder)
         {
             _commandDispatcher = commandDispatcher;
-            _themeManager = themeManager;
+            _themeChallenger = themeChallenger;
             _themeDataFinder = themeDataFinder;
         }
 
@@ -29,7 +29,7 @@ namespace Sociomedia.Themes.Application
                 return;
             }
 
-            var commands = _themeManager.Add(articleToChallenge);
+            var commands = _themeChallenger.Challenge(articleToChallenge);
 
             foreach (var command in commands) {
                 await _commandDispatcher.DispatchGeneric(command);

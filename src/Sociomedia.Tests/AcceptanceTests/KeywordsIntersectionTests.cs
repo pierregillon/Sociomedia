@@ -11,8 +11,8 @@ namespace Sociomedia.Tests.AcceptanceTests
         [Fact]
         public void Two_same_intersections_are_equals()
         {
-            var firstIntersection = new KeywordIntersection(new[] { "test" });
-            var secondIntersection = new KeywordIntersection(new[] { "test" });
+            var firstIntersection = new Keywords(new[] { "test" });
+            var secondIntersection = new Keywords(new[] { "test" });
 
             firstIntersection.Should().Be(secondIntersection);
 

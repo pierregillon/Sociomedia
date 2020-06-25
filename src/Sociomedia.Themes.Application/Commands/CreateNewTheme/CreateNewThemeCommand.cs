@@ -8,10 +8,10 @@ namespace Sociomedia.Themes.Application.Commands.CreateNewTheme
 {
     public class CreateNewThemeCommand : ICommand
     {
-        private readonly KeywordIntersection _intersection;
+        private readonly Keywords _intersection;
         public IReadOnlyCollection<Article> Articles { get; }
 
-        public CreateNewThemeCommand(KeywordIntersection intersection, IReadOnlyCollection<Article> articles)
+        public CreateNewThemeCommand(Keywords intersection, IReadOnlyCollection<Article> articles)
         {
             if (articles.Count != articles.Distinct().Count()) {
                 throw new ArgumentException("A theme must not contains duplicated article");

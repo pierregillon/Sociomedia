@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sociomedia.Core.Domain;
 using Sociomedia.Themes.Domain;
 
 namespace Sociomedia.Themes.Application.Projections
@@ -13,7 +12,7 @@ namespace Sociomedia.Themes.Application.Projections
         public ThemeReadModel(Guid id, IReadOnlyCollection<string> keywords, IReadOnlyCollection<ArticleReadModel> articles)
         {
             Id = id;
-            Keywords = keywords;
+            Keywords = new Keywords(keywords);
 
             if (articles.Select(x => x.Id).Distinct().Count() != articles.Count) {
                 throw new Exception("conflict");
@@ -24,7 +23,7 @@ namespace Sociomedia.Themes.Application.Projections
 
         public Guid Id { get; }
 
-        public IReadOnlyCollection<string> Keywords { get; }
+        public Keywords Keywords { get; }
 
         public IReadOnlyCollection<ArticleReadModel> Articles => _articles;
 
@@ -41,12 +40,9 @@ namespace Sociomedia.Themes.Application.Projections
             return _articles.Select(x => x.Id).Contains(article.Id);
         }
 
-        public KeywordIntersection CommonKeywords(ArticleToChallenge article)
+        public Keywords IntersectKeywords(ArticleToChallenge article)
         {
-            return Keywords
-                .Intersect(article.Keywords.Select(x => x.Value))
-                .ToArray()
-                .Pipe(x => new KeywordIntersection(x));
+            return Keywords.Intersect(article.Keywords);
         }
 
         public override string ToString()
@@ -56,7 +52,7 @@ namespace Sociomedia.Themes.Application.Projections
 
         public ThemeReadModel FilterRecentArticlesFrom(DateTimeOffset date)
         {
-            return new ThemeReadModel(Id, Keywords, Articles.Where(x => x.PublishDate > date).ToArray());
+            return new ThemeReadModel(Id, Keywords.ToValues(), Articles.Where(x => x.PublishDate > date).ToArray());
         }
     }
 }

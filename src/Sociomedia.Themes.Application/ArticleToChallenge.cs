@@ -1,25 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Sociomedia.Themes.Domain;
 
 namespace Sociomedia.Themes.Application
 {
     public class ArticleToChallenge
     {
+        private readonly IReadOnlyCollection<Keyword> _keywordsWithOccurence;
+
         public Guid Id { get; }
         public DateTimeOffset PublishDate { get; }
-        public IReadOnlyCollection<Keyword> Keywords { get; }
+        public Keywords Keywords { get; }
 
-        public ArticleToChallenge(Guid id, DateTimeOffset publishDate, IReadOnlyCollection<Keyword> keywords)
+        public ArticleToChallenge(Guid id, DateTimeOffset publishDate, IReadOnlyCollection<Keyword> keywordsWithOccurence)
         {
+            _keywordsWithOccurence = keywordsWithOccurence;
             Id = id;
             PublishDate = publishDate;
-            Keywords = keywords;
+            Keywords = new Keywords(keywordsWithOccurence.Select(x=>x.Value).ToArray());
         }
 
         public Article ToDomain()
         {
-            return new Article(Id, Keywords);
+            return new Article(Id, _keywordsWithOccurence);
         }
     }
 }
