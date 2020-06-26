@@ -1,8 +1,6 @@
 * try to reimport "leparisien"
 * test if an article is present in 2 rss feeds (lemonde)
 * takerigth 100 max on json objet to avoid console to blow
-* remove keywords "mais, selon, pour, être, promo, promotion, partage, partager, lire, connexion"
-- OMS, OMG => 3 letters but uppercase => should be included in keywords (same for L214)
 * add black list keyword for front to avoid
 * manage redondancy keywords : "macron", "emmanuel", "emmanuel macron"
 

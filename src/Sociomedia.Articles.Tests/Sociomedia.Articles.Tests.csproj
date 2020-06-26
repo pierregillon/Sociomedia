@@ -25,6 +25,9 @@
     <None Update="Dictionaries\french.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Dictionaries\french_black_list.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="UnitTests\Resources\article_example.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

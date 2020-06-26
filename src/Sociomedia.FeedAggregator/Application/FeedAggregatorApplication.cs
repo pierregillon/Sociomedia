@@ -25,7 +25,7 @@ namespace Sociomedia.FeedAggregator.Application
 
             Info("Loading language dictionary ...");
 
-            _dictionary.BuildFromFile();
+            _dictionary.BuildFromFiles();
 
             await _aggregator.StartAggregation(source.Token);
 

@@ -4,25 +4,29 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.VisualBasic.FileIO;
-using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Keywords;
+using Sociomedia.Core.Domain;
 
 namespace Sociomedia.Articles.Infrastructure
 {
     public class FrenchKeywordDictionary : IKeywordDictionary
     {
         private readonly string _fileName;
+        private readonly string _blackListFileName;
         private readonly IDictionary<string, List<WordDescriptor>> _wordDescriptors = new Dictionary<string, List<WordDescriptor>>();
-        private readonly IReadOnlyCollection<string> _specialForbiddenWords = new[] { "plus", "pour", "fait", "moins", "mais", "est" };
+        private readonly List<string> _specialForbiddenWords = new List<string>();
         private bool _isDictionaryBuilt;
 
-        public FrenchKeywordDictionary(string fileName)
+        public FrenchKeywordDictionary(string fileName, string blackListFileName)
         {
             _fileName = fileName;
+            _blackListFileName = blackListFileName;
         }
 
-        public void BuildFromFile()
+        public void BuildFromFiles()
         {
+            _specialForbiddenWords.AddRange(File.ReadAllLines(_blackListFileName));
+
             using var parser = new TextFieldParser(Path.Combine(_fileName), Encoding.UTF8) { TextFieldType = FieldType.Delimited };
 
             parser.SetDelimiters(";");
@@ -83,7 +87,8 @@ namespace Sociomedia.Articles.Infrastructure
             private readonly HashSet<string> _types;
 
             public string Word { get; }
-            public bool IsKeyWord => !_types.Any(x => x.StartsWith("ADJ:") || x.StartsWith("PRO:") || x.StartsWith("ART:") || x == "PRE") 
+
+            public bool IsKeyWord => !_types.Any(x => x.StartsWith("ADJ:") || x.StartsWith("PRO:") || x.StartsWith("ART:") || x == "PRE")
                                      && (_types.Contains("NOM") || _types.Contains("ADJ"));
 
             public WordDescriptor(string word, string type)
