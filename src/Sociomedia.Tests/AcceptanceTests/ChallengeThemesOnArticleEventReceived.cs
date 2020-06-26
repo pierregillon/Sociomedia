@@ -14,6 +14,23 @@ namespace Sociomedia.Tests.AcceptanceTests
     public class ChallengeThemesOnArticleEventReceived : AcceptanceTests
     {
         [Fact]
+        public async Task Article_without_keywords_are_ignored()
+        {
+            var articleId = Guid.NewGuid();
+
+            await EventPublisher.Publish(new DomainEvent[] {
+                AnArticleImported(articleId),
+                AnArticleImported(Guid.NewGuid()),
+                AnArticleImported(Guid.NewGuid()),
+                new ArticleKeywordsDefined(articleId, new []{AKeyword("coronavirus", 2)})
+            });
+
+            (await EventStore.GetNewEvents())
+                .Should()
+                .BeEmpty();
+        }
+
+        [Fact]
         public async Task Create_new_theme_on_article_keywords_defined_with_common_keywords()
         {
             var article1Id = Guid.NewGuid();

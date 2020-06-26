@@ -39,7 +39,10 @@ namespace Sociomedia.Themes.Application
         private ArticleToChallenge GetArticleToChallenge(ArticleKeywordsDefined @event)
         {
             var articleReadModel = _themeDataFinder.GetArticle(@event.Id);
-            return articleReadModel == null ? null : new ArticleToChallenge(@event.Id, articleReadModel.PublishDate, ExtractKeywordsToProcess(@event));
+            if (articleReadModel == null) {
+                return null;
+            }
+            return new ArticleToChallenge(@event.Id, articleReadModel.PublishDate, ExtractKeywordsToProcess(@event));
         }
 
         private static Keyword[] ExtractKeywordsToProcess(ArticleKeywordsDefined @event)

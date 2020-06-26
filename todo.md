@@ -3,6 +3,7 @@
 * takerigth 100 max on json objet to avoid console to blow
 * add black list keyword for front to avoid
 * manage redondancy keywords : "macron", "emmanuel", "emmanuel macron"
+* ArticleUpdated => update publishDate
 
 
 # Tech

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Sociomedia.Core.Domain;
 
@@ -10,7 +11,7 @@ namespace Sociomedia.Themes.Domain
 
         public Keywords(IReadOnlyCollection<string> values)
         {
-            _values = values;
+            _values = values ?? throw new ArgumentNullException(nameof(values));
         }
 
         public bool Any()

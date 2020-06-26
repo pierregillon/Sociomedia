@@ -31,6 +31,7 @@ namespace Sociomedia.Themes.Application.Projections
         {
             return _themeProjection.Articles
                 .Where(x => x.Id != article.Id)
+                .Where(x=>x.Keywords.Any())
                 .Where(x => x.PublishDate > article.PublishDate.Subtract(_articleAggregationInterval))
                 .ToArray();
         }
