@@ -6,6 +6,7 @@
 * add black list keyword for front to avoid
 * manage redondancy keywords : "macron", "emmanuel", "emmanuel macron"
 
+
 # Tech
 * display current assembly version for all programs on execution (FeedAggregator, ProjectionSynchronizer, Front)
 * Docker

@@ -9,6 +9,7 @@ using Sociomedia.ReadModel.DataAccess;
 using Sociomedia.ReadModel.DataAccess.Tables;
 using Sociomedia.Themes.Domain;
 using Xunit;
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
 
 namespace Sociomedia.ProjectionSynchronizer.Tests
 {
