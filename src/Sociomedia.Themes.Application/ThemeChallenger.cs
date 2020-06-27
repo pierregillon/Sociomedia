@@ -47,11 +47,11 @@ namespace Sociomedia.Themes.Application
             }
         }
 
-        private static IEnumerable<KeywordIntersectedGroup> GetKeywordIntersectedArticlesGroup(ArticleToChallenge article, IEnumerable<ICanIntersectKeywords> keywordIntersectables)
+        private static IEnumerable<KeywordIntersectedGroup> GetKeywordIntersectedArticlesGroup(ArticleToChallenge article, IEnumerable<ICanIntersectKeywords> elements)
         {
-            return keywordIntersectables
+            return elements
                 .Select(x => new KeywordIntersected(x, x.IntersectKeywords(article)))
-                .Where(x => x.KeywordIntersection.Any())
+                .Where(x => x.KeywordIntersection.IsCompatibleForThemeCreation())
                 .GroupBy(x => x.KeywordIntersection)
                 .Select(x => new KeywordIntersectedGroup(x.Key, article, x));
         }

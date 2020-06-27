@@ -20,6 +20,11 @@ namespace Sociomedia.Themes.Domain
             return _values.Any();
         }
 
+        public bool IsCompatibleForThemeCreation()
+        {
+            return _values.Any() && _values.Count <= 5;
+        }
+
         public bool ContainsAll(Keywords keywords)
         {
             return !keywords._values.Except(_values).Any();

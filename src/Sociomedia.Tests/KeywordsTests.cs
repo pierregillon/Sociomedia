@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Linq;
+using FluentAssertions;
 using Sociomedia.Themes.Domain;
 using Xunit;
 
@@ -40,7 +41,7 @@ namespace Sociomedia.Tests
             var keywords1 = new Keywords(new[] { "toto", "test2", "test" });
 
             keywords1
-                .Intersect(new Keywords(new[] { "test", "test2", "titi"}))
+                .Intersect(new Keywords(new[] { "test", "test2", "titi" }))
                 .Should()
                 .Be(new Keywords(new[] { "test", "test2" }));
         }
@@ -52,6 +53,40 @@ namespace Sociomedia.Tests
                 .Intersect(new Keywords(new[] { "c", "b", "e" }))
                 .Should()
                 .Be(new Keywords(new[] { "b", "c" }));
+        }
+
+
+        [Theory]
+        [InlineData("a")]
+        [InlineData("a ; b")]
+        [InlineData("a ; b ; c")]
+        [InlineData("a ; b ; c ; d")]
+        [InlineData("a ; b ; c ; d ; e")]
+        public void Keywords_are_compatible_for_theme_creation_between_1_and_5(string values)
+        {
+            new Keywords(values.Split(";").Select(x => x.Trim()))
+                .IsCompatibleForThemeCreation()
+                .Should()
+                .BeTrue();
+        }
+
+        [Theory]
+        [InlineData("a ; b ; c ; d ; e ; f")]
+        public void Keywords_are_not_compatible_over_6(string values)
+        {
+            new Keywords(values.Split(";").Select(x => x.Trim()))
+                .IsCompatibleForThemeCreation()
+                .Should()
+                .BeFalse();
+        }
+
+        [Fact]
+        public void Keywords_are_not_compatible_if_none()
+        {
+            new Keywords(Enumerable.Empty<string>())
+                .IsCompatibleForThemeCreation()
+                .Should()
+                .BeFalse();
         }
     }
 }
