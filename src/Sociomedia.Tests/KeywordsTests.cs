@@ -26,6 +26,15 @@ namespace Sociomedia.Tests
         }
 
         [Fact]
+        public void Keywords_does_not_contains_all()
+        {
+            var keywords1 = new Keywords(new[] { "toto", "test2", "test" });
+            var keywords2 = new Keywords(new[] { "test", "test2", "tata" });
+
+            keywords1.ContainsAll(keywords2).Should().BeFalse();
+        }
+
+        [Fact]
         public void Keywords_intersection()
         {
             var keywords1 = new Keywords(new[] { "toto", "test2", "test" });

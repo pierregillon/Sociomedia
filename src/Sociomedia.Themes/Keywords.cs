@@ -9,9 +9,10 @@ namespace Sociomedia.Themes.Domain
     {
         private readonly IReadOnlyCollection<string> _values;
 
-        public Keywords(IReadOnlyCollection<string> values)
+        public Keywords(IEnumerable<string> values)
         {
-            _values = values ?? throw new ArgumentNullException(nameof(values));
+            if (values == null) throw new ArgumentNullException(nameof(values));
+            _values = values.OrderBy(x => x).ToArray();
         }
 
         public bool Any()
@@ -26,17 +27,13 @@ namespace Sociomedia.Themes.Domain
 
         public bool SequenceEqual(Keywords keywords)
         {
-            if (_values.Count != keywords._values.Count) {
-                return false;
-            }
-            return _values.OrderBy(x => x).SequenceEqual(keywords._values.OrderBy(x => x));
+            return _values.Count == keywords._values.Count && _values.SequenceEqual(keywords._values);
         }
 
         public Keywords Intersect(Keywords keywords)
         {
             return _values
                 .Intersect(keywords._values)
-                .OrderBy(x => x)
                 .ToArray()
                 .Pipe(x => new Keywords(x));
         }
