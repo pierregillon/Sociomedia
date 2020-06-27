@@ -18,7 +18,7 @@ namespace Sociomedia.Themes.Infrastructure
                 scanner.AddAllTypesOf(typeof(ICommandHandler<>));
             });
 
-            For<ThemeProjection>().Singleton();
+            For<ThemeProjectionRepository>().Singleton();
             For<ThemeCalculatorConfiguration>().Use(x => configuration).Singleton();
             For<ThemeDataFinder>().Use<ThemeDataFinder>().Ctor<TimeSpan>().Is(TimeSpan.FromDays(configuration.ArticleAggregationIntervalInDays));
         }

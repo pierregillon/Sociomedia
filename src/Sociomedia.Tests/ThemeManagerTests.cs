@@ -1,7 +1,6 @@
 ﻿using System;
 using FluentAssertions;
 using Sociomedia.Articles.Domain.Articles;
-using Sociomedia.Core.Infrastructure;
 using Sociomedia.Themes.Application;
 using Sociomedia.Themes.Application.Commands.AddArticleToTheme;
 using Sociomedia.Themes.Application.Projections;
@@ -18,8 +17,9 @@ namespace Sociomedia.Tests
 
         public ThemeManagerTests()
         {
-            _projection = new ThemeProjection(new InMemoryDatabase());
-            _themeChallenger = new ThemeChallenger(new ThemeDataFinder(_projection, _twoWeeks, new AcceptanceTests.AcceptanceTests.EmptyLogger()));
+            var themeProjectionRepository = new ThemeProjectionRepository();
+            _projection = new ThemeProjection(themeProjectionRepository);
+            _themeChallenger = new ThemeChallenger(new ThemeDataFinder(themeProjectionRepository, _twoWeeks, new AcceptanceTests.AcceptanceTests.EmptyLogger()));
         }
 
         [Fact]

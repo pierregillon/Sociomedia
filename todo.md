@@ -6,6 +6,12 @@
 * ArticleUpdated => update publishDate
 * refacto ProjectionsBootstrapper
 * remove date from keywords
+* black list "mois, jour, bien, abonnés, offre,"
+* warning: prod base, update KeywordCount column
+* log when theme processing time > 1s
+* keyword count in article table
+* Interface to refactor GetKeywordIntersectedArticlesGroup and GetKeywordIntersectedThemeGroups
+* do not create theme if keyword intersection > 10 keywords
 
 # Tech
 * display current assembly version for all programs on execution (FeedAggregator, ProjectionSynchronizer, Front)

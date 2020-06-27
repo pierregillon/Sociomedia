@@ -8,20 +8,20 @@ namespace Sociomedia.Themes.Application.Projections
 {
     public class ThemeDataFinder
     {
-        private readonly ThemeProjection _themeProjection;
+        private readonly ThemeProjectionRepository _themeProjectionRepository;
         private readonly TimeSpan _articleAggregationInterval;
         private readonly ILogger _logger;
 
-        public ThemeDataFinder(ThemeProjection themeProjection, TimeSpan articleAggregationInterval, ILogger logger)
+        public ThemeDataFinder(ThemeProjectionRepository themeProjectionRepository, TimeSpan articleAggregationInterval, ILogger logger)
         {
-            _themeProjection = themeProjection;
+            _themeProjectionRepository = themeProjectionRepository;
             _articleAggregationInterval = articleAggregationInterval;
             _logger = logger;
         }
 
         public IReadOnlyCollection<ThemeReadModel> GetThemesContainingArticlesInSameTimeFrame(ArticleToChallenge article)
         {
-            return _themeProjection.Themes
+            return _themeProjectionRepository.GetAllThemes()
                 .Select(x => x.FilterRecentArticlesFrom(article.PublishDate.Subtract(_articleAggregationInterval)))
                 .Where(x => x.Articles.Any())
                 .ToArray();
@@ -29,7 +29,7 @@ namespace Sociomedia.Themes.Application.Projections
 
         public IReadOnlyCollection<ArticleReadModel> GetArticlesInSameTimeFrame(ArticleToChallenge article)
         {
-            return _themeProjection.Articles
+            return _themeProjectionRepository.GetAllArticles()
                 .Where(x => x.Id != article.Id)
                 .Where(x => x.Keywords.Any())
                 .Where(x => x.PublishDate > article.PublishDate.Subtract(_articleAggregationInterval))
@@ -38,14 +38,16 @@ namespace Sociomedia.Themes.Application.Projections
 
         public IReadOnlyCollection<ThemeReadModel> GetThemesWithAllKeywordsIncluded(Keywords intersection, ArticleToChallenge article)
         {
-            return GetThemesContainingArticlesInSameTimeFrame(article)
+            return _themeProjectionRepository.GetAllThemes()
                 .Where(theme => theme.Keywords.ContainsAll(intersection))
+                .Select(x => x.FilterRecentArticlesFrom(article.PublishDate.Subtract(_articleAggregationInterval)))
+                .Where(x => x.Articles.Any())
                 .ToList();
         }
 
         public ThemeReadModel FindExistingTheme(Keywords intersection)
         {
-            var themes = _themeProjection.Themes.Where(x => intersection.SequenceEqual(x.Keywords)).ToArray();
+            var themes = _themeProjectionRepository.GetAllThemes().Where(x => intersection.SequenceEqual(x.Keywords)).ToArray();
             if (themes.Length > 1) {
                 _logger.Info("2 themes have the same keyword intersections !");
             }
@@ -54,7 +56,7 @@ namespace Sociomedia.Themes.Application.Projections
 
         public ArticleReadModel GetArticle(Guid articleId)
         {
-            return _themeProjection.Articles.FirstOrDefault(x => x.Id == articleId);
+            return _themeProjectionRepository.FindArticle(articleId);
         }
     }
 }

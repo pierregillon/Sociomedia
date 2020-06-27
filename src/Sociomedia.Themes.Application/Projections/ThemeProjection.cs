@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Application.Projections;
-using Sociomedia.Core.Infrastructure;
 using Sociomedia.Themes.Domain;
 
 namespace Sociomedia.Themes.Application.Projections
@@ -17,30 +15,28 @@ namespace Sociomedia.Themes.Application.Projections
         IEventListener<ArticleAddedToTheme>,
         IProjection
     {
-        private readonly InMemoryDatabase _inMemoryDatabase;
+        private readonly ThemeProjectionRepository _themeProjectionRepository;
 
-        public ThemeProjection(InMemoryDatabase inMemoryDatabase)
+        public ThemeProjection(ThemeProjectionRepository themeProjectionRepository)
         {
-            _inMemoryDatabase = inMemoryDatabase;
+            _themeProjectionRepository = themeProjectionRepository;
         }
 
-        public IReadOnlyCollection<ArticleReadModel> Articles => _inMemoryDatabase.List<ArticleReadModel>();
-        public IReadOnlyCollection<ThemeReadModel> Themes => _inMemoryDatabase.List<ThemeReadModel>();
+        // ----- Callbacks
 
         public Task On(ArticleImported @event)
         {
-            if (Articles.Any(x => x.Id == @event.Id)) {
+            var existingArticle = _themeProjectionRepository.FindArticle(@event.Id);
+            if (existingArticle != null) {
                 throw new InvalidOperationException($"The article {@event.Id} already exists in projection !");
             }
 
-            _inMemoryDatabase.Add(new ArticleReadModel(@event.Id, @event.PublishDate));
-
-            return Task.CompletedTask;
+            return _themeProjectionRepository.AddArticle(new ArticleReadModel(@event.Id, @event.PublishDate));
         }
 
         public Task On(ArticleKeywordsDefined @event)
         {
-            var article = Articles.SingleOrDefault(x => x.Id == @event.Id);
+            var article = _themeProjectionRepository.FindArticle(@event.Id);
             if (article == null) {
                 throw new InvalidOperationException($"The article {@event.Id} does not exists in projection : unable to define keywords !");
             }
@@ -50,23 +46,23 @@ namespace Sociomedia.Themes.Application.Projections
 
         public Task On(ThemeAdded @event)
         {
-            var articles = Articles.Where(x => @event.Articles.Contains(x.Id)).ToArray();
-
-            var theme = Themes.SingleOrDefault(x => x.Id == @event.Id);
-            if (theme == null) {
-                theme = new ThemeReadModel(@event.Id, @event.Keywords.Select(x => x.Value).ToArray(), articles);
-                _inMemoryDatabase.Add(theme);
+            var theme = _themeProjectionRepository.FindTheme(@event.Id);
+            if (theme != null) {
+                throw new InvalidOperationException($"The theme {@event.Id} already exists in projection.");
             }
-            else {
-                throw new InvalidOperationException("theme already added !");
-            }
-            return Task.CompletedTask;
+            return _themeProjectionRepository.AddTheme(new ThemeReadModel(@event.Id, @event.Keywords.Select(x => x.Value).ToArray(), _themeProjectionRepository.FindArticles(@event.Articles)));
         }
 
         public Task On(ArticleAddedToTheme @event)
         {
-            var article = Articles.Single(x => x.Id == @event.ArticleId);
-            var theme = Themes.Single(x => x.Id == @event.Id);
+            var article = _themeProjectionRepository.FindArticle(@event.ArticleId);
+            if (article == null) {
+                throw new InvalidOperationException($"The article {@event.ArticleId} does not exists in projection : unable to add article to theme {@event.Id}.");
+            }
+            var theme = _themeProjectionRepository.FindTheme(@event.Id);
+            if (theme == null) {
+                throw new InvalidOperationException($"The article {@event.ArticleId} does not exists in projection : unable to add article to theme {@event.Id}.");
+            }
             theme.AddArticle(article);
             return Task.CompletedTask;
         }
