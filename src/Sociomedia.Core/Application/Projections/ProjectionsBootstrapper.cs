@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
 using Sociomedia.Core.Domain;
+using StructureMap.TypeRules;
 
 namespace Sociomedia.Core.Application.Projections
 {
@@ -21,7 +22,7 @@ namespace Sociomedia.Core.Application.Projections
             _logger = logger;
         }
 
-        public async Task InitializeUntil(long lastStreamPosition)
+        public async Task InitializeUntil(long lastStreamPosition, Type domainEventBase = null)
         {
             Info($"Updating projections to {lastStreamPosition} event position ...");
 
@@ -30,14 +31,33 @@ namespace Sociomedia.Core.Application.Projections
                 AddProjectionEvents(projectionsByType, projection);
             }
 
-            var eventCount = 0;
+            var allEvents = await ReadAllEvents(lastStreamPosition, domainEventBase, projectionsByType.Keys.ToArray());
 
-            await foreach (var @event in _eventStore.GetAllEventsBetween(Position.Start, new Position(lastStreamPosition, lastStreamPosition), projectionsByType.Keys.ToArray())) {
+            foreach (var @event in allEvents) {
                 await ApplyInProjections(projectionsByType, @event);
-                eventCount++;
             }
 
-            Info($"Projections up-to-date ({eventCount} events replayed).");
+            Info($"Projections up-to-date ({allEvents.Count} events replayed).");
+        }
+
+        private async Task<IReadOnlyCollection<IEvent>> ReadAllEvents(long lastStreamPosition, Type domainEventBase, IReadOnlyCollection<Type> eventTypes)
+        {
+            if (domainEventBase != null) {
+                var insideDomainEventTypes = eventTypes.Where(x => x.CanBeCastTo(domainEventBase)).ToArray();
+                var outsideDomainEventTypes = eventTypes.Where(x => !x.CanBeCastTo(domainEventBase)).ToArray();
+
+                var outsideDomainEvents = await _eventStore.GetAllEventsBetween(Position.Start, new Position(lastStreamPosition, lastStreamPosition), outsideDomainEventTypes).Enumerable();
+                var insideDomainEvents = await _eventStore.GetAllEventsBetween(Position.Start, Position.End, insideDomainEventTypes).Enumerable();
+
+                return outsideDomainEvents
+                    .Concat(insideDomainEvents)
+                    .OrderBy(x => x.TimeStamp)
+                    .ToArray();
+            }
+            else {
+                return await _eventStore.GetAllEventsBetween(Position.Start, new Position(lastStreamPosition, lastStreamPosition), eventTypes).Enumerable();
+            }
+
         }
 
         private static async Task ApplyInProjections(IDictionary<Type, List<ProjectionInfo>> projectionsByEventType, IEvent @event)

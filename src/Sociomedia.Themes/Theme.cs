@@ -9,6 +9,7 @@ namespace Sociomedia.Themes.Domain
     public class Theme : AggregateRoot
     {
         private IReadOnlyCollection<Keyword> _keywords;
+        private readonly List<Guid> _articles = new List<Guid>();
 
         private Theme() { }
 
@@ -21,6 +22,9 @@ namespace Sociomedia.Themes.Domain
 
         public void AddArticle(Article article)
         {
+            if (_articles.Contains(article.Id)) {
+                throw new InvalidOperationException($"The article {article.Id} is already present in the theme {this.Id}.");
+            }
             ApplyChange(new ArticleAddedToTheme(Id, article.Id));
             ApplyChange(new ThemeKeywordsUpdated(Id, IntersectKeywords(new[] { _keywords, article.Keywords })));
         }
@@ -29,11 +33,17 @@ namespace Sociomedia.Themes.Domain
         {
             Id = @event.Id;
             _keywords = @event.Keywords;
+            _articles.AddRange(@event.Articles);
         }
 
         private void Apply(ThemeKeywordsUpdated @event)
         {
             _keywords = @event.Keywords;
+        }
+
+        private void Apply(ArticleAddedToTheme @event)
+        {
+            _articles.Add(@event.ArticleId);
         }
 
         private static IReadOnlyCollection<Keyword> IntersectKeywords(IReadOnlyCollection<IEnumerable<Keyword>> keywordsList)

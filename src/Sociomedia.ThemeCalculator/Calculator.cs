@@ -11,13 +11,13 @@ using Sociomedia.Core.Application;
 using Sociomedia.Core.Application.Projections;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.EventStoring;
+using Sociomedia.Themes.Domain;
 
 namespace Sociomedia.ThemeCalculator
 {
     public class Calculator
     {
         private readonly IEventBus _eventBus;
-        private readonly IEventStoreExtended _eventStore;
         private readonly IEventPublisher _eventPublisher;
         private readonly IEventPositionRepository _eventPositionRepository;
         private readonly ILogger _logger;
@@ -25,7 +25,6 @@ namespace Sociomedia.ThemeCalculator
 
         public Calculator(
             IEventBus eventBus,
-            IEventStoreExtended eventStore,
             IEventPublisher eventPublisher,
             IEventPositionRepository eventPositionRepository,
             ILogger logger,
@@ -36,7 +35,6 @@ namespace Sociomedia.ThemeCalculator
             _logger = logger;
             _projectionsBootstrapper = projectionsBootstrapper;
             _eventPositionRepository = eventPositionRepository;
-            _eventStore = eventStore;
         }
 
         // ----- Public methods
@@ -45,7 +43,7 @@ namespace Sociomedia.ThemeCalculator
         {
             var lastStreamEventPosition = await GetLastStreamEventPosition();
             if (lastStreamEventPosition.HasValue) {
-                await _projectionsBootstrapper.InitializeUntil(lastStreamEventPosition.Value);
+                await _projectionsBootstrapper.InitializeUntil(lastStreamEventPosition.Value, typeof(ThemeEvent));
             }
             await _eventBus.SubscribeToEvents(lastStreamEventPosition, GetEventTypes(), DomainEventReceived);
             await Task.Delay(-1, token);

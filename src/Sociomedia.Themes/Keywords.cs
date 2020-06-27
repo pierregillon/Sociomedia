@@ -36,6 +36,7 @@ namespace Sociomedia.Themes.Domain
         {
             return _values
                 .Intersect(keywords._values)
+                .OrderBy(x => x)
                 .ToArray()
                 .Pipe(x => new Keywords(x));
         }

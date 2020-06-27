@@ -71,7 +71,7 @@ namespace Sociomedia.Tests.AcceptanceTests
         }
 
         [Fact]
-        public async Task Add_article_to_existing_theme_keywords_order()
+        public async Task Create_new_theme_ordering_keywords_by_occurence_then_value()
         {
             var article1 = Guid.NewGuid();
             var article2 = Guid.NewGuid();
@@ -207,6 +207,92 @@ namespace Sociomedia.Tests.AcceptanceTests
                     new ThemeKeywordsUpdated(newEvents.ElementAt(2).Id, new[] { new Keyword("b", 8), new Keyword("c", 8) }),
                     new ArticleAddedToTheme(newEvents.ElementAt(3).Id, article5),
                     new ThemeKeywordsUpdated(newEvents.ElementAt(3).Id, new[] { new Keyword("c", 10) }),
+                }, x => x.ExcludeDomainEventTechnicalFields2());
+        }
+
+        [Fact]
+        public async Task Keywords_intersection_with_themes_ignores_keyword_intersection_order()
+        {
+            var article1 = Guid.NewGuid();
+            var article2 = Guid.NewGuid();
+            var article3 = Guid.NewGuid();
+            var article4 = Guid.NewGuid();
+            var article5 = Guid.NewGuid();
+
+            // Arrange
+
+            await EventPublisher.Publish(new[] {
+                AnArticleWithKeywords(article1, KeywordDefined("b", "c")),
+                AnArticleWithKeywords(article2, KeywordDefined("b", "c")),
+                new DomainEvent[] {
+                    AnArticleImported(article3),
+                    new ArticleKeywordsDefined(article3, new[] {
+                        new Articles.Domain.Keywords.Keyword("c", 6),
+                        new Articles.Domain.Keywords.Keyword("a", 5),
+                        new Articles.Domain.Keywords.Keyword("b", 4),
+                    })
+                },
+                new DomainEvent[] {
+                    AnArticleImported(article4),
+                    new ArticleKeywordsDefined(article4, new[] {
+                        new Articles.Domain.Keywords.Keyword("c", 7),
+                        new Articles.Domain.Keywords.Keyword("a", 6),
+                        new Articles.Domain.Keywords.Keyword("b", 5),
+                    })
+                }
+            }.SelectMany(x => x));
+
+            // Act
+
+            await EventPublisher.Publish(AnArticleWithKeywords(article5, KeywordDefined("c", "b")));
+
+            // Assert
+
+            var newEvents = await EventStore.GetNewEvents().Pipe(x => x.ToArray());
+
+            newEvents
+                .Should()
+                .BeEquivalentTo(new DomainEvent[] {
+                    new ThemeAdded(newEvents.ElementAt(0).Id, new[] { new Keyword("b", 4), new Keyword("c", 4)}, new[] { article1, article2 }),
+                    new ArticleAddedToTheme(newEvents.ElementAt(0).Id, article3),
+                    new ThemeKeywordsUpdated(newEvents.ElementAt(0).Id, new[] { new Keyword("b", 8), new Keyword("c", 10) }),
+                    new ArticleAddedToTheme(newEvents.ElementAt(0).Id, article4),
+                    new ThemeKeywordsUpdated(newEvents.ElementAt(0).Id, new[] { new Keyword("b", 13), new Keyword("c", 17) }),
+                    new ThemeAdded(newEvents.ElementAt(5).Id, new[] { new Keyword("c", 13), new Keyword("a", 11), new Keyword("b", 9)}, new[] { article3, article4}),
+                    new ArticleAddedToTheme(newEvents.ElementAt(0).Id, article5),
+                    new ThemeKeywordsUpdated(newEvents.ElementAt(0).Id, new[] { new Keyword("b", 15), new Keyword("c", 19) }),
+                }, x => x.ExcludeDomainEventTechnicalFields2());
+        }
+
+        [Fact]
+        public async Task Create_theme_when_keyword_intersection_not_all_contained_in_existing_theme()
+        {
+            var article1 = Guid.NewGuid();
+            var article2 = Guid.NewGuid();
+            var article3 = Guid.NewGuid();
+            var article4 = Guid.NewGuid();
+
+            var events = new[] {
+                AnArticleWithKeywords(article1, KeywordDefined("b", "c")),
+                AnArticleWithKeywords(article2, KeywordDefined("b", "c")),
+                AnArticleWithKeywords(article3, KeywordDefined("a", "b", "c")),
+                AnArticleWithKeywords(article4, KeywordDefined("a", "b", "c")),
+            }.SelectMany(x => x);
+
+            await EventPublisher.Publish(events);
+
+            var newEvents = await EventStore.GetNewEvents().Pipe(x => x.ToArray());
+
+            newEvents
+                .Should()
+                .BeEquivalentTo(new DomainEvent[] {
+                    new ThemeAdded(newEvents.ElementAt(0).Id, new[] { new Keyword("b", 4), new Keyword("c", 4)}, new[] { article1, article2 }),
+                    new ArticleAddedToTheme(newEvents.ElementAt(0).Id, article3),
+                    new ThemeKeywordsUpdated(newEvents.ElementAt(0).Id, new[] { new Keyword("b", 6), new Keyword("c", 6) }),
+                    new ArticleAddedToTheme(newEvents.ElementAt(0).Id, article4),
+                    new ThemeKeywordsUpdated(newEvents.ElementAt(0).Id, new[] { new Keyword("b", 8), new Keyword("c", 8) }),
+                    new ThemeAdded(newEvents.ElementAt(5).Id, new[] { new Keyword("a", 4), new Keyword("b", 4), new Keyword("c", 4) }, new[] { article3, article4 }),
+
                 }, x => x.ExcludeDomainEventTechnicalFields2());
         }
 

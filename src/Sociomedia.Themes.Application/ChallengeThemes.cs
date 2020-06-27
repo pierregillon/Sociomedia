@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Infrastructure.CQRS;
+using Sociomedia.Themes.Application.Commands.AddArticleToTheme;
 using Sociomedia.Themes.Application.Projections;
 using Sociomedia.Themes.Domain;
 
@@ -29,7 +30,16 @@ namespace Sociomedia.Themes.Application
                 return;
             }
 
-            var commands = _themeChallenger.Challenge(articleToChallenge);
+            var commands = _themeChallenger.Challenge(articleToChallenge).ToList();
+
+            var test = commands
+                .OfType<AddArticleToThemeCommand>()
+                .GroupBy(x => new { x.ThemeId, x.Article.Id })
+                .Where(x => x.Count() > 1);
+
+            if (test.Any()) {
+
+            }
 
             foreach (var command in commands) {
                 await _commandDispatcher.DispatchGeneric(command);

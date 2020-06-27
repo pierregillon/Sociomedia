@@ -50,9 +50,24 @@ namespace Sociomedia.Tests
                 .Skip(1)
                 .Should()
                 .BeEquivalentTo(new DomainEvent[] {
-                    new ArticleAddedToTheme(default, newArticle.Id), 
-                    new ThemeKeywordsUpdated(default, new[] { new Keyword("b", 6) }), 
+                    new ArticleAddedToTheme(default, newArticle.Id),
+                    new ThemeKeywordsUpdated(default, new[] { new Keyword("b", 6) }),
                 }, x => x.ExcludeDomainEventTechnicalFields());
+        }
+
+        [Fact]
+        public void Throw_error_when_adding_an_article_already_in_the_theme()
+        {
+            var article1 = new Article(Guid.NewGuid(), new[] { new Keyword("b", 2), new Keyword("a", 2), new Keyword("c", 3) });
+            var article2 = new Article(Guid.NewGuid(), new[] { new Keyword("b", 2), new Keyword("a", 2), new Keyword("c", 5) });
+
+            var theme = new Theme(new[] { article1, article2 });
+
+            theme
+                .Invoking(x => x.AddArticle(article1))
+                .Should()
+                .Throw<InvalidOperationException>()
+                .WithMessage($"The article {article1.Id} is already present in the theme {theme.Id}.");
         }
     }
 }

@@ -35,5 +35,14 @@ namespace Sociomedia.Tests
                 .Should()
                 .Be(new Keywords(new[] { "test", "test2" }));
         }
+
+        [Fact]
+        public void Keywords_intersection_is_ordered()
+        {
+            new Keywords(new[] { "a", "b", "c" })
+                .Intersect(new Keywords(new[] { "c", "b", "e" }))
+                .Should()
+                .Be(new Keywords(new[] { "b", "c" }));
+        }
     }
 }

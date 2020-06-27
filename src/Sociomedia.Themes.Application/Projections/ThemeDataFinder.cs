@@ -31,7 +31,7 @@ namespace Sociomedia.Themes.Application.Projections
         {
             return _themeProjection.Articles
                 .Where(x => x.Id != article.Id)
-                .Where(x=>x.Keywords.Any())
+                .Where(x => x.Keywords.Any())
                 .Where(x => x.PublishDate > article.PublishDate.Subtract(_articleAggregationInterval))
                 .ToArray();
         }
@@ -39,7 +39,7 @@ namespace Sociomedia.Themes.Application.Projections
         public IReadOnlyCollection<ThemeReadModel> GetThemesWithAllKeywordsIncluded(Keywords intersection, ArticleToChallenge article)
         {
             return GetThemesContainingArticlesInSameTimeFrame(article)
-                .Where(theme => intersection.ContainsAll(theme.Keywords))
+                .Where(theme => theme.Keywords.ContainsAll(intersection))
                 .ToList();
         }
 
