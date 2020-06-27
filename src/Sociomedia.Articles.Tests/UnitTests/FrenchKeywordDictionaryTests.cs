@@ -10,7 +10,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
 
         static FrenchKeywordDictionaryTests()
         {
-            Dictionary = new FrenchKeywordDictionary("./Dictionaries/french.csv", "./Dictionaries/french_black_list.txt");
+            Dictionary = new FrenchKeywordDictionary(new FrenchKeywordDictionaryConfiguration("./Dictionaries/french.csv", "./Dictionaries/french_black_list.txt"));
             Dictionary.BuildFromFiles();
         }
 

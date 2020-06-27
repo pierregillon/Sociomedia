@@ -20,13 +20,22 @@ namespace Sociomedia.Articles.Tests.UnitTests
         }
 
         [Theory]
-        [InlineData("test a ad ax test")]
-        [InlineData("a bc c test a test")]
-        public void Keywords_are_words_with_more_than_2_letters(string text)
+        [InlineData("test a add a add test")]
+        [InlineData("a bc c test a test oms a oms")]
+        public void Keywords_are_words_with_more_than_3_letters(string text)
         {
             _keywordsParser.Parse(text)
                 .Should()
                 .BeEquivalentTo(new Keyword("test", 2));
+        }
+
+        [Theory]
+        [InlineData("OMS a add a add OMS")]
+        public void Keywords_can_be_3_letters_acronym(string text)
+        {
+            _keywordsParser.Parse(text)
+                .Should()
+                .BeEquivalentTo(new Keyword("oms", 2));
         }
 
         [Theory]

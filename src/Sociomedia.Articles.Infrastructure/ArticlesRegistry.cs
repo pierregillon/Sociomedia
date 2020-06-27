@@ -1,11 +1,9 @@
 ﻿using System;
 using System.IO;
 using Sociomedia.Articles.Domain;
-using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Articles.Domain.Feeds;
 using Sociomedia.Articles.Domain.Keywords;
 using Sociomedia.Core.Application;
-using Sociomedia.Core.Infrastructure.EventStoring;
 using StructureMap;
 using StructureMap.Graph;
 using StructureMap.Graph.Scanning;
@@ -23,11 +21,12 @@ namespace Sociomedia.Articles.Infrastructure
                 scanner.AddAllTypesOf(typeof(ICommandHandler<>));
             });
 
-            For<FrenchKeywordDictionary>()
-                .Use<FrenchKeywordDictionary>()
-                .Ctor<string>()
-                .Is(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "./Dictionaries/french.csv"))
-                .Singleton();
+            For<FrenchKeywordDictionaryConfiguration>().Use(new FrenchKeywordDictionaryConfiguration(
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "./Dictionaries/french.csv"),
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "./Dictionaries/french_black_list.txt")
+            ));
+
+            For<FrenchKeywordDictionary>().Use<FrenchKeywordDictionary>().Singleton();
 
             For<IKeywordDictionary>().Use(x => x.GetInstance<FrenchKeywordDictionary>());
 

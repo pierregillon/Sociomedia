@@ -12,3 +12,11 @@ plus
 fait
 moins
 est
+mois
+jour
+bien
+abonné
+abonnés
+abonnement
+abonnements
+offre

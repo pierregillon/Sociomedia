@@ -5,29 +5,26 @@ using System.Linq;
 using System.Text;
 using Microsoft.VisualBasic.FileIO;
 using Sociomedia.Articles.Domain.Keywords;
-using Sociomedia.Core.Domain;
 
 namespace Sociomedia.Articles.Infrastructure
 {
     public class FrenchKeywordDictionary : IKeywordDictionary
     {
-        private readonly string _fileName;
-        private readonly string _blackListFileName;
+        private readonly FrenchKeywordDictionaryConfiguration _configuration;
         private readonly IDictionary<string, List<WordDescriptor>> _wordDescriptors = new Dictionary<string, List<WordDescriptor>>();
         private readonly List<string> _specialForbiddenWords = new List<string>();
         private bool _isDictionaryBuilt;
 
-        public FrenchKeywordDictionary(string fileName, string blackListFileName)
+        public FrenchKeywordDictionary(FrenchKeywordDictionaryConfiguration configuration)
         {
-            _fileName = fileName;
-            _blackListFileName = blackListFileName;
+            _configuration = configuration;
         }
 
         public void BuildFromFiles()
         {
-            _specialForbiddenWords.AddRange(File.ReadAllLines(_blackListFileName));
+            _specialForbiddenWords.AddRange(File.ReadAllLines(_configuration.BlackListFilePath));
 
-            using var parser = new TextFieldParser(Path.Combine(_fileName), Encoding.UTF8) { TextFieldType = FieldType.Delimited };
+            using var parser = new TextFieldParser(Path.Combine(_configuration.DictionaryFilePath), Encoding.UTF8) { TextFieldType = FieldType.Delimited };
 
             parser.SetDelimiters(";");
 

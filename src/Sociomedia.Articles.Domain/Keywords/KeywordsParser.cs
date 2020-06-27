@@ -11,7 +11,7 @@ namespace Sociomedia.Articles.Domain.Keywords
 
         private const int MAX_COMPOSED_WORD_LENGTH = 3;
         private const int MIN_WORD_OCCURENCE = 2;
-        private const int MIN_WORD_LENGTH = 3;
+        private const int MIN_WORD_LENGTH = 4;
 
         private static readonly string[] Separators = { " ", "\"", "'", "’", "“", "”", "«", "»", "?", "!", ";", ",", ".", ":", "(", ")" };
 
@@ -39,8 +39,8 @@ namespace Sociomedia.Articles.Domain.Keywords
         private bool IsWordEligible(string word)
         {
             return !string.IsNullOrWhiteSpace(word) 
-                   && word.Length >= MIN_WORD_LENGTH 
-                   && !word.All(char.IsDigit) 
+                   && (word.Is3LettersAcronym() ||  word.Length >= MIN_WORD_LENGTH)
+                   && !word.IsANumber()
                    && (char.IsUpper(word[0]) || _keywordDictionary.IsValidKeyword(word));
         }
 
