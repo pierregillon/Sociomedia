@@ -1,5 +1,6 @@
 ﻿using System;
 using Sociomedia.Core.Application;
+using Sociomedia.Themes.Application;
 using Sociomedia.Themes.Application.Projections;
 using StructureMap;
 using StructureMap.Graph;
@@ -20,7 +21,7 @@ namespace Sociomedia.Themes.Infrastructure
 
             For<ThemeProjectionRepository>().Singleton();
             For<ThemeCalculatorConfiguration>().Use(x => configuration).Singleton();
-            For<ThemeDataFinder>().Use<ThemeDataFinder>().Ctor<TimeSpan>().Is(TimeSpan.FromDays(configuration.ArticleAggregationIntervalInDays));
+            For<ThemeDataFinder>().Use<ThemeDataFinder>();
         }
 
         private class AllInterfacesConvention : IRegistrationConvention

@@ -54,10 +54,5 @@ namespace Sociomedia.Themes.Application.Projections
         {
             return string.Join(" | ", Keywords);
         }
-
-        public ThemeReadModel FilterRecentArticlesFrom(DateTimeOffset date)
-        {
-            return new ThemeReadModel(Id, Keywords.ToValues(), Articles.Where(x => x.PublishDate > date).ToArray());
-        }
     }
 }

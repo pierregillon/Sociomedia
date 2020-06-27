@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using EventStore.ClientAPI;
+using Sociomedia.Core.Domain;
 using Sociomedia.Themes.Domain;
 
 namespace Sociomedia.Themes.Application.Projections
@@ -9,39 +10,36 @@ namespace Sociomedia.Themes.Application.Projections
     public class ThemeDataFinder
     {
         private readonly ThemeProjectionRepository _themeProjectionRepository;
-        private readonly TimeSpan _articleAggregationInterval;
+        private readonly ThemeCalculatorConfiguration _configuration;
         private readonly ILogger _logger;
+        private readonly IClock _clock;
 
-        public ThemeDataFinder(ThemeProjectionRepository themeProjectionRepository, TimeSpan articleAggregationInterval, ILogger logger)
+        public ThemeDataFinder(ThemeProjectionRepository themeProjectionRepository, ThemeCalculatorConfiguration configuration, ILogger logger, IClock clock)
         {
             _themeProjectionRepository = themeProjectionRepository;
-            _articleAggregationInterval = articleAggregationInterval;
+            _configuration = configuration;
             _logger = logger;
+            _clock = clock;
         }
 
-        public IReadOnlyCollection<ThemeReadModel> GetThemesContainingArticlesInSameTimeFrame(ArticleToChallenge article)
+        public IReadOnlyCollection<ThemeReadModel> GetAllThemes()
         {
-            return _themeProjectionRepository.GetAllThemes()
-                .Select(x => x.FilterRecentArticlesFrom(article.PublishDate.Subtract(_articleAggregationInterval)))
-                .Where(x => x.Articles.Any())
-                .ToArray();
+            return _themeProjectionRepository.GetAllThemes().ToArray();
         }
 
-        public IReadOnlyCollection<ArticleReadModel> GetArticlesInSameTimeFrame(ArticleToChallenge article)
+        public IReadOnlyCollection<ArticleReadModel> GetAllArticles(Guid articleId)
         {
             return _themeProjectionRepository.GetAllArticles()
-                .Where(x => x.Id != article.Id)
+                .Where(x => x.Id != articleId)
                 .Where(x => x.Keywords.Any())
-                .Where(x => x.PublishDate > article.PublishDate.Subtract(_articleAggregationInterval))
+                .Where(x => x.PublishDate > _clock.Now().Subtract(_configuration.ArticleAggregationInterval))
                 .ToArray();
         }
 
-        public IReadOnlyCollection<ThemeReadModel> GetThemesWithAllKeywordsIncluded(Keywords intersection, ArticleToChallenge article)
+        public IReadOnlyCollection<ThemeReadModel> GetThemesWithAllKeywordsIncluded(Keywords intersection)
         {
             return _themeProjectionRepository.GetAllThemes()
                 .Where(theme => theme.Keywords.ContainsAll(intersection))
-                .Select(x => x.FilterRecentArticlesFrom(article.PublishDate.Subtract(_articleAggregationInterval)))
-                .Where(x => x.Articles.Any())
                 .ToList();
         }
 

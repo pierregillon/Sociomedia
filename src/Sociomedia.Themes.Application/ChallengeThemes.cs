@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Infrastructure.CQRS;
-using Sociomedia.Themes.Application.Commands.AddArticleToTheme;
 using Sociomedia.Themes.Application.Projections;
 using Sociomedia.Themes.Domain;
 

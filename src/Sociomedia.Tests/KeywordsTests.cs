@@ -88,5 +88,16 @@ namespace Sociomedia.Tests
                 .Should()
                 .BeFalse();
         }
+
+        [Fact]
+        public void Same_keywords_can_be_grouped()
+        {
+            var grouped = new Keywords[] {
+                new Keywords(new []{"a", "b"}),
+                new Keywords(new []{"a", "b"}),
+            }.GroupBy(x => x);
+
+            grouped.Should().HaveCount(1);
+        }
     }
 }

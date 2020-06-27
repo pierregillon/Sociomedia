@@ -1,9 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Security.Principal;
 using Newtonsoft.Json;
 using Sociomedia.Core.Infrastructure.EventStoring;
-using Sociomedia.Themes.Infrastructure;
+using Sociomedia.Themes.Application;
 
 namespace Sociomedia.ThemeCalculator
 {

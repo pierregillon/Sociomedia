@@ -1,6 +1,8 @@
 ﻿using System;
 using FluentAssertions;
+using NSubstitute;
 using Sociomedia.Articles.Domain.Articles;
+using Sociomedia.Core.Domain;
 using Sociomedia.Themes.Application;
 using Sociomedia.Themes.Application.Commands.AddArticleToTheme;
 using Sociomedia.Themes.Application.Projections;
@@ -13,13 +15,16 @@ namespace Sociomedia.Tests
     {
         private readonly ThemeProjection _projection;
         private readonly ThemeChallenger _themeChallenger;
-        private readonly TimeSpan _twoWeeks = TimeSpan.FromDays(15);
+        private readonly IClock _clock = Substitute.For<IClock>();
 
         public ThemeManagerTests()
         {
+            _clock.Now().Returns(DateTimeOffset.Now);
+
             var themeProjectionRepository = new ThemeProjectionRepository();
-            _projection = new ThemeProjection(themeProjectionRepository);
-            _themeChallenger = new ThemeChallenger(new ThemeDataFinder(themeProjectionRepository, _twoWeeks, new AcceptanceTests.AcceptanceTests.EmptyLogger()));
+            var configuration = new ThemeCalculatorConfiguration{ArticleAggregationIntervalInDays = 30};
+            _projection = new ThemeProjection(themeProjectionRepository, configuration, _clock);
+            _themeChallenger = new ThemeChallenger(new ThemeDataFinder(themeProjectionRepository, configuration, new AcceptanceTests.AcceptanceTests.EmptyLogger(), _clock));
         }
 
         [Fact]

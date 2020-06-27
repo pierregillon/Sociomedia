@@ -26,7 +26,7 @@ namespace Sociomedia.Themes.Application
 
         private IEnumerable<ICommand> ChallengeExistingThemes(ArticleToChallenge article)
         {
-            foreach (var group in GetKeywordIntersectedArticlesGroup(article, _themeDataFinder.GetThemesContainingArticlesInSameTimeFrame(article))) {
+            foreach (var group in GetKeywordIntersectedGroup(article, _themeDataFinder.GetAllThemes())) {
                 var existingTheme = _themeDataFinder.FindExistingTheme(group.KeywordIntersection);
                 if (existingTheme == null) {
                     yield return new CreateNewThemeCommand(group.KeywordIntersection, group.GetAllArticles());
@@ -39,15 +39,15 @@ namespace Sociomedia.Themes.Application
 
         private IEnumerable<ICommand> ChallengeExistingArticles(ArticleToChallenge article)
         {
-            foreach (var group in GetKeywordIntersectedArticlesGroup(article, _themeDataFinder.GetArticlesInSameTimeFrame(article))) {
-                var matchingThemes = _themeDataFinder.GetThemesWithAllKeywordsIncluded(group.KeywordIntersection, article);
+            foreach (var group in GetKeywordIntersectedGroup(article, _themeDataFinder.GetAllArticles(article.Id))) {
+                var matchingThemes = _themeDataFinder.GetThemesWithAllKeywordsIncluded(group.KeywordIntersection);
                 if (!matchingThemes.Any()) {
                     yield return new CreateNewThemeCommand(group.KeywordIntersection, group.GetAllArticles());
                 }
             }
         }
 
-        private static IEnumerable<KeywordIntersectedGroup> GetKeywordIntersectedArticlesGroup(ArticleToChallenge article, IEnumerable<ICanIntersectKeywords> elements)
+        private static IEnumerable<KeywordIntersectedGroup> GetKeywordIntersectedGroup(ArticleToChallenge article, IEnumerable<ICanIntersectKeywords> elements)
         {
             return elements
                 .Select(x => new KeywordIntersected(x, x.IntersectKeywords(article)))
@@ -75,7 +75,7 @@ namespace Sociomedia.Themes.Application
             public IReadOnlyCollection<Article> GetAllArticles()
             {
                 return _keywordIntersectedArticles
-                    .SelectMany(x => x.Article.GetArticles())
+                    .SelectMany(x => x.CanIntersectKeywords.GetArticles())
                     .Distinct()
                     .Append(_article.ToDomain())
                     .ToArray();
@@ -84,12 +84,12 @@ namespace Sociomedia.Themes.Application
 
         public class KeywordIntersected
         {
-            public ICanIntersectKeywords Article { get; }
+            public ICanIntersectKeywords CanIntersectKeywords { get; }
             public Keywords KeywordIntersection { get; }
 
-            public KeywordIntersected(ICanIntersectKeywords article, Keywords keywordIntersection)
+            public KeywordIntersected(ICanIntersectKeywords canIntersectKeywords, Keywords keywordIntersection)
             {
-                Article = article;
+                CanIntersectKeywords = canIntersectKeywords;
                 KeywordIntersection = keywordIntersection;
             }
         }

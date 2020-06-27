@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Application.Projections;
+using Sociomedia.Core.Domain;
 using Sociomedia.Themes.Domain;
 
 namespace Sociomedia.Themes.Application.Projections
@@ -16,10 +17,14 @@ namespace Sociomedia.Themes.Application.Projections
         IProjection
     {
         private readonly ThemeProjectionRepository _themeProjectionRepository;
+        private readonly ThemeCalculatorConfiguration _configuration;
+        private readonly IClock _clock;
 
-        public ThemeProjection(ThemeProjectionRepository themeProjectionRepository)
+        public ThemeProjection(ThemeProjectionRepository themeProjectionRepository, ThemeCalculatorConfiguration configuration, IClock clock)
         {
             _themeProjectionRepository = themeProjectionRepository;
+            _configuration = configuration;
+            _clock = clock;
         }
 
         // ----- Callbacks
@@ -30,6 +35,9 @@ namespace Sociomedia.Themes.Application.Projections
             if (existingArticle != null) {
                 throw new InvalidOperationException($"The article {@event.Id} already exists in projection !");
             }
+            if (@event.PublishDate < _clock.Now().Subtract(_configuration.ArticleAggregationInterval)) {
+                return Task.CompletedTask;
+            }
 
             return _themeProjectionRepository.AddArticle(new ArticleReadModel(@event.Id, @event.PublishDate));
         }
@@ -37,10 +45,9 @@ namespace Sociomedia.Themes.Application.Projections
         public Task On(ArticleKeywordsDefined @event)
         {
             var article = _themeProjectionRepository.FindArticle(@event.Id);
-            if (article == null) {
-                throw new InvalidOperationException($"The article {@event.Id} does not exists in projection : unable to define keywords !");
-            }
-            article.DefineKeywords(@event.Keywords.Select(x => new Keyword(x.Value, x.Occurence)).ToArray());
+
+            article?.DefineKeywords(@event.Keywords.Select(x => new Keyword(x.Value, x.Occurence)).ToArray());
+
             return Task.CompletedTask;
         }
 
@@ -50,7 +57,12 @@ namespace Sociomedia.Themes.Application.Projections
             if (theme != null) {
                 throw new InvalidOperationException($"The theme {@event.Id} already exists in projection.");
             }
-            return _themeProjectionRepository.AddTheme(new ThemeReadModel(@event.Id, @event.Keywords.Select(x => x.Value).ToArray(), _themeProjectionRepository.FindArticles(@event.Articles)));
+            var newTheme = new ThemeReadModel(@event.Id, @event.Keywords.Select(x => x.Value).ToArray(), _themeProjectionRepository.FindArticles(@event.Articles));
+            var existingTheme = _themeProjectionRepository.GetAllThemes().Where(x => x.Keywords.Equals(newTheme.Keywords)).ToList();
+            if (existingTheme.Any()) {
+                throw new InvalidOperationException("A theme already exists in the projection with the same keywords.");
+            }
+            return _themeProjectionRepository.AddTheme(newTheme);
         }
 
         public Task On(ArticleAddedToTheme @event)

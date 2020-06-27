@@ -53,7 +53,7 @@ namespace Sociomedia.Themes.Domain
                 .IntersectAll()
                 .ToArray();
 
-            return keywordsList
+            var test = keywordsList
                 .SelectMany(x => x)
                 .Where(x => commonKeywords.Contains(x.Value))
                 .GroupBy(x => x.Value)
@@ -61,6 +61,12 @@ namespace Sociomedia.Themes.Domain
                 .OrderByDescending(x => x.Occurence)
                 .ThenBy(x => x.Value)
                 .ToArray();
+
+            if (test.Length > 5) {
+                throw new InvalidOperationException("something wrong");
+            }
+
+            return test;
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using NSubstitute;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.CQRS;
@@ -13,6 +14,15 @@ namespace Sociomedia.Tests.AcceptanceTests
 {
     public class ChallengeThemesOnArticleEventReceived : AcceptanceTests
     {
+        private readonly IClock _clock = Substitute.For<IClock>();
+        
+        public ChallengeThemesOnArticleEventReceived()
+        {
+            _clock.Now().Returns(DateTimeOffset.Now);
+
+            Container.Inject(_clock);
+        }
+
         [Fact]
         public async Task Article_without_keywords_are_ignored()
         {
@@ -330,54 +340,20 @@ namespace Sociomedia.Tests.AcceptanceTests
 
         [Theory]
         [InlineData(40)]
-        [InlineData(15)]
-        public async Task Two_articles_imported_at_more_than_two_weeks_interval_do_not_create_a_common_theme(int daysFromToday)
+        [InlineData(33)]
+        public async Task Articles_imported_with_a_publish_date_older_than_1_month_ago_are_ignored(int daysFromToday)
         {
             var article1 = Guid.NewGuid();
             var article2 = Guid.NewGuid();
 
             await EventPublisher.Publish(new[] {
-                AnArticleWithKeywordsAndDate(article1, DateTimeOffset.Now.Subtract(TimeSpan.FromDays(daysFromToday)), AKeyword("coronavirus", 2), AKeyword("france", 2)),
-                AnArticleWithKeywordsAndDate(article2, DateTimeOffset.Now, AKeyword("coronavirus", 3), AKeyword("chine", 2)),
+                AnArticleWithKeywordsAndDate(article1, _clock.Now().Subtract(TimeSpan.FromDays(daysFromToday)), AKeyword("coronavirus", 2), AKeyword("france", 2)),
+                AnArticleWithKeywordsAndDate(article2, _clock.Now(), AKeyword("coronavirus", 3), AKeyword("chine", 2)),
             }.SelectMany(x => x));
 
             (await EventStore.GetNewEvents())
                 .Should()
                 .BeEmpty();
-        }
-
-        [Fact]
-        public async Task A_theme_can_contains_articles_from_more_than_two_weeks_interval()
-        {
-            var article1 = Guid.NewGuid();
-            var article2 = Guid.NewGuid();
-            var article3 = Guid.NewGuid();
-
-            await EventPublisher.Publish(AnArticleWithKeywordsAndDate(
-                article1,
-                DateTimeOffset.Now.Subtract(TimeSpan.FromDays(20)),
-                AKeyword("coronavirus", 2), AKeyword("france", 2))
-            );
-
-            await EventPublisher.Publish(AnArticleWithKeywordsAndDate(
-                article2,
-                DateTimeOffset.Now.Subtract(TimeSpan.FromDays(10)),
-                AKeyword("coronavirus", 2), AKeyword("france", 2))
-            );
-
-            await EventPublisher.Publish(AnArticleWithKeywordsAndDate(
-                article3,
-                DateTimeOffset.Now,
-                AKeyword("coronavirus", 2), AKeyword("france", 2))
-            );
-
-            (await EventStore.GetNewEvents())
-                .Should()
-                .BeEquivalentTo(new DomainEvent[] {
-                    new ThemeAdded(default, new[] { new Keyword("coronavirus", 4), new Keyword("france", 4) }, new[] { article1, article2 }),
-                    new ArticleAddedToTheme(default, article3),
-                    new ThemeKeywordsUpdated(default, new[] { new Keyword("coronavirus", 6), new Keyword("france", 6) })
-                }, x => x.ExcludeDomainEventTechnicalFields());
         }
 
         // ----- Privates
