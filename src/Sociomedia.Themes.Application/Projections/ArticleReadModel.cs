@@ -5,7 +5,7 @@ using Sociomedia.Themes.Domain;
 
 namespace Sociomedia.Themes.Application.Projections
 {
-    public class ArticleReadModel
+    public class ArticleReadModel : ICanIntersectKeywords
     {
         private IReadOnlyCollection<Keyword> _keywordsAndOccurence;
 
@@ -29,6 +29,11 @@ namespace Sociomedia.Themes.Application.Projections
         public Keywords IntersectKeywords(ArticleToChallenge article)
         {
             return Keywords.Intersect(article.Keywords);
+        }
+
+        public IEnumerable<Article> GetArticles()
+        {
+            yield return ToDomain();
         }
 
         public override string ToString()

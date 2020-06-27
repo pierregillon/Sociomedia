@@ -10,7 +10,6 @@
 * warning: prod base, update KeywordCount column
 * log when theme processing time > 1s
 * keyword count in article table
-* Interface to refactor GetKeywordIntersectedArticlesGroup and GetKeywordIntersectedThemeGroups
 * do not create theme if keyword intersection > 10 keywords
 
 # Tech

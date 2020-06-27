@@ -26,7 +26,7 @@ namespace Sociomedia.Themes.Application
 
         private IEnumerable<ICommand> ChallengeExistingThemes(ArticleToChallenge article)
         {
-            foreach (var group in GetKeywordIntersectedThemeGroups(article)) {
+            foreach (var group in GetKeywordIntersectedArticlesGroup(article, _themeDataFinder.GetThemesContainingArticlesInSameTimeFrame(article))) {
                 var existingTheme = _themeDataFinder.FindExistingTheme(group.KeywordIntersection);
                 if (existingTheme == null) {
                     yield return new CreateNewThemeCommand(group.KeywordIntersection, group.GetAllArticles());
@@ -39,7 +39,7 @@ namespace Sociomedia.Themes.Application
 
         private IEnumerable<ICommand> ChallengeExistingArticles(ArticleToChallenge article)
         {
-            foreach (var group in GetKeywordIntersectedArticlesGroup(article)) {
+            foreach (var group in GetKeywordIntersectedArticlesGroup(article, _themeDataFinder.GetArticlesInSameTimeFrame(article))) {
                 var matchingThemes = _themeDataFinder.GetThemesWithAllKeywordsIncluded(group.KeywordIntersection, article);
                 if (!matchingThemes.Any()) {
                     yield return new CreateNewThemeCommand(group.KeywordIntersection, group.GetAllArticles());
@@ -47,38 +47,25 @@ namespace Sociomedia.Themes.Application
             }
         }
 
-        private IEnumerable<KeywordIntersectedArticleGroup> GetKeywordIntersectedArticlesGroup(ArticleToChallenge article)
+        private static IEnumerable<KeywordIntersectedGroup> GetKeywordIntersectedArticlesGroup(ArticleToChallenge article, IEnumerable<ICanIntersectKeywords> keywordIntersectables)
         {
-            return _themeDataFinder
-                .GetArticlesInSameTimeFrame(article)
-                .Select(x => new KeywordIntersectedArticle(x, x.IntersectKeywords(article)))
+            return keywordIntersectables
+                .Select(x => new KeywordIntersected(x, x.IntersectKeywords(article)))
                 .Where(x => x.KeywordIntersection.Any())
                 .GroupBy(x => x.KeywordIntersection)
-                .Select(x => new KeywordIntersectedArticleGroup(x.Key, article, x))
-                .ToArray();
-        }
-
-        private IEnumerable<KeywordIntersectedThemeGroup> GetKeywordIntersectedThemeGroups(ArticleToChallenge article)
-        {
-            return _themeDataFinder
-                .GetThemesContainingArticlesInSameTimeFrame(article)
-                .Select(theme => new KeywordIntersectedTheme(theme.IntersectKeywords(article), theme))
-                .Where(x => x.KeywordIntersection.Any())
-                .GroupBy(x => x.KeywordIntersection)
-                .Select(x => new KeywordIntersectedThemeGroup(x.Key, article, x))
-                .ToArray();
+                .Select(x => new KeywordIntersectedGroup(x.Key, article, x));
         }
 
         // ----- Internal classes
 
-        public class KeywordIntersectedArticleGroup
+        public class KeywordIntersectedGroup
         {
             private readonly ArticleToChallenge _article;
-            private readonly IEnumerable<KeywordIntersectedArticle> _keywordIntersectedArticles;
+            private readonly IEnumerable<KeywordIntersected> _keywordIntersectedArticles;
 
             public Keywords KeywordIntersection { get; }
 
-            public KeywordIntersectedArticleGroup(Keywords keywordIntersection, ArticleToChallenge article, IEnumerable<KeywordIntersectedArticle> keywordIntersectedArticles)
+            public KeywordIntersectedGroup(Keywords keywordIntersection, ArticleToChallenge article, IEnumerable<KeywordIntersected> keywordIntersectedArticles)
             {
                 KeywordIntersection = keywordIntersection;
                 _article = article;
@@ -88,61 +75,23 @@ namespace Sociomedia.Themes.Application
             public IReadOnlyCollection<Article> GetAllArticles()
             {
                 return _keywordIntersectedArticles
-                    .Select(x => x.Article.ToDomain())
-                    .Append(_article.ToDomain())
-                    .ToArray();
-            }
-        }
-
-        public class KeywordIntersectedArticle
-        {
-            public ArticleReadModel Article { get; }
-            public Keywords KeywordIntersection { get; }
-
-            public KeywordIntersectedArticle(ArticleReadModel article, Keywords keywordIntersection)
-            {
-                Article = article;
-                KeywordIntersection = keywordIntersection;
-            }
-        }
-
-        public class KeywordIntersectedThemeGroup
-        {
-            private readonly ArticleToChallenge _article;
-            private readonly IEnumerable<KeywordIntersectedTheme> _group;
-
-            public Keywords KeywordIntersection { get; }
-
-            public KeywordIntersectedThemeGroup(Keywords keywordIntersection, ArticleToChallenge article, IEnumerable<KeywordIntersectedTheme> keywordIntersectedGroup)
-            {
-                _article = article;
-                KeywordIntersection = keywordIntersection;
-                _group = keywordIntersectedGroup;
-            }
-
-            public IReadOnlyCollection<Article> GetAllArticles()
-            {
-                return _group
-                    .SelectMany(x => x.Articles)
-                    .Select(x => x.ToDomain())
+                    .SelectMany(x => x.Article.GetArticles())
                     .Distinct()
                     .Append(_article.ToDomain())
                     .ToArray();
             }
         }
 
-        public class KeywordIntersectedTheme
+        public class KeywordIntersected
         {
-            private readonly ThemeReadModel _theme;
+            public ICanIntersectKeywords Article { get; }
+            public Keywords KeywordIntersection { get; }
 
-            public KeywordIntersectedTheme(Keywords keywordIntersection, ThemeReadModel theme)
+            public KeywordIntersected(ICanIntersectKeywords article, Keywords keywordIntersection)
             {
-                _theme = theme;
+                Article = article;
                 KeywordIntersection = keywordIntersection;
             }
-
-            public Keywords KeywordIntersection { get; }
-            public IReadOnlyCollection<ArticleReadModel> Articles => _theme.Articles;
         }
     }
 }
