@@ -11,6 +11,7 @@
 * log when theme processing time > 1s
 * keyword count in article table
 * do not create theme if keyword intersection > 10 keywords
+* optimize inmemory projection for articles (use dictionary)
 
 # Tech
 * display current assembly version for all programs on execution (FeedAggregator, ProjectionSynchronizer, Front)

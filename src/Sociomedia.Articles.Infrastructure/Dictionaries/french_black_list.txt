@@ -20,3 +20,4 @@ abonnés
 abonnement
 abonnements
 offre
+article

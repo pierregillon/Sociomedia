@@ -5,7 +5,7 @@ namespace Sociomedia.Core
 {
     public static class AsyncEnumerableExtensions
     {
-        public static async Task<IReadOnlyCollection<T>> Enumerable<T>(this IAsyncEnumerable<T> enumerable)
+        public static async Task<IReadOnlyCollection<T>> EnumerateAsync<T>(this IAsyncEnumerable<T> enumerable)
         {
             var list = new List<T>();
             await foreach (var item in enumerable) {

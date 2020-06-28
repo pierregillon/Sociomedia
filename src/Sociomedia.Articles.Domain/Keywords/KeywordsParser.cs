@@ -41,7 +41,7 @@ namespace Sociomedia.Articles.Domain.Keywords
             return !string.IsNullOrWhiteSpace(word) 
                    && (word.Is3LettersAcronym() ||  word.Length >= MIN_WORD_LENGTH)
                    && !word.IsANumber()
-                   && (char.IsUpper(word[0]) || _keywordDictionary.IsValidKeyword(word));
+                   && _keywordDictionary.IsValidKeyword(word);
         }
 
         private static IEnumerable<Keyword> TransformToKeywords(IReadOnlyCollection<string> words)
