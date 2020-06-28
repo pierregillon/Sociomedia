@@ -12,5 +12,14 @@ namespace Sociomedia.Tests {
                 .Should()
                 .NotBe(new Keyword("Test", 11));
         }
+
+        [Fact]
+        public void A_keyword_can_be_composed()
+        {
+            new Keyword("john wick", 1)
+                .IsComposed
+                .Should()
+                .BeTrue();
+        }
     }
 }

@@ -6,6 +6,7 @@ namespace Sociomedia.Themes.Domain
     {
         public int Occurence { get; }
         public string Value { get; }
+        public bool IsComposed => Value.Contains(' ');
 
         public Keyword(string value, int occurence)
         {

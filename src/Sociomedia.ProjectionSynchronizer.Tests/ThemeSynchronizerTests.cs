@@ -41,7 +41,10 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
             var article1 = Guid.NewGuid();
             var article2 = Guid.NewGuid();
 
-            await _inMemoryBus.Push(1, new ThemeAdded(theme, new[] { new Keyword("coronavirus", 10), new Keyword("france", 12) }, new[] { article1, article2 }));
+            await _inMemoryBus.Push(1, new ThemeAdded(theme, new[] {
+                new Keyword("coronavirus", 10), 
+                new Keyword("france", 12)
+            }, new[] { article1, article2 }));
 
             // Asserts
 
@@ -52,7 +55,8 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
                         Id = theme,
                         Name = "France, Coronavirus",
                         FullKeywords = "coronavirus (10) ; france (12)",
-                        KeywordCount = 2
+                        KeywordCount = 2,
+                        OccurencePerKeywordPerArticle = 5.5d
                     },
                 });
 
@@ -66,6 +70,33 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
                     new ThemedArticleTable {
                         ThemeId = theme,
                         ArticleId = article2
+                    },
+                });
+        }
+
+        [Fact]
+        public async Task A_theme_with_composed_keyword_are_merged_in_name()
+        {
+            await _synchronizer.StartSynchronization();
+
+            // Acts
+            var theme = Guid.NewGuid();
+            var article1 = Guid.NewGuid();
+            var article2 = Guid.NewGuid();
+
+            await _inMemoryBus.Push(1, new ThemeAdded(theme, new[] {
+                new Keyword("emmanuel macron", 10),
+                new Keyword("emmanuel", 12),
+                new Keyword("macron", 15)
+            }, new[] { article1, article2 }));
+
+            // Asserts
+
+            (await _dbConnection.Themes.ToArrayAsync())
+                .Should()
+                .BeEquivalentTo(new[] {
+                    new {
+                        Name = "Emmanuel Macron",
                     },
                 });
         }
@@ -166,7 +197,8 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
                         Id = theme,
                         Name = "Coronavirus, France, Bob",
                         FullKeywords = "coronavirus (15) ; france (14) ; bob (2)",
-                        KeywordCount = 3
+                        KeywordCount = 3,
+                        OccurencePerKeywordPerArticle = 5.166666666666667d
                     },
                 });
         }
