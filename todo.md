@@ -12,6 +12,10 @@
 * keyword count in article table
 * do not create theme if keyword intersection > 10 keywords
 * optimize inmemory projection for articles (use dictionary)
+* order by (3 * theme."KeywordCount") * (2 * Count(theme."Id")) * (2 * "OccurencePerKeywordPerArticle") * (3 * AVG(14 - Date_part('day', now() - article."PublishDate"))) desc
+* projection : distinct when concatenating keywords for articles (and theme ?)
+* ignore several common keywords from theming (week days, month names, current country)
+* Remove themes that can be replaced with composed words ? ('Premier' => 'Premier ministre' ; 'Premier tour')
 
 # Tech
 * display current assembly version for all programs on execution (FeedAggregator, ProjectionSynchronizer, Front)
