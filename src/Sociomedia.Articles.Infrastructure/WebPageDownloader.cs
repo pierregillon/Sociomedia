@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
+using FluentAsync;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Core.Domain;
 
@@ -22,14 +23,14 @@ namespace Sociomedia.Articles.Infrastructure
         {
             return await url
                 .Pipe(DownloadWebPageContent)
-                .Pipe(x => x.ReadAsStringAsync());
+                .PipeAsync(x => x.ReadAsStringAsync());
         }
 
         public async Task<Stream> DownloadStream(string url)
         {
             return await url
                 .Pipe(DownloadWebPageContent)
-                .Pipe(x => x.ReadAsStreamAsync());
+                .PipeAsync(x => x.ReadAsStreamAsync());
         }
 
         private async Task<HttpContent> DownloadWebPageContent(string url)

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using CodeHollow.FeedReader.Feeds;
+using FluentAsync;
 using HtmlAgilityPack;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Feeds;

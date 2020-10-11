@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentAsync;
 using Sociomedia.Core.Domain;
 
 namespace Sociomedia.Articles.Domain.Keywords

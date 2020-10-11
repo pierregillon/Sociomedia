@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FluentAsync;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Feeds;
-using Sociomedia.Core.Domain;
 
 namespace Sociomedia.Articles.Infrastructure
 {
@@ -25,7 +25,7 @@ namespace Sociomedia.Articles.Infrastructure
             try {
                 return await url
                     .Pipe(_webPageDownloader.DownloadStream)
-                    .Pipe(_feedParser.Parse);
+                    .PipeAsync(_feedParser.Parse);
             }
             catch (UnreachableWebDocumentException) {
                 return Array.Empty<FeedItem>();

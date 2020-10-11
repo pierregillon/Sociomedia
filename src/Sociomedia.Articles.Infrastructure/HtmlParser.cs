@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using FluentAsync;
 using HtmlAgilityPack;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Core.Domain;

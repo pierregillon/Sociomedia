@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="CqrsLite" Version="1.31.1" />
     <PackageReference Include="EventStore.Client" Version="5.0.8" />
+    <PackageReference Include="FluentAsync" Version="1.0.1" />
     <PackageReference Include="StructureMap" Version="4.5.0" />
   </ItemGroup>
 

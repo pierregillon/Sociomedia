@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using CQRSlite.Domain;
 using EventStore.ClientAPI;
+using FluentAsync;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Articles.Domain.Keywords;
@@ -56,7 +57,7 @@ namespace Sociomedia.Articles.Application.Commands.CalculateKeywords
             try {
                 return await url
                     .Pipe(_webPageDownloader.Download)
-                    .Pipe(_htmlParser.ExtractPlainTextArticleContent);
+                    .PipeAsync(_htmlParser.ExtractPlainTextArticleContent);
             }
             catch (UnreachableWebDocumentException) {
                 _logger.Error($"[{GetType().Name.SeparatePascalCaseWords().ToUpper()}] Unable to update keywords of the article {url} : unreachable web document.");

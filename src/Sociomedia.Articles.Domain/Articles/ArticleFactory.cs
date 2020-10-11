@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using FluentAsync;
 using Sociomedia.Articles.Domain.Feeds;
 using Sociomedia.Articles.Domain.Keywords;
-using Sociomedia.Core.Domain;
 
 namespace Sociomedia.Articles.Domain.Articles
 {
@@ -22,9 +22,9 @@ namespace Sociomedia.Articles.Domain.Articles
         public async Task<Article> Build(Guid mediaId, FeedItem feedItem)
         {
             feedItem.ImageUrl ??= await _webPageDownloader.Download(feedItem.Link)
-                .Pipe(_htmlParser.ExtractArticleImageUrl)
-                .Pipe(imageUrl => InjectHostIfMissing(imageUrl, feedItem.Link))
-                .Pipe(UrlSanitizer.Sanitize);
+                .PipeAsync(_htmlParser.ExtractArticleImageUrl)
+                .PipeAsync(imageUrl => InjectHostIfMissing(imageUrl, feedItem.Link))
+                .PipeAsync(UrlSanitizer.Sanitize);
 
             return new Article(mediaId, feedItem);
         }
