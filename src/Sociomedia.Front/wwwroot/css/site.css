@@ -181,18 +181,3 @@ app {
         display: block;
     }
 }
-.month-trending {
-    margin-top: -10px;
-}
-
-.month-trending .nav-item {
-    padding-top: 0 !important;
-}
-
-.month-trending li a {
-    height: 2em !important;
-}
-
-.month-trending li {
-    color: white;
-}

@@ -1,0 +1,12 @@
+﻿.edit-media {
+    max-width: 900px;
+}
+
+.edit-media .row {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.form-group {
+    background: red;
+}

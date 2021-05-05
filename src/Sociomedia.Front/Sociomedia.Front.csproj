@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlazorStyled" Version="3.1.0" />
     <PackageReference Include="Sotsera.Blazor.Toaster" Version="3.0.0" />
     <PackageReference Include="StructureMap.AspNetCore" Version="2.0.0" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="2.0.0" />

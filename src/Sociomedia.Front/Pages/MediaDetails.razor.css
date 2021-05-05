@@ -1,0 +1,14 @@
+﻿.media-details > .logo {
+    display: block;
+    margin: auto;
+    max-height: 200px;
+    max-width: 500px;
+    min-width: 410px;
+}
+
+.media-details > .information { margin-top: 20px; }
+
+.media-details h2.articles {
+    text-align: center;
+    margin-bottom: 20px;
+}
