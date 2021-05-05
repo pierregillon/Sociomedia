@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CqrsLite" Version="1.31.1" />
+    <PackageReference Include="StructureMap" Version="4.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sociomedia.Core\Sociomedia.Core.csproj" />
+    <ProjectReference Include="..\Sociomedia.Themes.Application\Sociomedia.Themes.Application.csproj" />
+  </ItemGroup>
+
+</Project>

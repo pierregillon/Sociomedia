@@ -1,0 +1,12 @@
+{
+  "EventStore": {
+    "server": "localhost",
+    "port": 0,
+    "login": "",
+    "password": ""
+  },
+
+  "ThemeCalculator": {
+    "ArticleAggregationIntervalInDays": 15
+  }
+}

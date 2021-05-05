@@ -5,13 +5,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
-using Sociomedia.Articles.Application.Projections;
-using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core;
+using Sociomedia.Core.Application;
+using Sociomedia.Core.Application.Projections;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.EventStoring;
-using Sociomedia.FeedAggregator.Infrastructure;
 using Sociomedia.Medias.Domain;
 
 namespace Sociomedia.FeedAggregator.Application
@@ -49,7 +48,7 @@ namespace Sociomedia.FeedAggregator.Application
         public async Task StartAggregation(CancellationToken token)
         {
             var lastStreamEventPosition = await GetLastStreamEventPosition();
-            await _projectionsBootstrapper.InitializeUntil(lastStreamEventPosition.Value);
+            await _projectionsBootstrapper.InitializeUntil(lastStreamEventPosition.Value, typeof(ArticleEvent));
             await _eventBus.SubscribeToEvents(lastStreamEventPosition, GetEventTypes(), DomainEventReceived, () => {
                 StartFeedSynchronization(token);
             });
@@ -90,15 +89,9 @@ namespace Sociomedia.FeedAggregator.Application
 
         private static IEnumerable<Type> GetEventTypes()
         {
-            var articlesEvents = typeof(ArticleEvent).Assembly.GetTypes()
+            return typeof(MediaEvent).Assembly.GetTypes()
                 .Where(x => x.IsDomainEvent())
                 .ToArray();
-
-            var mediaEvents = typeof(MediaEvent).Assembly.GetTypes()
-                .Where(x => x.IsDomainEvent())
-                .ToArray();
-
-            return articlesEvents.Union(mediaEvents).ToArray();
         }
 
         private void Error(Exception ex)

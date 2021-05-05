@@ -1,19 +1,9 @@
 ﻿using System;
 using System.IO;
-using CQRSlite.Domain;
-using CQRSlite.Events;
-using EventStore.ClientAPI;
-using EventStore.ClientAPI.Common.Log;
-using Sociomedia.Articles.Application.Projections;
-using Sociomedia.Articles.Application.Queries;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Feeds;
 using Sociomedia.Articles.Domain.Keywords;
 using Sociomedia.Core.Application;
-using Sociomedia.Core.Domain;
-using Sociomedia.Core.Infrastructure.CQRS;
-using Sociomedia.Core.Infrastructure.EventStoring;
-using Sociomedia.Core.Infrastructure.Logging;
 using StructureMap;
 using StructureMap.Graph;
 using StructureMap.Graph.Scanning;
@@ -22,11 +12,8 @@ namespace Sociomedia.Articles.Infrastructure
 {
     public class ArticlesRegistry : Registry
     {
-        public ArticlesRegistry(EventStoreConfiguration eventStoreConfiguration)
+        public ArticlesRegistry()
         {
-            For<ICommandDispatcher>().Use<StructureMapCommandDispatcher>();
-            For<IEventPublisher>().Use<StructureMapEventPublisher>();
-
             Scan(scanner => {
                 scanner.Assembly("Sociomedia.Articles.Application");
                 scanner.Convention<AllInterfacesConvention>();
@@ -34,29 +21,17 @@ namespace Sociomedia.Articles.Infrastructure
                 scanner.AddAllTypesOf(typeof(ICommandHandler<>));
             });
 
-            For<ICommandDispatcher>().DecorateAllWith<CommandDispatcherLogger>();
+            For<FrenchKeywordDictionaryConfiguration>().Use(new FrenchKeywordDictionaryConfiguration(
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "./Dictionaries/french.csv"),
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "./Dictionaries/french_black_list.txt")
+            ));
 
-            For<FrenchKeywordDictionary>()
-                .Use<FrenchKeywordDictionary>()
-                .Ctor<string>()
-                .Is(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "./Dictionaries/french.csv"))
-                .Singleton();
+            For<FrenchKeywordDictionary>().Use<FrenchKeywordDictionary>().Singleton();
 
             For<IKeywordDictionary>().Use(x => x.GetInstance<FrenchKeywordDictionary>());
 
-            For<IProjectionLocator>().Use<ProjectionLocator>();
-
             For<IFeedReader>().Use<FeedReader>();
             For<IFeedParser>().Use<FeedParser>();
-            For<InMemoryDatabase>().Singleton();
-            For<ILogger>().Use<ConsoleLogger>();
-            For<ITypeLocator>().Use<ReflectionTypeLocator>();
-
-            For<IRepository>().Use(context => new Repository(context.GetInstance<IEventStore>()));
-            For<IEventStore>().Use<EventStoreOrg>().Singleton();
-            For<IEventStoreExtended>().Use(x => x.GetInstance<EventStoreOrg>());
-            For<EventStoreConfiguration>().Use(eventStoreConfiguration).Singleton();
-
             For<IHtmlParser>().Use<HtmlParser>();
             For<IWebPageDownloader>().Use<WebPageDownloader>();
         }

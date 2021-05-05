@@ -1,0 +1,108 @@
+﻿@page "/"
+@page "/themes"
+@using Sociomedia.Front.Data
+@inject ThemeFinder ThemeFinder
+
+<h1>Actualité récente</h1>
+
+@if (_themes.Any()) {
+    <div class="themes">
+        @foreach (var theme in _themes) {
+            <h3 class="theme-name">
+                <a href="@("/themes/" + theme.Id)">@theme.Name</a>
+            </h3>
+            <div class="row justify-content-center">
+                @foreach (var article in theme.Articles) {
+                    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
+                        <Article @key="@article.Id" Value="@article"></Article>
+                    </div>
+                }
+            </div>
+            <div class="d-flex justify-content-center">
+                <a class="btn btn-secondary" href="@("/themes/" + theme.Id)" data-toggle="tooltip" data-placement="top" title="Voir tous les articles du même thème">
+                    @theme.Name : voir tous les articles
+                </a>
+            </div>
+        }
+        @if (ShowMoreThemesButton)
+        {
+            <div class="d-flex justify-content-center show-more">
+                <button class="btn btn-primary" @onclick="@ShowMoreThemes">
+                    Afficher plus de thèmes
+                </button>
+            </div>
+        }
+
+        @if (_isLoadingMorePages)
+        {
+            <div class="d-flex justify-content-center themes-spinner">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Chargement...</span>
+                </div>
+            </div>
+        }
+    </div>
+}
+else {
+    <div class="d-flex justify-content-center">
+        Aucun résultat
+    </div>
+}
+
+<Styled>
+    .themes {
+        margin-bottom: 20px;
+    }
+
+    .themes .theme-name {
+        margin-top: 1em;
+    }
+
+    .oi.oi-reload {
+        font-size: 20px;
+    }
+
+    .themes .themes-spinner, .show-more {
+        margin: 50px;
+    }
+</Styled>
+
+@code {
+    private const int PAGE_SIZE = 10;
+    private int _currentPage = 0;
+
+    private IReadOnlyCollection<TrendingThemeListItem> _themes = Array.Empty<TrendingThemeListItem>();
+    private bool _noMoreThemes;
+    private bool _isLoadingMorePages;
+
+    public bool ShowMoreThemesButton => !_isLoadingMorePages && _themes.Count > 0 && !_noMoreThemes;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPage(0);
+    }
+
+    private async Task ShowMoreThemes()
+    {
+        await LoadPage(++_currentPage);
+    }
+
+    private async Task LoadPage(int page)
+    {
+        try {
+            _isLoadingMorePages = true;
+            var newThemes = await ThemeFinder.GetTrending(page, PAGE_SIZE);
+            _themes = _themes.Concat(newThemes).ToArray();
+            if (newThemes.Count < PAGE_SIZE) {
+                _noMoreThemes = true;
+            }
+        }
+        finally
+        {
+            _isLoadingMorePages = false;
+        }
+    }
+
+}
+

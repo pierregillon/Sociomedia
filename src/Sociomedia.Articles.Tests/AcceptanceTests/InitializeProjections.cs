@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CQRSlite.Events;
 using EventStore.ClientAPI;
@@ -7,10 +8,11 @@ using FluentAssertions;
 using NSubstitute;
 using Sociomedia.Articles.Application.Projections;
 using Sociomedia.Articles.Application.Queries;
-using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Articles;
+using Sociomedia.Core.Application.Projections;
 using Sociomedia.Core.Domain;
 using Sociomedia.Medias.Domain;
+using StructureMap.TypeRules;
 using Xunit;
 
 namespace Sociomedia.Articles.Tests.AcceptanceTests
@@ -35,7 +37,11 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             var mediaId = Guid.NewGuid();
 
             _eventStore
-                .GetAllEventsBetween(Arg.Any<Position>(), Arg.Any<Position>(), Arg.Any<IReadOnlyCollection<Type>>())
+                .GetAllEventsBetween(
+                    Arg.Any<Position>(),
+                    Arg.Any<Position>(),
+                    Arg.Is<IReadOnlyCollection<Type>>(x=>x.All(@event=>@event.CanBeCastTo(typeof(MediaEvent))))
+                )
                 .Returns(new AsyncList<IEvent> {
                     new MediaFeedAdded(mediaId, "https://site/rss.xml"),
                     new MediaFeedAdded(mediaId, "https://site/atom.xml"),
@@ -43,7 +49,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
                     new MediaFeedRemoved(mediaId, "https://site/rss1.xml"),
                 });
 
-            await _projectionsBootstrapper.InitializeUntil(0);
+            await _projectionsBootstrapper.InitializeUntil(0, typeof(ArticleEvent));
 
             (await _finder.GetAllMediaFeeds())
                 .Should()
@@ -67,7 +73,11 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             var mediaId = Guid.NewGuid();
 
             _eventStore
-                .GetAllEventsBetween(Arg.Any<Position>(), Arg.Any<Position>(), Arg.Any<IReadOnlyCollection<Type>>())
+                .GetAllEventsBetween(
+                    Position.Start,
+                    Position.End,
+                    Arg.Is<IReadOnlyCollection<Type>>(x => x.All(@event => @event.CanBeCastTo(typeof(ArticleEvent))))
+                )
                 .Returns(new AsyncList<IEvent> {
                     new ArticleImported(articleId, "test", "summary", DateTimeOffset.Now.Date.Subtract(TimeSpan.FromDays(1)), "https://site.html", "https://site/image.jpg", "externalId", new string[0], mediaId),
                     new ArticleUpdated(articleId, "some title", "some article", DateTimeOffset.Now.Date, "https://site2.html", "https://site2/image.jpg"),
@@ -75,7 +85,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
                     new ArticleDeleted(article2Id)
                 });
 
-            await _projectionsBootstrapper.InitializeUntil(0);
+            await _projectionsBootstrapper.InitializeUntil(0, typeof(ArticleEvent));
 
             (await _finder.GetArticle(mediaId, "externalId"))
                 .Should()

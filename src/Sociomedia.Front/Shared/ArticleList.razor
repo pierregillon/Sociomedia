@@ -1,4 +1,5 @@
 ﻿@using Sociomedia.Front.Data
+@using Sociomedia.Front.Models
 @inject ArticleFinder ArticleFinder
 
 @if (_articles.Any())
@@ -43,16 +44,16 @@ else
 
 <Styled>
     .articles {
-    max-width: 1300px;
-    margin: auto;
+        max-width: 1300px;
+        margin: auto;
     }
 
     .oi.oi-reload {
-    font-size: 20px;
+        font-size: 20px;
     }
 
     .articles-spinner, .show-more {
-    margin: 50px;
+        margin: 50px;
     }
 
 </Styled>
@@ -62,14 +63,11 @@ else
     private int _currentPage = 0;
     private bool _isLoadingMorePages;
     private bool _noMoreArticles;
-    private string _currentKeyword;
+    private ArticleListFilters _currentFilter;
     private int _totalArticleCount;
 
     [Parameter]
-    public Guid? MediaId { get; set; }
-
-    [Parameter]
-    public string Keyword { get; set; }
+    public ArticleListFilters Filters { get; set; }
 
     public bool ShowMoreArticlesButton => !_isLoadingMorePages && _articles.Count > 0 && !_noMoreArticles;
 
@@ -77,9 +75,9 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        if (_currentKeyword != Keyword)
+        if (_currentFilter != Filters)
         {
-            _currentKeyword = Keyword;
+            _currentFilter = Filters;
             _articles = Array.Empty<ArticleListItem>();
             _noMoreArticles = false;
             await LoadPage(0);
@@ -88,7 +86,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _currentKeyword = Keyword;
+        _currentFilter = Filters;
         await LoadPage(0);
     }
 
@@ -102,8 +100,8 @@ else
         try
         {
             _isLoadingMorePages = true;
-            _totalArticleCount = await ArticleFinder.Count(MediaId, _currentKeyword);
-            var newArticles = await ArticleFinder.List(page, PAGE_SIZE, MediaId, _currentKeyword);
+            _totalArticleCount = await ArticleFinder.Count(_currentFilter);
+            var newArticles = await ArticleFinder.List(page, PAGE_SIZE, _currentFilter);
             _articles = _articles.Concat(newArticles).ToArray();
             if (newArticles.Count < PAGE_SIZE) {
                 _noMoreArticles = true;

@@ -11,16 +11,11 @@ namespace Sociomedia.Front.Data
 {
     public class MediaFinder
     {
-        private readonly DbConnectionReadModel _dbConnection;
-
-        public MediaFinder(DbConnectionReadModel dbConnection)
-        {
-            _dbConnection = dbConnection;
-        }
-
         public async Task<IReadOnlyCollection<MediaListItem>> List()
         {
-            return await _dbConnection.Medias
+            await using var dbConnection = new DbConnectionReadModel();
+            
+            return await dbConnection.Medias
                 .Select(x => new MediaListItem {
                     Id = x.Id,
                     Name = x.Name,
@@ -32,7 +27,9 @@ namespace Sociomedia.Front.Data
 
         public async Task<ArticleViewModel> Get(Guid mediaId)
         {
-            var media = await _dbConnection.Medias
+            await using var dbConnection = new DbConnectionReadModel();
+            
+            var media = await dbConnection.Medias
                 .Where(x => x.Id == mediaId)
                 .Select(media => new {
                     Id = media.Id,
@@ -43,7 +40,7 @@ namespace Sociomedia.Front.Data
                 .SingleOrDefaultAsync();
 
             if (media != null) {
-                var feeds = await _dbConnection.MediaFeeds
+                var feeds = await dbConnection.MediaFeeds
                     .Where(x => x.MediaId == mediaId)
                     .Select((x, i) => new FeedItem {
                         Url = x.FeedUrl,
@@ -64,7 +61,9 @@ namespace Sociomedia.Front.Data
 
         public async Task<MediaDetailDto> GetDetails(Guid mediaId)
         {
-            var mediaDetail = await _dbConnection.Medias
+            await using var dbConnection = new DbConnectionReadModel();
+            
+            var mediaDetail = await dbConnection.Medias
                 .Where(x => x.Id == mediaId)
                 .Select(media => new {
                     Id = media.Id,

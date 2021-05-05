@@ -39,9 +39,9 @@ namespace Sociomedia.Articles.Domain.Keywords
         private bool IsWordEligible(string word)
         {
             return !string.IsNullOrWhiteSpace(word) 
-                   && word.Length >= MIN_WORD_LENGTH 
-                   && !word.All(char.IsDigit) 
-                   && (char.IsUpper(word[0]) || _keywordDictionary.IsValidKeyword(word));
+                   && (word.Is3LettersAcronym() ||  word.Length >= MIN_WORD_LENGTH)
+                   && !word.IsANumber()
+                   && _keywordDictionary.IsValidKeyword(word);
         }
 
         private static IEnumerable<Keyword> TransformToKeywords(IReadOnlyCollection<string> words)

@@ -32,21 +32,28 @@ namespace Sociomedia.Articles.Domain.Keywords
         public bool Equals(Keyword other)
         {
             if (other == null) throw new ArgumentNullException(nameof(other));
-            return _words.SequenceEqual(other._words);
-            //return string.Compare(_value, other._value, CultureInfo.CurrentCulture, CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace) == 0;
+            return _words.SequenceEqual(other._words) && Occurence == other.Occurence;
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((Keyword) obj);
         }
 
         public override int GetHashCode()
         {
             return Value.GetHashCode();
+        }
+
+        public static Keyword operator +(Keyword x, Keyword y)
+        {
+            if (x.Value != y.Value) {
+                throw new InvalidOperationException("Keywords are different, unable to add them");
+            }
+            return new Keyword(x.Value, x.Occurence + y.Occurence);
         }
     }
 }

@@ -20,13 +20,22 @@ namespace Sociomedia.Articles.Tests.UnitTests
         }
 
         [Theory]
-        [InlineData("test a ad ax test")]
-        [InlineData("a bc c test a test")]
-        public void Keywords_are_words_with_more_than_2_letters(string text)
+        [InlineData("test a add a add test")]
+        [InlineData("a bc c test a test oms a oms")]
+        public void Keywords_are_words_with_more_than_3_letters(string text)
         {
             _keywordsParser.Parse(text)
                 .Should()
                 .BeEquivalentTo(new Keyword("test", 2));
+        }
+
+        [Theory]
+        [InlineData("OMS a add a add OMS")]
+        public void Keywords_can_be_3_letters_acronym(string text)
+        {
+            _keywordsParser.Parse(text)
+                .Should()
+                .BeEquivalentTo(new Keyword("oms", 2));
         }
 
         [Theory]
@@ -102,8 +111,8 @@ namespace Sociomedia.Articles.Tests.UnitTests
             _keywordsParser.Parse(text)
                 .Should()
                 .Contain(new Keyword("john wick", 2))
-                .And.Contain(new Keyword("john", 1))
-                .And.Contain(new Keyword("wick", 1));
+                .And.Contain(new Keyword("john", 2))
+                .And.Contain(new Keyword("wick", 2));
         }
 
         [Theory]
@@ -124,7 +133,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
                 .Contain(new Keyword("covid-19", 2));
         }
 
-        [Theory]
+        [Theory(Skip = "Condition with first letter let to much words go through")]
         [InlineData("Le président est Jean Petit. Jean Petit aime diriger.")]
         public void A_keyword_can_be_a_first_name_and_last_name(string text)
         {

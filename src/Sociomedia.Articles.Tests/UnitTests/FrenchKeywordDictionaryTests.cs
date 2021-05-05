@@ -10,8 +10,8 @@ namespace Sociomedia.Articles.Tests.UnitTests
 
         static FrenchKeywordDictionaryTests()
         {
-            Dictionary = new FrenchKeywordDictionary("./Dictionaries/french.csv");
-            Dictionary.BuildFromFile();
+            Dictionary = new FrenchKeywordDictionary(new FrenchKeywordDictionaryConfiguration("./Dictionaries/french.csv", "./Dictionaries/french_black_list.txt"));
+            Dictionary.BuildFromFiles();
         }
 
         [Theory]
@@ -26,11 +26,19 @@ namespace Sociomedia.Articles.Tests.UnitTests
         }
 
         [Theory]
+        [InlineData("mais")]
+        [InlineData("selon")]
+        [InlineData("être")]
+        [InlineData("promo")]
+        [InlineData("promotion")]
+        [InlineData("partage")]
+        [InlineData("partager")]
+        [InlineData("lire")]
+        [InlineData("connexion")]
         [InlineData("plus")]
         [InlineData("pour")]
         [InlineData("fait")]
         [InlineData("moins")]
-        [InlineData("mais")]
         [InlineData("est")]
         public void Some_words_are_forbidden(string adjective)
         {
@@ -41,6 +49,8 @@ namespace Sociomedia.Articles.Tests.UnitTests
         [InlineData("trump")]
         [InlineData("coronavirus")]
         [InlineData("rachida dati")]
+        [InlineData("l214")]
+        [InlineData("OMS")]
         public void Valid_keyword_is_unknown_word(string word)
         {
             Dictionary.IsValidKeyword(word).Should().BeTrue();

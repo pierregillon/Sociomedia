@@ -1,4 +1,21 @@
 * try to reimport "leparisien"
+* test if an article is present in 2 rss feeds (lemonde)
+* takerigth 100 max on json objet to avoid console to blow
+* add black list keyword for front to avoid
+* manage redondancy keywords : "macron", "emmanuel", "emmanuel macron"
+* ArticleUpdated => update publishDate
+* refacto ProjectionsBootstrapper
+* remove date from keywords
+* black list "mois, jour, bien, abonnés, offre,"
+* warning: prod base, update KeywordCount column
+* log when theme processing time > 1s
+* keyword count in article table
+* do not create theme if keyword intersection > 10 keywords
+* optimize inmemory projection for articles (use dictionary)
+* order by (3 * theme."KeywordCount") * (2 * Count(theme."Id")) * (2 * "OccurencePerKeywordPerArticle") * (3 * AVG(14 - Date_part('day', now() - article."PublishDate"))) desc
+* projection : distinct when concatenating keywords for articles (and theme ?)
+* ignore several common keywords from theming (week days, month names, current country)
+* Remove themes that can be replaced with composed words ? ('Premier' => 'Premier ministre' ; 'Premier tour')
 
 # Tech
 * display current assembly version for all programs on execution (FeedAggregator, ProjectionSynchronizer, Front)
@@ -20,6 +37,7 @@
   => add linux CI
 * Update article not only on different publish date but also when title or summary changed a little bit : introduce % accuracy
 * Show indication about free / paid articles
+* If date is in future (rare but happend) filter it in front query : Date < now 
 
 # Theme domain
 * display 3 main themes on article card

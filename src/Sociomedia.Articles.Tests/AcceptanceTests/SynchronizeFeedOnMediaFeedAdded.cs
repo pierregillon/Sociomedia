@@ -1,11 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CQRSlite.Events;
 using FluentAssertions;
 using NSubstitute;
-using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Articles.Domain.Feeds;
 using Sociomedia.Articles.Tests.UnitTests;
@@ -29,11 +27,9 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
         {
             var mediaId = Guid.NewGuid();
 
-            await EventStore.StoreAndPublish(new IEvent[] {
+            await StoreAndPublish(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left)
             });
-
-            EventStore.CommitEvents();
 
             _feedReader
                 .Read("https://www.test.com/rss.xml")
@@ -56,9 +52,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
                     }
                 });
 
-            await EventStore.StoreAndPublish(new IEvent[] {
-                new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml"),
-            });
+            await EventPublisher.Publish(new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml"));
 
             (await EventStore.GetNewEvents())
                 .OfType<ArticleImported>()

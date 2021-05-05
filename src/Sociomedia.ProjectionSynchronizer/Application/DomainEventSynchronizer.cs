@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.EventStoring;
 using Sociomedia.Medias.Domain;
+using Sociomedia.Themes.Domain;
 
 namespace Sociomedia.ProjectionSynchronizer.Application
 {
@@ -16,18 +16,15 @@ namespace Sociomedia.ProjectionSynchronizer.Application
         private readonly IEventBus _eventBus;
         private readonly IEventPublisher _eventPublisher;
         private readonly IStreamPositionRepository _streamPositionRepository;
-        private readonly ProjectionSynchronizationConfiguration _configuration;
 
         public DomainEventSynchronizer(
             IEventBus eventBus,
             IEventPublisher eventPublisher,
-            IStreamPositionRepository streamPositionRepository,
-            ProjectionSynchronizationConfiguration configuration)
+            IStreamPositionRepository streamPositionRepository)
         {
             _eventBus = eventBus;
             _eventPublisher = eventPublisher;
             _streamPositionRepository = streamPositionRepository;
-            _configuration = configuration;
         }
 
         public async Task StartSynchronization()
@@ -38,15 +35,19 @@ namespace Sociomedia.ProjectionSynchronizer.Application
 
         private static IEnumerable<Type> GetEventTypes()
         {
-            var articlesEvents = typeof(ArticleImported).Assembly.GetTypes()
+            var articlesEvents = typeof(ArticleEvent).Assembly.GetTypes()
                 .Where(x => x.IsDomainEvent())
                 .ToArray();
 
-            var mediaEvents = typeof(MediaAdded).Assembly.GetTypes()
+            var mediaEvents = typeof(MediaEvent).Assembly.GetTypes()
                 .Where(x => x.IsDomainEvent())
                 .ToArray();
 
-            return articlesEvents.Union(mediaEvents).ToArray();
+            var themeEvents = typeof(ThemeEvent).Assembly.GetTypes()
+                .Where(x => x.IsDomainEvent())
+                .ToArray();
+
+            return articlesEvents.Concat(mediaEvents).Concat(themeEvents).ToArray();
         }
 
         private async Task DomainEventReceived(IEvent @event, long position)

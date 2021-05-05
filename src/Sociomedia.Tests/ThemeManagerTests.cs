@@ -1,5 +1,11 @@
-﻿using System.Linq;
+﻿using System;
 using FluentAssertions;
+using NSubstitute;
+using Sociomedia.Articles.Domain.Articles;
+using Sociomedia.Core.Domain;
+using Sociomedia.Themes.Application;
+using Sociomedia.Themes.Application.Commands.AddArticleToTheme;
+using Sociomedia.Themes.Application.Projections;
 using Sociomedia.Themes.Domain;
 using Xunit;
 
@@ -7,157 +13,77 @@ namespace Sociomedia.Tests
 {
     public class ThemeManagerTests
     {
-        private readonly ThemeManager _themeManager;
+        private readonly ThemeProjection _projection;
+        private readonly ThemeChallenger _themeChallenger;
+        private readonly IClock _clock = Substitute.For<IClock>();
 
         public ThemeManagerTests()
         {
-            _themeManager = new ThemeManager();
+            _clock.Now().Returns(DateTimeOffset.Now);
+
+            var themeProjectionRepository = new ThemeProjectionRepository();
+            var configuration = new ThemeCalculatorConfiguration{ArticleAggregationIntervalInDays = 30};
+            _projection = new ThemeProjection(themeProjectionRepository, configuration, _clock);
+            _themeChallenger = new ThemeChallenger(new ThemeDataFinder(themeProjectionRepository, configuration, new AcceptanceTests.AcceptanceTests.EmptyLogger(), _clock));
         }
 
         [Fact]
         public void A_single_article_does_not_create_theme()
         {
-            var article = new ThemeArticle(new[] { "test 1" });
+            var article = new ArticleToChallenge(Guid.NewGuid(), DateTimeOffset.Now, new[] { new Keyword("test 1", 2), });
 
-            _themeManager.Add(article);
+            var commands = _themeChallenger.Challenge(article);
 
-            _themeManager.UncommittedEvents
-                .Should()
-                .BeEmpty();
+            commands.Should().BeEmpty();
         }
 
         [Fact]
-        public void Two_articles_with_same_keywords_create_theme_with_keyword_intersection()
+        public void Adding_article_in_an_existing_theme_that_match_keywords()
         {
-            var article1 = new ThemeArticle(new[] { "coronavirus", "italie" });
-            var article2 = new ThemeArticle(new[] { "coronavirus", "china" });
+            var article1 = Guid.NewGuid();
+            var article2 = Guid.NewGuid();
+            var article3 = Guid.NewGuid();
+            var theme1 = Guid.NewGuid();
 
-            _themeManager.Add(article1);
-            _themeManager.Add(article2);
+            _projection.On(AnArticleImported(article1));
+            _projection.On(new ArticleKeywordsDefined(article1, new[] {
+                new Articles.Domain.Keywords.Keyword("coronavirus", 2),
+                new Articles.Domain.Keywords.Keyword("italie", 2),
+            }));
+            _projection.On(AnArticleImported(article2));
+            _projection.On(new ArticleKeywordsDefined(article2, new[] {
+                new Articles.Domain.Keywords.Keyword("coronavirus", 3),
+                new Articles.Domain.Keywords.Keyword("china", 3),
+            }));
+            _projection.On(new ThemeAdded(theme1, new[] {
+                new Keyword("coronavirus", 5)
+            }, new[] { article1, article2 }));
 
-            _themeManager.UncommittedEvents
+            var articleToChallenge = new ArticleToChallenge(article3, DateTimeOffset.Now, new[] {
+                new Keyword("coronavirus", 3),
+                new Keyword("france", 3),
+            });
+
+            var commands = _themeChallenger.Challenge(articleToChallenge);
+
+            commands
                 .Should()
-                .BeEquivalentTo(new {
-                    Keywords = new[] { "coronavirus" },
-                    Articles = new[] { article1, article2 }
-                });
+                .BeEquivalentTo(new AddArticleToThemeCommand(theme1, articleToChallenge.ToDomain()));
         }
 
-        [Fact]
-        public void Three_articles_create_two_themes()
+        private static ArticleImported AnArticleImported(Guid articleId, DateTimeOffset publishDate = default)
         {
-            var article1 = new ThemeArticle(new[] { "coronavirus", "italie" });
-            var article2 = new ThemeArticle(new[] { "coronavirus", "china" });
-            var article3 = new ThemeArticle(new[] { "opera", "china" });
-
-            _themeManager.Add(article1);
-            _themeManager.Add(article2);
-            _themeManager.Add(article3);
-
-            _themeManager.UncommittedEvents
-                .Should()
-                .BeEquivalentTo(new[] {
-                    new {
-                        Keywords = new[] { "coronavirus" },
-                        Articles = new[] { article1, article2 }
-                    },
-                    new {
-                        Keywords = new[] { "china" },
-                        Articles = new[] { article2, article3 }
-                    }
-                });
-        }
-
-        [Fact]
-        public void Three_articles_in_the_same_theme()
-        {
-            var article1 = new ThemeArticle(new[] { "coronavirus", "italie" });
-            var article2 = new ThemeArticle(new[] { "coronavirus", "china" });
-            var article3 = new ThemeArticle(new[] { "coronavirus", "europe" });
-
-            _themeManager.Add(article1);
-            _themeManager.Add(article2);
-            _themeManager.Add(article3);
-
-            var events = _themeManager.UncommittedEvents;
-
-            events
-                .OfType<NewThemeCreated>()
-                .Should()
-                .BeEquivalentTo(new {
-                    Keywords = new[] { "coronavirus" },
-                    Articles = new[] { article1, article2 }
-                });
-
-            events
-                .OfType<ArticleAddedToTheme>()
-                .Should()
-                .BeEquivalentTo(new { Article = article3 });
-        }
-
-        [Fact]
-        public void Three_articles_in_two_themes_with_keyword_in_common()
-        {
-            var article1 = new ThemeArticle(new[] { "coronavirus", "italie" });
-            var article2 = new ThemeArticle(new[] { "coronavirus", "china" });
-            var article3 = new ThemeArticle(new[] { "coronavirus", "china" });
-
-            _themeManager.Add(article1);
-            _themeManager.Add(article2);
-            _themeManager.Add(article3);
-
-            var events = _themeManager.UncommittedEvents;
-
-            events
-                .OfType<NewThemeCreated>()
-                .Should()
-                .BeEquivalentTo(new[] {
-                    new {
-                        Keywords = new[] { "coronavirus" },
-                        Articles = new[] { article1, article2 }
-                    },
-                    new {
-                        Keywords = new[] { "coronavirus", "china" },
-                        Articles = new[] { article2, article3 }
-                    }
-                });
-
-            events
-                .OfType<ArticleAddedToTheme>()
-                .Should()
-                .BeEquivalentTo(new { Article = article3 });
-        }
-
-        [Fact]
-        public void Three_articles_with_a_single_keyword_in_common()
-        {
-            var article1 = new ThemeArticle(new[] { "coronavirus", "italie" });
-            var article2 = new ThemeArticle(new[] { "coronavirus", "italie", "chine" });
-            var article3 = new ThemeArticle(new[] { "coronavirus", "chine" });
-
-            _themeManager.Add(article1);
-            _themeManager.Add(article2);
-            _themeManager.Add(article3);
-
-            var events = _themeManager.UncommittedEvents;
-
-            events
-                .OfType<NewThemeCreated>()
-                .Should()
-                .BeEquivalentTo(new[] {
-                    new {
-                        Keywords = new[] { "coronavirus", "italie" },
-                        Articles = new[] { article1, article2 }
-                    },
-                    new {
-                        Keywords = new[] { "coronavirus" },
-                        Articles = new[] { article1, article2, article3 }
-                    },
-                    new {
-                        Keywords = new[] { "coronavirus", "chine" },
-                        Articles = new[] { article2, article3 }
-                    },
-                });
+            return new ArticleImported(
+                articleId,
+                "some title",
+                "some summary",
+                publishDate == default ? DateTimeOffset.Now : publishDate,
+                "some url",
+                "some image url",
+                "some external id",
+                Array.Empty<string>(),
+                Guid.NewGuid()
+            );
         }
     }
 }

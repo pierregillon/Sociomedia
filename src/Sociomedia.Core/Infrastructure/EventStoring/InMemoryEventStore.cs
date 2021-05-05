@@ -11,35 +11,25 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 {
     public class InMemoryEventStore : IEventStore, IEventStoreExtended
     {
-        private readonly IEventPublisher _eventPublisher;
         private readonly Dictionary<Guid, List<IEvent>> _domainEventsPerGuid = new Dictionary<Guid, List<IEvent>>();
         private readonly List<IEvent> _allEvents = new List<IEvent>();
         private DateTimeOffset _now;
 
-        public InMemoryEventStore(IEventPublisher eventPublisher)
+        public Task<IEnumerable<IEvent>> GetNewEvents()
         {
-            _eventPublisher = eventPublisher;
+            return GetNewEventsAfter(_now);
         }
 
-        public async Task<IReadOnlyCollection<IEvent>> GetNewEvents()
+        public async Task<IEnumerable<IEvent>> GetNewEventsAfter(DateTimeOffset date)
         {
             await Task.Delay(0);
 
-            return _domainEventsPerGuid
-                .SelectMany(x => x.Value)
-                .Where(x => x.TimeStamp > _now)
+            return _allEvents
+                .Where(x => x.TimeStamp > date)
                 .ToArray();
         }
 
-        public async Task StoreAndPublish(IEnumerable<IEvent> events, CancellationToken cancellationToken = new CancellationToken())
-        {
-            foreach (var @event in events) {
-                Add(@event);
-                await _eventPublisher.Publish(@event, cancellationToken);
-            }
-        }
-
-        public Task Store(IEnumerable<IEvent> events, CancellationToken cancellationToken = new CancellationToken())
+        public Task Store(IEnumerable<IEvent> events)
         {
             foreach (var @event in events) {
                 Add(@event);
@@ -47,9 +37,9 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
             return Task.CompletedTask;
         }
 
-        Task IEventStore.Save(IEnumerable<IEvent> events, CancellationToken cancellationToken = new CancellationToken())
+        Task IEventStore.Save(IEnumerable<IEvent> events, CancellationToken cancellationToken)
         {
-            return Store(events, cancellationToken);
+            return Store(events);
         }
 
         public async Task<IEnumerable<IEvent>> Get(Guid aggregateId, int fromVersion, CancellationToken cancellationToken = new CancellationToken())

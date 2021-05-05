@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using CQRSlite.Events;
 using FluentAssertions;
 using NSubstitute;
-using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Articles.Domain.Keywords;
 using Sociomedia.Articles.Tests.UnitTests;
@@ -23,15 +22,13 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
 
             WebPageDownloader.Download(Arg.Any<string>()).Returns("<html>some content with summary</html>");
 
-            await EventStore.StoreAndPublish(new IEvent[] {
+            await StoreAndPublish(new IEvent[] {
                 new MediaAdded(mediaId, "test", null, PoliticalOrientation.Left) { Version = 1 },
                 new MediaFeedAdded(mediaId, "https://www.test.com/rss.xml") { Version = 2 }
             });
 
-            EventStore.CommitEvents();
-
             // Act
-            await EventStore.StoreAndPublish(new IEvent[] {
+            await StoreAndPublish(new IEvent[] {
                 new ArticleImported(Guid.NewGuid(), "some title", "some summary", new DateTime(2020, 04, 01), "https://test/article", "", "articleExternalId", new string[0], mediaId) { Version = 1 }
             });
 
@@ -43,7 +40,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
                         default,
                         new[] {
                             new Keyword("some", 3),
-                            new Keyword("summary", 3),
+                            new Keyword("summary", 2),
                         }),
                 }, x => x.ExcludeDomainEventTechnicalFields());
         }

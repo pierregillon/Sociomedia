@@ -1,0 +1,55 @@
+﻿@page "/themes/{ThemeId:guid}"
+@using Sociomedia.Front.Data
+@using Sociomedia.Front.Models
+
+
+@if (_themeDetail == null)
+{
+    <p>
+        <em>Chargement...</em>
+    </p>
+}
+else
+{
+    <h1>Thème : @_themeDetail.Name</h1>
+    <hr />
+    <ArticleList Filters="@_filters"></ArticleList>
+}
+
+@code {
+
+    [Inject]
+    protected ThemeFinder ThemeFinder { get; set; }
+
+    [Inject]
+    protected NavigationManager NavigationManager { get; set; }
+
+    [Parameter]
+    public Guid? ThemeId { get; set; }
+
+    private ThemeDetail _themeDetail;
+    private ArticleListFilters _filters;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await Reload();
+    }
+
+    private async Task Reload()
+    {
+        if (!ThemeId.HasValue)
+        {
+            NavigationManager.NavigateTo("/themes");
+        }
+        else
+        {
+            _filters = new ArticleListFilters
+            {
+                ThemeId = ThemeId.Value
+            };
+            _themeDetail = await ThemeFinder.Details(ThemeId.Value);
+        }
+    }
+
+}
+

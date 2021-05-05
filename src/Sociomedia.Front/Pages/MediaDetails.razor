@@ -1,5 +1,6 @@
 ﻿@page "/medias/{MediaId:guid}"
 @using Sociomedia.Front.Data
+@using Sociomedia.Front.Models
 
 @if (_mediaDetails == null) {
     <p>
@@ -44,7 +45,7 @@ else {
                 <span>Pour en savoir plus, consultez <a href="https://fr.wikipedia.org/wiki/Le_Monde" target="_blank">le site web officiel</a> ou <a href="https://fr.wikipedia.org/wiki/Le_Monde" target="_blank">le lien Wikipédia</a></span>
             </div>
         </div>
-        <ArticleList MediaId="@MediaId.Value"></ArticleList>
+        <ArticleList Filters="@_filters"></ArticleList>
     </div>
 }
 
@@ -79,6 +80,8 @@ else {
     [Parameter]
     public Guid? MediaId { get; set; }
 
+    private ArticleListFilters _filters;
+
     private MediaDetailDto _mediaDetails;
 
     protected override async Task OnInitializedAsync()
@@ -87,6 +90,9 @@ else {
             NavigationManager.NavigateTo("/articles");
         }
         else {
+            _filters = new ArticleListFilters {
+                MediaId = MediaId.Value
+            };
             _mediaDetails = await MediaFinder.GetDetails(MediaId.Value);
         }
     }

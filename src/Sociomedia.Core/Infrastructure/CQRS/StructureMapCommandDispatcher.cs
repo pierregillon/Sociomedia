@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Sociomedia.Core.Application;
 using StructureMap;
 
@@ -11,6 +12,19 @@ namespace Sociomedia.Core.Infrastructure.CQRS
         public StructureMapCommandDispatcher(IContainer container)
         {
             _container = container;
+        }
+
+        public async Task DispatchGeneric(ICommand command)
+        {
+            if (command == null) throw new ArgumentNullException(nameof(command));
+
+            var handlerType = typeof(ICommandHandler<>).MakeGenericType(command.GetType());
+
+            var handler = _container.GetInstance(handlerType);
+
+            await (Task)handlerType
+                .GetMethod(nameof(ICommandHandler<ICommand>.Handle))
+                .Invoke(handler, new[] { command });
         }
 
         public async Task Dispatch<T>(T command) where T : ICommand

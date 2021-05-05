@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Sociomedia.Articles.Application.Commands.DeleteArticle;
 using Sociomedia.Articles.Application.Projections;
-using Sociomedia.Articles.Application.Queries;
 using Sociomedia.Core.Application;
+using Sociomedia.Core.Infrastructure;
 using Sociomedia.Core.Infrastructure.CQRS;
 using Sociomedia.Medias.Domain;
 
