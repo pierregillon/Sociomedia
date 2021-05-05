@@ -93,6 +93,7 @@ namespace Sociomedia.Front.Data
                         MediaImageUrl = media.ImageUrl
                     })
                 .GroupBy(x => new { x.ThemeId, x.ThemeName })
+                .DisableGuard()
                 .ToArrayAsync();
 
             return results
