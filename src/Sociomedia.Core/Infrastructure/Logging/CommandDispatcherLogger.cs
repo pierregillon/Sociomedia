@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using EventStore.ClientAPI;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Infrastructure.CQRS;
@@ -39,7 +39,7 @@ namespace Sociomedia.Core.Infrastructure.Logging
         private void Log(object command)
         {
             var json = JsonConvert.SerializeObject(command, Formatting.None);
-            _logger.Info($"[COMMAND_DISPATCHER] Execute command {command.GetType().Name} | {json.Substring(0, Math.Min(json.Length, 147))}");
+            _logger.LogInformation($"[COMMAND_DISPATCHER] Execute command {command.GetType().Name} | {json.Substring(0, Math.Min(json.Length, 147))}");
         }
     }
 }

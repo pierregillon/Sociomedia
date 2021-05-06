@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using EventStore.ClientAPI;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Keywords;
@@ -35,7 +35,7 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             Container.Inject(Substitute.For<IKeywordDictionary>());
             Container.Inject<IEventStore>(Container.GetInstance<InMemoryEventStore>());
             Container.Inject<IEventStoreExtended>(Container.GetInstance<InMemoryEventStore>());
-            Container.Inject<ILogger>(new EmptyLogger());
+            Container.Inject(Substitute.For<ILogger>());
 
             Container
                 .GetInstance<IKeywordDictionary>()
@@ -57,21 +57,6 @@ namespace Sociomedia.Articles.Tests.AcceptanceTests
             await EventStore.Store(events);
             EventStore.CommitEvents();
             await EventPublisher.Publish(events);
-        }
-
-        private class EmptyLogger : ILogger
-        {
-            public void Error(string format, params object[] args) { }
-
-            public void Error(Exception ex, string format, params object[] args) { }
-
-            public void Info(string format, params object[] args) { }
-
-            public void Info(Exception ex, string format, params object[] args) { }
-
-            public void Debug(string format, params object[] args) { }
-
-            public void Debug(Exception ex, string format, params object[] args) { }
         }
     }
 }

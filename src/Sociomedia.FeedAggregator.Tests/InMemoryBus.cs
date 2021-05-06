@@ -8,7 +8,6 @@ namespace Sociomedia.FeedAggregator.Tests {
     public class InMemoryBus : IEventBus
     {
         private DomainEventReceived _domainEventReceived;
-        private LiveProcessingStarted _liveProcessingStarted;
 
         public bool IsListening { get; private set; }
 
@@ -16,10 +15,9 @@ namespace Sociomedia.FeedAggregator.Tests {
 
         public bool IsConnected => IsListening;
 
-        public Task SubscribeToEvents(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, LiveProcessingStarted liveProcessingStarted)
+        public Task SubscribeToEvents(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived)
         {
             _domainEventReceived = domainEventReceived;
-            _liveProcessingStarted = liveProcessingStarted;
             LastStreamPosition = initialPosition;
             IsListening = true;
             return Task.CompletedTask;
@@ -33,11 +31,6 @@ namespace Sociomedia.FeedAggregator.Tests {
         public async Task Push(long position, DomainEvent @event)
         {
             await _domainEventReceived(@event, position);
-        }
-
-        public void SwitchToLiveMode()
-        {
-            _liveProcessingStarted.Invoke();
         }
     }
 }

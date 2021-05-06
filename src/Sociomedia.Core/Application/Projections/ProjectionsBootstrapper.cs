@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using EventStore.ClientAPI;
+using EventStore.Client;
+using Microsoft.Extensions.Logging;
 using Sociomedia.Core.Domain;
 using StructureMap.TypeRules;
 
@@ -45,7 +46,7 @@ namespace Sociomedia.Core.Application.Projections
             var innerDomainEventTypes = eventTypes.Where(x => x.CanBeCastTo(innerDomainEventType)).ToArray();
             var outerDomainEventTypes = eventTypes.Where(x => !x.CanBeCastTo(innerDomainEventType)).ToArray();
 
-            var innerDomainEvents = await _eventStore.GetAllEventsBetween(Position.Start, new Position(lastStreamPosition, lastStreamPosition), outerDomainEventTypes).EnumerateAsync();
+            var innerDomainEvents = await _eventStore.GetAllEventsBetween(Position.Start, new Position((ulong)lastStreamPosition, (ulong)lastStreamPosition), outerDomainEventTypes).EnumerateAsync();
             var outerDomainEvents = await _eventStore.GetAllEventsBetween(Position.Start, Position.End, innerDomainEventTypes).EnumerateAsync();
 
             return innerDomainEvents
@@ -79,7 +80,7 @@ namespace Sociomedia.Core.Application.Projections
 
         private void Info(string message)
         {
-            _logger.Info($"[{GetType().DisplayableName()}] " + message);
+            _logger.LogInformation($"[{GetType().DisplayableName()}] " + message);
         }
     }
 }

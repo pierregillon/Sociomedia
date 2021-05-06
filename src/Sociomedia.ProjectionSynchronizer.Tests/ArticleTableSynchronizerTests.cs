@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using EventStore.ClientAPI;
 using FluentAssertions;
 using LinqToDB;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Articles.Domain.Keywords;
 using Sociomedia.Core.Infrastructure.EventStoring;
@@ -23,7 +24,7 @@ namespace Sociomedia.ProjectionSynchronizer.Tests
         public ArticleTableSynchronizerTests()
         {
             Container.Inject<IEventBus>(_inMemoryBus);
-            Container.Inject<ILogger>(new EmptyLogger());
+            Container.Inject(Substitute.For<ILogger>());
 
             var configuration = Container.GetInstance<ProjectionSynchronizationConfiguration>();
             configuration.ReconnectionDelayMs = 1;

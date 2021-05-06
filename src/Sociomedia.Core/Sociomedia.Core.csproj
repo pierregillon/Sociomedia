@@ -8,7 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="CqrsLite" Version="1.33.0" />
-    <PackageReference Include="EventStore.Client" Version="5.0.8" />
+    <PackageReference Include="EventStore.Client.Grpc.Streams" Version="21.2.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.37.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="StructureMap" Version="4.7.1" />
   </ItemGroup>
 

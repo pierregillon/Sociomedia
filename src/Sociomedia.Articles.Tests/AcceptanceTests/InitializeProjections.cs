@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using EventStore.ClientAPI;
+using EventStore.Client;
 using FluentAssertions;
 using NSubstitute;
 using Sociomedia.Articles.Application.Projections;

@@ -1,7 +1,6 @@
 ﻿using CQRSlite.Domain;
 using CQRSlite.Events;
-using EventStore.ClientAPI;
-using EventStore.ClientAPI.Common.Log;
+using Microsoft.Extensions.Logging;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Infrastructure.CQRS;
 using Sociomedia.Core.Infrastructure.EventStoring;
@@ -28,7 +27,8 @@ namespace Sociomedia.Medias.Infrastructure
 
             For<ICommandDispatcher>().DecorateAllWith<CommandDispatcherLogger>();
 
-            For<ILogger>().Use<ConsoleLogger>();
+            For<ILoggerFactory>().Use(x => LoggerFactory.Create(x => x.AddConsole()));
+            For<ILogger>().Use(x => x.GetInstance<ILoggerFactory>().CreateLogger("test"));
             For<ITypeLocator>().Use<ReflectionTypeLocator>();
 
             For<IRepository>().Use(context => new Repository(context.GetInstance<IEventStore>()));

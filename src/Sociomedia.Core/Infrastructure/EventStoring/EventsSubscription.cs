@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using EventStore.ClientAPI;
+using EventStore.Client;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Sociomedia.Core.Infrastructure.EventStoring
@@ -13,19 +14,17 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
     public class EventsSubscription
     {
         private readonly DomainEventReceived _domainEventReceived;
-        private readonly LiveProcessingStarted _liveProcessingStarted;
         private readonly ILogger _logger;
-        private EventStoreAllCatchUpSubscription _subscription;
+        private StreamSubscription _subscription;
         private readonly Dictionary<string, Type> _nameToEventType;
         private readonly JsonSerializerSettings _serializerSettings;
-        private Position? _lastPosition;
-        private IEventStoreConnection _currentConnection;
+        private Position _lastPosition;
+        private EventStoreClient _currentClient;
 
-        public EventsSubscription(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, LiveProcessingStarted liveProcessingStarted, ILogger logger)
+        public EventsSubscription(long? initialPosition, IEnumerable<Type> eventTypes, DomainEventReceived domainEventReceived, ILogger logger)
         {
-            _lastPosition = initialPosition.HasValue ? new Position(initialPosition.Value, initialPosition.Value) : (Position?) null;
+            _lastPosition = initialPosition.HasValue ? new Position((ulong) initialPosition.Value, (ulong) initialPosition.Value) : Position.Start;
             _domainEventReceived = domainEventReceived;
-            _liveProcessingStarted = liveProcessingStarted;
             _logger = logger;
             _nameToEventType = eventTypes.ToDictionary(x => x.Name);
 
@@ -39,63 +38,53 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
             };
         }
 
-        public void DefineConnection(IEventStoreConnection connection)
+        public async Task DefineConnection(EventStoreClient client)
         {
-            _currentConnection = connection;
-            _currentConnection.Closed += ConnectionOnClosed;
+            _currentClient = client;
 
-            Subscribe();
+            await Subscribe();
         }
 
-        private void Subscribe()
+        private async Task Subscribe()
         {
-            if (_currentConnection == null) {
+            if (_currentClient == null) {
                 return;
             }
 
-            _subscription?.Stop();
+            _subscription?.Dispose();
 
-            _subscription = _currentConnection.SubscribeToAllFrom(
+            _subscription = await _currentClient.SubscribeToAllAsync(
                 _lastPosition,
-                CatchUpSubscriptionSettings.Default,
                 EventAppeared,
-                LiveProcessingStarted,
-                SubscriptionDropped
+                subscriptionDropped: SubscriptionDropped,
+                filterOptions: new SubscriptionFilterOptions(EventTypeFilter.ExcludeSystemEvents(), checkpointReached: (s, position, c) => {
+                    _logger.LogDebug($"Checkpoint taken at {position.PreparePosition}");
+                    _lastPosition = position;
+                    return Task.CompletedTask;
+                })
             );
         }
 
         public void Unsubscribe()
         {
-            _subscription?.Stop();
+            _subscription?.Dispose();
             _subscription = null;
         }
 
+
         // ----- Callback
 
-        private void ConnectionOnClosed(object sender, ClientClosedEventArgs e)
-        {
-            Unsubscribe();
-            _currentConnection.Closed -= ConnectionOnClosed;
-            _currentConnection = null;
-        }
-
-        private void LiveProcessingStarted(EventStoreCatchUpSubscription obj)
-        {
-            Debug("Switched to live mode");
-            _liveProcessingStarted?.Invoke();
-        }
-
-        private async Task EventAppeared(EventStoreCatchUpSubscription subscription, ResolvedEvent resolvedEvent)
+        private async Task EventAppeared(StreamSubscription subscription, ResolvedEvent resolvedEvent, CancellationToken cancellationToken)
         {
             try {
                 if (resolvedEvent.OriginalStreamId.StartsWith("$") || !TryConvertToDomainEvent(resolvedEvent, out var @event)) {
-                    _lastPosition = resolvedEvent.OriginalPosition;
+                    _lastPosition = resolvedEvent.OriginalPosition.GetValueOrDefault();
                     return;
                 }
 
                 Debug($"Event received : stream: {resolvedEvent.OriginalStreamId}, date: {resolvedEvent.Event.Created:g}, type: {@event.GetType().Name}");
-                await _domainEventReceived.Invoke(@event, resolvedEvent.OriginalPosition.GetValueOrDefault().CommitPosition);
-                _lastPosition = resolvedEvent.OriginalPosition;
+                await _domainEventReceived.Invoke(@event, (long) resolvedEvent.OriginalPosition.GetValueOrDefault().CommitPosition);
+                _lastPosition = resolvedEvent.OriginalPosition.GetValueOrDefault();
             }
             catch (Exception ex) {
                 Error(ex);
@@ -103,22 +92,22 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
             }
         }
 
-        private void SubscriptionDropped(EventStoreCatchUpSubscription _, SubscriptionDropReason reason, Exception error)
+        private async void SubscriptionDropped(StreamSubscription subscription, SubscriptionDroppedReason reason, Exception? error)
         {
             Unsubscribe();
             Debug("Subscription dropped. Reason: " + reason);
             Error(error);
             Thread.Sleep(5000);
-            Subscribe();
+            await Subscribe();
         }
 
         private bool TryConvertToDomainEvent(ResolvedEvent @event, out IEvent result)
         {
             try {
-                var json = Encoding.UTF8.GetString(@event.Event.Data);
+                var json = Encoding.UTF8.GetString(@event.Event.Data.ToArray());
                 if (_nameToEventType.TryGetValue(@event.Event.EventType, out var eventType)) {
                     var domainEvent = (IEvent) JsonConvert.DeserializeObject(json, eventType, _serializerSettings);
-                    domainEvent.Version = (int) @event.OriginalEventNumber + 1;
+                    domainEvent.Version = (int) @event.OriginalEventNumber.ToInt64() + 1;
                     result = domainEvent;
                     return true;
                 }
@@ -133,12 +122,12 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 
         private void Debug(string message)
         {
-            _logger.Debug($"[{GetType().DisplayableName()}] {message}");
+            _logger.LogDebug($"[{GetType().DisplayableName()}] {message}");
         }
 
         private void Error(Exception ex)
         {
-            _logger.Error(ex, $"[{GetType().DisplayableName()}] Unhandled exception");
+            _logger.LogError(ex, $"[{GetType().DisplayableName()}] Unhandled exception");
         }
     }
 }

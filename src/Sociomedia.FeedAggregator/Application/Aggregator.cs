@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using EventStore.ClientAPI;
+using Microsoft.Extensions.Logging;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core;
 using Sociomedia.Core.Application;
@@ -49,9 +49,8 @@ namespace Sociomedia.FeedAggregator.Application
         {
             var lastStreamEventPosition = await GetLastStreamEventPosition();
             await _projectionsBootstrapper.InitializeUntil(lastStreamEventPosition.Value, typeof(ArticleEvent));
-            await _eventBus.SubscribeToEvents(lastStreamEventPosition, GetEventTypes(), DomainEventReceived, () => {
-                StartFeedSynchronization(token);
-            });
+            await _eventBus.SubscribeToEvents(lastStreamEventPosition, GetEventTypes(), DomainEventReceived);
+            StartFeedSynchronization(token);
         }
 
         // ----- Call backs
@@ -96,12 +95,12 @@ namespace Sociomedia.FeedAggregator.Application
 
         private void Error(Exception ex)
         {
-            _logger.Error(ex, $"[{GetType().DisplayableName()}] Unhandled exception : ");
+            _logger.LogError(ex, $"[{GetType().DisplayableName()}] Unhandled exception : ");
         }
 
         private void Info(string message)
         {
-            _logger.Info($"[{GetType().DisplayableName()}] " + message);
+            _logger.LogInformation($"[{GetType().DisplayableName()}] " + message);
         }
     }
 }

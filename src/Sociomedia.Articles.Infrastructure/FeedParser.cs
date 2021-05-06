@@ -7,8 +7,8 @@ using System.Net;
 using System.Text.RegularExpressions;
 using CodeHollow.FeedReader;
 using CodeHollow.FeedReader.Feeds;
-using EventStore.ClientAPI;
 using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Feeds;
 using Sociomedia.Core.Domain;
@@ -46,7 +46,7 @@ namespace Sociomedia.Articles.Infrastructure
                     yield return rssItem;
                 }
                 else {
-                    _logger.Info($"[FEED_PARSER] Unable to import feed {rssItem.Link} : publish date was not defined.");
+                    _logger.LogInformation($"[FEED_PARSER] Unable to import feed {rssItem.Link} : publish date was not defined.");
                 }
             }
         }

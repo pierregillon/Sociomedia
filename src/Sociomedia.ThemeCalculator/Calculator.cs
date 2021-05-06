@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using EventStore.ClientAPI;
+using Microsoft.Extensions.Logging;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core;
 using Sociomedia.Core.Application;
@@ -77,7 +77,7 @@ namespace Sociomedia.ThemeCalculator
 
         private void Info(string message)
         {
-            _logger.Info($"[{GetType().DisplayableName()}] " + message);
+            _logger.LogInformation($"[{GetType().DisplayableName()}] " + message);
         }
     }
 }

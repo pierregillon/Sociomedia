@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using EventStore.ClientAPI;
+using Microsoft.Extensions.Logging;
 
 namespace Sociomedia.ThemeCalculator
 {
@@ -35,7 +35,7 @@ namespace Sociomedia.ThemeCalculator
 
         private void Info(string message)
         {
-            _logger.Info("[APPLICATION] " + message);
+            _logger.LogInformation("[APPLICATION] " + message);
         }
 
         private static void WaitForExit()

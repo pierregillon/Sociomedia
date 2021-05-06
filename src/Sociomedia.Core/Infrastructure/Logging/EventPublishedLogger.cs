@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using EventStore.ClientAPI;
+using Microsoft.Extensions.Logging;
 
 namespace Sociomedia.Core.Infrastructure.Logging
 {
@@ -18,7 +18,7 @@ namespace Sociomedia.Core.Infrastructure.Logging
 
         public async Task Publish<T>(T @event, CancellationToken cancellationToken = new CancellationToken()) where T : class, IEvent
         {
-            _logger.Debug(@event.GetType().Name);
+            _logger.LogDebug(@event.GetType().Name);
             await _eventPublisher.Publish(@event, cancellationToken);
         }
     }

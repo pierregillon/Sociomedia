@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using EventStore.ClientAPI;
+using EventStore.Client;
 using Sociomedia.Core.Domain;
 
 namespace Sociomedia.Core.Infrastructure.EventStoring
@@ -75,7 +75,7 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 
             var events = _allEvents
                 .Skip((int) startPosition.CommitPosition)
-                .Where((x, i) => i < endPosition.CommitPosition)
+                .Where((x, i) => (ulong)i < endPosition.CommitPosition)
                 .ToArray();
 
             foreach (var @event in events) {

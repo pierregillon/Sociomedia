@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using EventStore.ClientAPI;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Articles.Domain.Articles;
@@ -45,7 +45,7 @@ namespace Sociomedia.FeedAggregator.Tests
             container.Inject((IEventStoreExtended) _eventStore);
             container.Inject((IEventStore) _eventStore);
             container.Inject((IEventBus) _inMemoryBus);
-            container.Inject((ILogger) new EmptyLogger());
+            container.Inject(Substitute.For<ILogger>());
 
             _aggregator = container.GetInstance<Aggregator>();
         }
@@ -71,9 +71,9 @@ namespace Sociomedia.FeedAggregator.Tests
 
             // Act
             await _aggregator.StartAggregation(source.Token);
+            await Task.Delay(100, source.Token);
             await _inMemoryBus.Push(2, new ArticleImported(articleId, "some title", "some summary", DateTimeOffset.Now.Date.AddDays(-1), "https://mysite/article.html", null, "someExternalId", new string[0], mediaId) { Version = 1 });
-            _inMemoryBus.SwitchToLiveMode();
-            await Task.Delay(200, source.Token);
+            await Task.Delay(100, source.Token);
 
             // Asserts
             var events = await _eventStore.GetNewEvents().Pipe(x => x.ToArray());

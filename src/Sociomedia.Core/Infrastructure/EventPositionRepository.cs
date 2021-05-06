@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using EventStore.ClientAPI;
+using Microsoft.Extensions.Logging;
 using Sociomedia.Core.Application;
 
 namespace Sociomedia.Core.Infrastructure
@@ -33,7 +33,7 @@ namespace Sociomedia.Core.Infrastructure
                 await File.WriteAllTextAsync(FilePath, position.ToString());
             }
             catch (Exception ex) {
-                _logger.Error(ex, $"[{this.GetType().DisplayableName()}] Unable to save the position {position}.");
+                _logger.LogError(ex, $"[{this.GetType().DisplayableName()}] Unable to save the position {position}.");
             }
         }
     }

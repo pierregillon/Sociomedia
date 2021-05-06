@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CQRSlite.Domain;
-using EventStore.ClientAPI;
+using Microsoft.Extensions.Logging;
 using Sociomedia.Articles.Application.Projections;
 using Sociomedia.Articles.Application.Queries;
 using Sociomedia.Articles.Domain;
@@ -105,12 +105,12 @@ namespace Sociomedia.Articles.Application.Commands.SynchronizeMediaFeeds
 
         private void Debug(string message)
         {
-            _logger.Debug($"[{GetType().DisplayableName()}] {message}");
+            _logger.LogDebug($"[{GetType().DisplayableName()}] {message}");
         }
 
         private void Error(Exception ex, string error)
         {
-            _logger.Error(ex, $"[{GetType().DisplayableName()}] {error}");
+            _logger.LogError(ex, $"[{GetType().DisplayableName()}] {error}");
         }
     }
 }

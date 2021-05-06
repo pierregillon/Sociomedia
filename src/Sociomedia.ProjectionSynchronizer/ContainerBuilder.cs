@@ -1,6 +1,5 @@
 ﻿using CQRSlite.Events;
-using EventStore.ClientAPI;
-using EventStore.ClientAPI.Common.Log;
+using Microsoft.Extensions.Logging;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.CQRS;
@@ -22,7 +21,8 @@ namespace Sociomedia.ProjectionSynchronizer
                 x.For<IEventBus>().Use<EventStoreOrgBus>().Singleton();
                 x.For<IEventPublisher>().Use<StructureMapEventPublisher>();
                 x.For<IDomainEventTypeLocator>().Use<ReflectionDomainEventTypeLocator>().Singleton();
-                x.For<ILogger>().Use<ConsoleLogger>();
+                x.For<ILoggerFactory>().Use(x => LoggerFactory.Create(x => x.AddConsole()));
+                x.For<ILogger>().Use(x => x.GetInstance<ILoggerFactory>().CreateLogger("test"));
                 x.For<DbConnectionReadModel>().Use<DbConnectionReadModel>().Singleton();
                 x.For<IStreamPositionRepository>().Use<StreamPositionRepository>();
                 x.For<DbSettings>();

@@ -1,7 +1,6 @@
 ﻿using CQRSlite.Domain;
 using CQRSlite.Events;
-using EventStore.ClientAPI;
-using EventStore.ClientAPI.Common.Log;
+using Microsoft.Extensions.Logging;
 using Sociomedia.Core.Application.Projections;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure.CQRS;
@@ -31,7 +30,8 @@ namespace Sociomedia.Core.Infrastructure
             For<InMemoryDatabase>().Singleton();
             For<IProjectionLocator>().Use<ProjectionLocator>();
 
-            For<ILogger>().Use<ConsoleLogger>();
+            For<ILoggerFactory>().Use(x => LoggerFactory.Create(x => x.AddConsole()));
+            For<ILogger>().Use(x => x.GetInstance<ILoggerFactory>().CreateLogger("test"));
             For<IClock>().Use<Clock>();
         }
     }

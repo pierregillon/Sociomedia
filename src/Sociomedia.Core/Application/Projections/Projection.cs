@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using EventStore.ClientAPI;
+using Microsoft.Extensions.Logging;
 using Sociomedia.Core.Infrastructure;
 
 namespace Sociomedia.Core.Application.Projections
@@ -35,7 +35,7 @@ namespace Sociomedia.Core.Application.Projections
 
         protected void LogError(string message)
         {
-            _logger.Error($"[{GetType().Name.SeparatePascalCaseWords().ToUpper()}] {message}");
+            _logger.LogError($"[{GetType().Name.SeparatePascalCaseWords().ToUpper()}] {message}");
         }
     }
 }

@@ -3,7 +3,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using EventStore.ClientAPI;
+using Microsoft.Extensions.Logging;
 using Sociomedia.Articles.Domain;
 using Sociomedia.Core.Domain;
 
@@ -56,7 +56,7 @@ namespace Sociomedia.Articles.Infrastructure
 
         private void Error(Exception exception, string url)
         {
-            _logger.Error($"[HTTP_DOWNLOADER] Unable to download web document '{url}' : {exception.Message}");
+            _logger.LogError($"[HTTP_DOWNLOADER] Unable to download web document '{url}' : {exception.Message}");
         }
     }
 }

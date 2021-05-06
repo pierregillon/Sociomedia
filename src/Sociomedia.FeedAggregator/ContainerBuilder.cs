@@ -1,4 +1,5 @@
-﻿using Sociomedia.Articles.Domain.Articles;
+﻿using Microsoft.Extensions.Logging;
+using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Articles.Infrastructure;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Infrastructure;

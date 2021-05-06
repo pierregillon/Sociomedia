@@ -1,6 +1,6 @@
-﻿using System;
-using CQRSlite.Events;
-using EventStore.ClientAPI;
+﻿using CQRSlite.Events;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 using Sociomedia.Core.Domain;
 using Sociomedia.Core.Infrastructure;
 using Sociomedia.Core.Infrastructure.CQRS;
@@ -28,27 +28,12 @@ namespace Sociomedia.Tests.AcceptanceTests
 
             Container.Inject<IEventStore>(Container.GetInstance<InMemoryEventStore>());
             Container.Inject<IEventStoreExtended>(Container.GetInstance<InMemoryEventStore>());
-            Container.Inject<ILogger>(new EmptyLogger());
+            Container.Inject(Substitute.For<ILogger>());
 
             CommandDispatcher = Container.GetInstance<ICommandDispatcher>();
 
             EventStore = Container.GetInstance<InMemoryEventStore>();
             EventPublisher = Container.GetInstance<IEventPublisher>();
-        }
-
-        public class EmptyLogger : ILogger
-        {
-            public void Error(string format, params object[] args) { }
-
-            public void Error(Exception ex, string format, params object[] args) { }
-
-            public void Info(string format, params object[] args) { }
-
-            public void Info(Exception ex, string format, params object[] args) { }
-
-            public void Debug(string format, params object[] args) { }
-
-            public void Debug(Exception ex, string format, params object[] args) { }
         }
     }
 }

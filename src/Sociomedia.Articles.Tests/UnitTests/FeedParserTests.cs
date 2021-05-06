@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using EventStore.ClientAPI.Common.Log;
 using FluentAssertions;
-using Sociomedia.Articles.Domain;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 using Sociomedia.Articles.Domain.Feeds;
 using Sociomedia.Articles.Infrastructure;
 using Xunit;
@@ -20,7 +20,7 @@ namespace Sociomedia.Articles.Tests.UnitTests
 
         public FeedParserTests()
         {
-            _parser = new FeedParser(new HtmlParser(), new ConsoleLogger());
+            _parser = new FeedParser(new HtmlParser(), Substitute.For<ILogger>());
         }
 
         [Fact]

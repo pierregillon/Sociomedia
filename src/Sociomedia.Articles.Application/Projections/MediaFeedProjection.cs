@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using EventStore.ClientAPI;
+using Microsoft.Extensions.Logging;
 using Sociomedia.Core.Application;
 using Sociomedia.Core.Application.Projections;
 using Sociomedia.Core.Infrastructure;

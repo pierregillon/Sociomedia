@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using EventStore.ClientAPI;
+using Microsoft.Extensions.Logging;
 using Sociomedia.Articles.Infrastructure;
 
 namespace Sociomedia.FeedAggregator.Application
@@ -40,7 +40,7 @@ namespace Sociomedia.FeedAggregator.Application
 
         private void Info(string message)
         {
-            _logger.Info("[APPLICATION] " + message);
+            _logger.LogInformation("[APPLICATION] " + message);
         }
 
         private static void WaitForExit()

@@ -1,5 +1,6 @@
 ﻿using System;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Sociomedia.Articles.Domain.Articles;
 using Sociomedia.Core.Domain;
@@ -24,7 +25,7 @@ namespace Sociomedia.Tests
             var themeProjectionRepository = new ThemeProjectionRepository();
             var configuration = new ThemeCalculatorConfiguration{ArticleAggregationIntervalInDays = 30};
             _projection = new ThemeProjection(themeProjectionRepository, configuration, _clock);
-            _themeChallenger = new ThemeChallenger(new ThemeDataFinder(themeProjectionRepository, configuration, new AcceptanceTests.AcceptanceTests.EmptyLogger(), _clock));
+            _themeChallenger = new ThemeChallenger(new ThemeDataFinder(themeProjectionRepository, configuration, Substitute.For<ILogger>(), _clock));
         }
 
         [Fact]

@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CQRSlite.Events;
-using EventStore.ClientAPI;
+using EventStore.Client;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Sociomedia.Core.Domain;
 
@@ -13,18 +14,12 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 {
     public class EventStoreOrg : IEventStore, IEventStoreExtended
     {
-        private const int EVENT_COUNT = 200;
-
-        private IEventStoreConnection _connection;
+        private readonly EventStoreClient _client;
         private readonly JsonSerializerSettings _serializerSettings;
-        private readonly EventStoreConfiguration _configuration;
-        private readonly ILogger _logger;
         private readonly ITypeLocator _typeLocator;
 
         public EventStoreOrg(EventStoreConfiguration configuration, ILogger logger, ITypeLocator typeLocator)
         {
-            _configuration = configuration;
-            _logger = logger;
             _typeLocator = typeLocator;
 
             var jsonResolver = new PropertyCleanerSerializerContractResolver();
@@ -35,14 +30,16 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
                 ContractResolver = jsonResolver,
                 Formatting = Formatting.Indented
             };
+
+            var settings = EventStoreClientSettings.Create(configuration.ConnectionString);
+            settings.ConnectionName = AppDomain.CurrentDomain.FriendlyName;
+            _client = new EventStoreClient(settings);
         }
 
         // ----- Public methods
 
         public async Task<IEnumerable<IEvent>> Get(Guid aggregateId, int fromVersion, CancellationToken cancellationToken = default)
         {
-            await Connect();
-
             var streamEvents = await ReadAllEventsInStream(aggregateId.ToString(), fromVersion);
 
             return streamEvents
@@ -52,67 +49,65 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 
         public async Task Save(IEnumerable<IEvent> events, CancellationToken cancellationToken = default)
         {
-            await Connect();
-
-            foreach (var @event in events) {
-                var json = JsonConvert.SerializeObject(@event, _serializerSettings);
-                var eventData = new EventData(
-                    Guid.NewGuid(),
-                    @event.GetType().Name,
-                    true,
-                    Encoding.UTF8.GetBytes(json),
-                    null
-                );
-                var version = @event.Version - 2; // CQRSLite start event version at 1. EventStore at -1.
-                await _connection.AppendToStreamAsync(@event.Id.ToString(), version, eventData);
+            var allEvents = events.ToArray();
+            if (!allEvents.Any()) {
+                throw new InvalidOperationException("No events to save !");
             }
+
+            EventData ConvertToEventData(IEvent @event)
+            {
+                var json = JsonConvert.SerializeObject(@event, _serializerSettings);
+                return new EventData(
+                    Uuid.NewUuid(),
+                    @event.GetType().Name,
+                    Encoding.UTF8.GetBytes(json)
+                );
+            }
+
+            var firstEvent = allEvents.First();
+            var version = new StreamRevision((ulong) firstEvent.Version - 2); // CQRSLite start event version at 1. EventStore at -1.
+            var streamName = firstEvent.Id.ToString();
+            await _client.AppendToStreamAsync(streamName, version, allEvents.Select(ConvertToEventData), cancellationToken: cancellationToken);
         }
 
         public async IAsyncEnumerable<IEvent> GetAllEventsBetween(Position startPosition, Position endPosition, IReadOnlyCollection<Type> eventTypes)
         {
-            await Connect();
-
             var eventTypesByName = eventTypes.ToDictionary(x => x.Name);
 
-            AllEventsSlice currentSlice;
-
-            do {
-                currentSlice = await _connection.ReadAllEventsForwardAsync(startPosition, EVENT_COUNT, false);
-                startPosition = currentSlice.NextPosition;
-                foreach (var @event in currentSlice.Events.Where(x => !x.Event.EventType.StartsWith("$"))) {
-                    if (eventTypesByName.TryGetValue(@event.Event.EventType, out var eventType)) {
-                        yield return ConvertToDomainEvent(@event, eventType);
-                    }
-                    if (@event.OriginalPosition == endPosition) {
-                        yield break;
-                    }
+            await foreach (var @event in _client.ReadAllAsync(Direction.Forwards, startPosition)) {
+                if (@event.Event.EventType.StartsWith("$")) {
+                    continue;
                 }
-            } while (!currentSlice.IsEndOfStream);
+                if (eventTypesByName.TryGetValue(@event.Event.EventType, out var eventType)) {
+                    yield return ConvertToDomainEvent(@event, eventType);
+                }
+                if (@event.OriginalPosition == endPosition) {
+                    yield break;
+                }
+            }
         }
 
         public async Task<long> GetCurrentGlobalStreamPosition()
         {
-            await Connect();
+            var @event = await FirstOrDefault(_client.ReadAllAsync(Direction.Backwards, Position.End, 1));
+            if (!@event.HasValue) {
+                return 0;
+            }
+            if (@event.Value.OriginalPosition.HasValue) {
+                return (long) @event.Value.OriginalPosition.Value.CommitPosition;
+            }
+            return 0;
+        }
 
-            var slice = await _connection.ReadAllEventsBackwardAsync(Position.End, 1, false);
-            return slice.FromPosition.CommitPosition;
+        private static async Task<ResolvedEvent?> FirstOrDefault(IAsyncEnumerable<ResolvedEvent> enumerable)
+        {
+            await foreach (var test in enumerable) {
+                return test;
+            }
+            return default;
         }
 
         // ----- Internal logic
-
-        private async Task Connect()
-        {
-            if (_connection != null) {
-                return;
-            }
-            _connection = EventStoreConnection.Create(_configuration.Uri, AppDomain.CurrentDomain.FriendlyName);
-            _connection.ErrorOccurred += (sender, args) => Error(args.Exception.ToString());
-            _connection.Closed += (sender, args) => {
-                Error("Connection closed : " + args.Reason);
-                _connection = null;
-            };
-            await _connection.ConnectAsync();
-        }
 
         private IEvent ConvertToDomainEvent(ResolvedEvent @event)
         {
@@ -130,35 +125,23 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 
         private IEvent ConvertToDomainEvent(ResolvedEvent @event, Type eventType)
         {
-            var json = Encoding.UTF8.GetString(@event.Event.Data);
+            var json = Encoding.UTF8.GetString(@event.Event.Data.ToArray());
             var domainEvent = (IEvent) JsonConvert.DeserializeObject(json, eventType, _serializerSettings);
-            domainEvent.Version = (int) @event.OriginalEventNumber + 1;
+            domainEvent.Version = (int) @event.OriginalEventNumber.ToInt64() + 1;
             return domainEvent;
         }
 
-        private async Task<IEnumerable<ResolvedEvent>> ReadAllEventsInStream(string streamId, int fromVersion)
+        private async Task<IReadOnlyCollection<ResolvedEvent>> ReadAllEventsInStream(string streamId, int fromVersion)
         {
-            var streamEvents = new List<ResolvedEvent>();
-            StreamEventsSlice currentSlice;
-            var nextSliceStart = fromVersion == -1 ? StreamPosition.Start : (long) fromVersion;
+            var position = fromVersion == -1 ? StreamPosition.Start : new StreamPosition((ulong) fromVersion);
 
-            do {
-                currentSlice = await _connection.ReadStreamEventsForwardAsync(streamId, nextSliceStart, EVENT_COUNT, false);
-                nextSliceStart = currentSlice.NextEventNumber;
-                streamEvents.AddRange(currentSlice.Events);
-            } while (!currentSlice.IsEndOfStream);
+            var result = _client.ReadStreamAsync(Direction.Forwards, streamId, position);
 
-            return streamEvents;
-        }
+            if (await result.ReadState == ReadState.StreamNotFound) {
+                return Array.Empty<ResolvedEvent>();
+            }
 
-        private void Debug(string message)
-        {
-            _logger.Debug("[EVENTSTORE] " + message);
-        }
-
-        private void Error(string message)
-        {
-            _logger.Error("[EVENTSTORE] " + message);
+            return await _client.ReadStreamAsync(Direction.Forwards, streamId, position).EnumerateAsync();
         }
     }
 }

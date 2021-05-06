@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using EventStore.ClientAPI;
 using LinqToDB.Data;
+using Microsoft.Extensions.Logging;
 using Sociomedia.ProjectionSynchronizer.Application;
 using Sociomedia.ReadModel.DataAccess;
 
@@ -25,7 +25,7 @@ namespace Sociomedia.ProjectionSynchronizer
 
                 await synchronizer.StartSynchronization();
 
-                container.GetInstance<ILogger>().Debug("[PROGRAM] Read database synchronizer started.");
+                container.GetInstance<ILogger>().LogDebug("[PROGRAM] Read database synchronizer started.");
 
                 WaitForExit();
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EventStore.ClientAPI;
+using Microsoft.Extensions.Logging;
 using Sociomedia.Core.Domain;
 using Sociomedia.Themes.Domain;
 
@@ -47,7 +47,7 @@ namespace Sociomedia.Themes.Application.Projections
         {
             var themes = _themeProjectionRepository.GetAllThemes().Where(x => intersection.SequenceEqual(x.Keywords)).ToArray();
             if (themes.Length > 1) {
-                _logger.Info("2 themes have the same keyword intersections !");
+                _logger.LogInformation("2 themes have the same keyword intersections !");
             }
             return themes.FirstOrDefault();
         }
