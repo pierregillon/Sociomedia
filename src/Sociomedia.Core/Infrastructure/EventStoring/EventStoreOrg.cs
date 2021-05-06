@@ -89,7 +89,7 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
 
         public async Task<long> GetCurrentGlobalStreamPosition()
         {
-            var @event = await FirstOrDefault(_client.ReadAllAsync(Direction.Backwards, Position.End, 1));
+            var @event = await _client.ReadAllAsync(Direction.Backwards, Position.End, 1).Select(x => (ResolvedEvent?)x).FirstOrDefaultAsync();
             if (!@event.HasValue) {
                 return 0;
             }
@@ -97,14 +97,6 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
                 return (long) @event.Value.OriginalPosition.Value.CommitPosition;
             }
             return 0;
-        }
-
-        private static async Task<ResolvedEvent?> FirstOrDefault(IAsyncEnumerable<ResolvedEvent> enumerable)
-        {
-            await foreach (var test in enumerable) {
-                return test;
-            }
-            return default;
         }
 
         // ----- Internal logic
@@ -141,7 +133,7 @@ namespace Sociomedia.Core.Infrastructure.EventStoring
                 return Array.Empty<ResolvedEvent>();
             }
 
-            return await _client.ReadStreamAsync(Direction.Forwards, streamId, position).EnumerateAsync();
+            return await _client.ReadStreamAsync(Direction.Forwards, streamId, position).ToListAsync();
         }
     }
 }

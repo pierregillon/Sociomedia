@@ -46,8 +46,8 @@ namespace Sociomedia.Core.Application.Projections
             var innerDomainEventTypes = eventTypes.Where(x => x.CanBeCastTo(innerDomainEventType)).ToArray();
             var outerDomainEventTypes = eventTypes.Where(x => !x.CanBeCastTo(innerDomainEventType)).ToArray();
 
-            var innerDomainEvents = await _eventStore.GetAllEventsBetween(Position.Start, new Position((ulong)lastStreamPosition, (ulong)lastStreamPosition), outerDomainEventTypes).EnumerateAsync();
-            var outerDomainEvents = await _eventStore.GetAllEventsBetween(Position.Start, Position.End, innerDomainEventTypes).EnumerateAsync();
+            var innerDomainEvents = await _eventStore.GetAllEventsBetween(Position.Start, new Position((ulong)lastStreamPosition, (ulong)lastStreamPosition), outerDomainEventTypes).ToListAsync();
+            var outerDomainEvents = await _eventStore.GetAllEventsBetween(Position.Start, Position.End, innerDomainEventTypes).ToListAsync();
 
             return innerDomainEvents
                 .Concat(outerDomainEvents)

@@ -71,7 +71,7 @@ namespace Sociomedia.FeedAggregator.Tests
 
             // Act
             await _aggregator.StartAggregation(source.Token);
-            await Task.Delay(100, source.Token);
+            await Task.Delay(200, source.Token);
             await _inMemoryBus.Push(2, new ArticleImported(articleId, "some title", "some summary", DateTimeOffset.Now.Date.AddDays(-1), "https://mysite/article.html", null, "someExternalId", new string[0], mediaId) { Version = 1 });
             await Task.Delay(100, source.Token);
 
